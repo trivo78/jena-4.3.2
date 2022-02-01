@@ -62,6 +62,8 @@ import org.apache.jena.update.UpdateException ;
 /** Implementation of general purpose update request execution */ 
 public class UpdateEngineWorker implements UpdateVisitor
 {
+    
+    final boolean enableDebugPrint = true;
     protected final DatasetGraph datasetGraph ;
     protected final boolean alwaysSilent = true ;
     protected final Binding inputBinding;       // Used for UpdateModify only
@@ -273,18 +275,20 @@ public class UpdateEngineWorker implements UpdateVisitor
     
     @Override
     public void visit(UpdateDataInsert update) {
+        List<Quad> tmp = new ArrayList<>();
         for ( Quad quad : update.getQuads() )
-            addToDatasetGraph(datasetGraph, quad);
+            addToDatasetGraph(datasetGraph, quad,tmp);
     }
 
     @Override
     public void visit(UpdateDataDelete update) {
+        List<Quad> tmp = new ArrayList<>();
         for ( Quad quad : update.getQuads() )
-            deleteFromDatasetGraph(datasetGraph, quad);
+            deleteFromDatasetGraph(datasetGraph, quad,tmp);
     }
 
     @Override
-    public void visit(UpdateDeleteWhere update) {
+    public UpdateResult visit(UpdateDeleteWhere update) {
         List<Quad> quads = update.getQuads() ;
         // Removed from SPARQL : Convert bNodes to named variables first.
         //quads = convertBNodesToVariables(quads) ;
@@ -294,7 +298,7 @@ public class UpdateEngineWorker implements UpdateVisitor
         
         // Decided to serialize the bindings, but could also have decided to
         // serialize the quads after applying the template instead.
-        
+        List<Quad> deleted = null;
         ThresholdPolicy<Binding> policy = ThresholdPolicyFactory.policyFromContext(datasetGraph.getContext());
         DataBag<Binding> db = BagFactory.newDefaultBag(policy, SerializationFactoryFinder.bindingSerializationFactory());
         try {
@@ -303,16 +307,23 @@ public class UpdateEngineWorker implements UpdateVisitor
             Iter.close(bindings);
 
             Iterator<Binding> it = db.iterator();
-            execDelete(datasetGraph, quads, null, it);
+            deleted = execDelete(datasetGraph, quads, null, it);
             Iter.close(it);
         }
         finally {
             db.close();
         }
+        
+        final UpdateResult ret = new UpdateResult(deleted,null);
+        if (enableDebugPrint)
+            System.out.println(ret.toString());
+        
+        return ret;
     }
     
     @Override
-    public void visit(UpdateModify update) {
+    public UpdateResult visit(UpdateModify update) {
+        
         Node withGraph = update.getWithIRI();
         Element elt = update.getWherePattern();
 
@@ -348,6 +359,7 @@ public class UpdateEngineWorker implements UpdateVisitor
         Query query = elementToQuery(elt) ;
         ThresholdPolicy<Binding> policy = ThresholdPolicyFactory.policyFromContext(datasetGraph.getContext());
         DataBag<Binding> db = BagFactory.newDefaultBag(policy, SerializationFactoryFinder.bindingSerializationFactory()) ;
+        UpdateResult ret = null;
         try {
             Iterator<Binding> bindings = evalBindings(query, dsg, inputBinding, context);
 
@@ -362,16 +374,25 @@ public class UpdateEngineWorker implements UpdateVisitor
             Iter.close(bindings);
 
             Iterator<Binding> it = db.iterator();
-            execDelete(datasetGraph, update.getDeleteQuads(), withGraph, it);
+            List<Quad> deleted = execDelete(datasetGraph, update.getDeleteQuads(), withGraph, it);
             Iter.close(it);
 
             Iterator<Binding> it2 = db.iterator();
-            execInsert(datasetGraph, update.getInsertQuads(), withGraph, it2);
+            List<Quad> updated =  execInsert(datasetGraph, update.getInsertQuads(), withGraph, it2);
             Iter.close(it2);
+            
+            ret = new UpdateResult(deleted,updated);
+            
+            if (enableDebugPrint) {
+                System.out.println(ret.toString());
+                
+            }
         }
         finally {
             db.close();
         }
+        return ret;
+        
     }
 
     // Indirection for subsystems to support USING/USING NAMED.
@@ -446,52 +467,63 @@ public class UpdateEngineWorker implements UpdateVisitor
         return n.isURI() || n.isLiteral() ;
     }
 
-    protected static void execDelete(DatasetGraph dsg, List<Quad> quads, Node dftGraph, Iterator<Binding> bindings) {
+    protected static List<Quad> execDelete(DatasetGraph dsg, List<Quad> quads, Node dftGraph, Iterator<Binding> bindings) {
         Pair<List<Quad>, List<Quad>> p = split(quads) ;
-        execDelete(dsg, p.getLeft(), p.getRight(), dftGraph, bindings) ;
+        return execDelete(dsg, p.getLeft(), p.getRight(), dftGraph, bindings) ;
     }
     
-    protected static void execDelete(DatasetGraph dsg, List<Quad> onceQuads, List<Quad> templateQuads, Node dftGraph, Iterator<Binding> bindings) {
+    protected static List<Quad> execDelete(DatasetGraph dsg, List<Quad> onceQuads, List<Quad> templateQuads, Node dftGraph, Iterator<Binding> bindings) {
+        List<Quad> ret = new ArrayList<>();
+        
         if ( onceQuads != null && bindings.hasNext() ) {
             onceQuads = remapDefaultGraph(onceQuads, dftGraph) ;
-            onceQuads.forEach(q->deleteFromDatasetGraph(dsg, q)) ;
+            onceQuads.forEach(q->deleteFromDatasetGraph(dsg, q,ret)) ;
         }
         Iterator<Quad> it = template(templateQuads, dftGraph, bindings) ;
         if ( it == null )
-            return ;
-        it.forEachRemaining(q->deleteFromDatasetGraph(dsg, q)) ;
+            return ret;
+        
+        
+        it.forEachRemaining(q->deleteFromDatasetGraph(dsg, q,ret)) ;
+        return ret;
     }
 
-    protected static void execInsert(DatasetGraph dsg, List<Quad> quads, Node dftGraph, Iterator<Binding> bindings) {
+    protected static List<Quad> execInsert(DatasetGraph dsg, List<Quad> quads, Node dftGraph, Iterator<Binding> bindings) {
         Pair<List<Quad>, List<Quad>> p = split(quads) ;
-        execInsert(dsg, p.getLeft(), p.getRight(), dftGraph, bindings) ;
+        return execInsert(dsg, p.getLeft(), p.getRight(), dftGraph, bindings) ;
     }
     
-    protected static void execInsert(DatasetGraph dsg, List<Quad> onceQuads, List<Quad> templateQuads, Node dftGraph, Iterator<Binding> bindings) {
+    protected static List<Quad>  execInsert(DatasetGraph dsg, List<Quad> onceQuads, List<Quad> templateQuads, Node dftGraph, Iterator<Binding> bindings) {
+        List<Quad> ret = new ArrayList<>();
         if ( onceQuads != null && bindings.hasNext() ) {
             onceQuads = remapDefaultGraph(onceQuads, dftGraph) ;
-            onceQuads.forEach((q)->addToDatasetGraph(dsg, q)) ;
+            onceQuads.forEach((q)->addToDatasetGraph(dsg, q,ret)) ;
         }
         Iterator<Quad> it = template(templateQuads, dftGraph, bindings) ;
         if ( it == null )
-            return ;
-        it.forEachRemaining((q)->addToDatasetGraph(dsg, q)) ;
+            return ret ;
+        it.forEachRemaining((q)->addToDatasetGraph(dsg, q,ret)) ;
+        
+        return ret;
     }
 
     // Catch all individual adds of quads
-    private static void addToDatasetGraph(DatasetGraph datasetGraph, Quad quad) {
+    private static void addToDatasetGraph(DatasetGraph datasetGraph, Quad quad,List<Quad> result) {
         // Check legal triple.
-        if ( quad.isLegalAsData() )
+        if ( quad.isLegalAsData() ) {
             datasetGraph.add(quad);
+            result.add(quad);
+        }
         // Else drop.
         // Log.warn(UpdateEngineWorker.class, "Bad quad as data: "+quad) ;
     }
 
     // Catch all individual deletes of quads
-    private static void deleteFromDatasetGraph(DatasetGraph datasetGraph, Quad quad) {
+    private static void deleteFromDatasetGraph(DatasetGraph datasetGraph, Quad quad,List<Quad> result) {
         if ( datasetGraph instanceof DatasetGraphReadOnly )
             Log.warn(UpdateEngineWorker.class, "Read only dataset");
         datasetGraph.delete(quad);
+        result.add(quad);
     }
 
     protected Query elementToQuery(Element pattern) {

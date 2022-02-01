@@ -30,6 +30,7 @@ import org.apache.jena.sparql.core.Quad ;
 import org.apache.jena.sparql.core.Var ;
 import org.apache.jena.sparql.expr.ExprTransform ;
 import org.apache.jena.sparql.graph.NodeTransform ;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.request.* ;
 import org.apache.jena.sparql.syntax.Element ;
 import org.apache.jena.update.Update ;
@@ -147,7 +148,7 @@ public class UpdateTransformOps {
         }
 
         @Override
-        public void visit(UpdateDeleteWhere update) {
+        public UpdateResult visit(UpdateDeleteWhere update) {
             List<Quad> quads = update.getQuads() ;
             List<Quad> quads2 = transform(quads) ;
             if ( quads == quads2 )
@@ -157,10 +158,12 @@ public class UpdateTransformOps {
                 addAll(acc, quads2) ;
                 result = new UpdateDeleteWhere(acc) ;
             }
+            
+            return null;
         }
 
         @Override
-        public void visit(UpdateModify update) {
+        public UpdateResult visit(UpdateModify update) {
             Element el = update.getWherePattern() ;
             Element el2 = ElementTransformer.transform(el, elTransform, exprTransform) ;
 
@@ -175,6 +178,7 @@ public class UpdateTransformOps {
             addAll(mod.getInsertAcc(), ins1) ;
             mod.setElement(el2); 
             result = mod ;
+            return null;
         }
 
         private void addAll(QuadAcc acc, List<Quad> quads) {

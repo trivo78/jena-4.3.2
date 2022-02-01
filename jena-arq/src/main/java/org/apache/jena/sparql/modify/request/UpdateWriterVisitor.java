@@ -25,6 +25,7 @@ import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.graph.Node ;
 import org.apache.jena.sparql.ARQException ;
 import org.apache.jena.sparql.core.Quad ;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.request.UpdateDataWriter.UpdateMode ;
 import org.apache.jena.sparql.serializer.FormatterElement ;
 import org.apache.jena.sparql.serializer.SerializationContext ;
@@ -187,14 +188,15 @@ public class UpdateWriterVisitor implements UpdateVisitor {
     }
 
     @Override
-    public void visit(UpdateDeleteWhere update) {
+    public UpdateResult visit(UpdateDeleteWhere update) {
         out.ensureStartOfLine();
         out.println("DELETE WHERE ");
         outputQuadsBraced(update.getQuads());
+        return null;
     }
 
     @Override
-    public void visit(UpdateModify update) {
+    public UpdateResult visit(UpdateModify update) {
         out.ensureStartOfLine();
         if ( update.getWithIRI() != null ) {
             // out.ensureStartOfLine() ;
@@ -246,6 +248,8 @@ public class UpdateWriterVisitor implements UpdateVisitor {
         } else
             out.print("{}");
         out.decIndent(BLOCK_INDENT);
+        
+        return null;
     }
 
     protected FormatterElement prepareElementFormatter() {

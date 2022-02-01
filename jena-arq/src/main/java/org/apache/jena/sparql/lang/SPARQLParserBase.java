@@ -28,6 +28,7 @@ import org.apache.jena.sparql.core.Prologue ;
 import org.apache.jena.sparql.core.Var ;
 import org.apache.jena.sparql.engine.binding.Binding ;
 import org.apache.jena.sparql.engine.binding.BindingBuilder;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.UpdateSink ;
 import org.apache.jena.sparql.modify.request.* ;
 import org.apache.jena.update.Update ;
@@ -175,8 +176,9 @@ public class SPARQLParserBase extends QueryParserBase {
 
     private static UpdateVisitor v = new UpdateVisitorBase() {
         @Override
-        public void visit(UpdateModify mod) {
+        public UpdateResult visit(UpdateModify mod) {
             SyntaxVarScope.check(mod.getWherePattern()) ;
+            return null;
         }
     } ;
 
