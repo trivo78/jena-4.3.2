@@ -70,7 +70,7 @@ public class UpdateEngineMain extends UpdateEngineBase
     public UpdateSink getUpdateSink()
     {
         if ( updateSink == null )
-            updateSink = new UpdateVisitorSink(this.prepareWorker(),
+            updateSink = new UpdateVisitorSinkWithReturn(this.prepareWorker(),
                                                sink(q->datasetGraph.add(q)), 
                                                sink(q->datasetGraph.delete(q)));
         return updateSink ;

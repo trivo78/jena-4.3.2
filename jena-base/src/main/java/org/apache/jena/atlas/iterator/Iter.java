@@ -18,6 +18,7 @@
 
 package org.apache.jena.atlas.iterator;
 
+
 import java.io.PrintStream;
 import java.util.*;
 import java.util.function.*;
@@ -29,6 +30,7 @@ import java.util.stream.StreamSupport;
 import org.apache.jena.atlas.io.IO;
 import org.apache.jena.atlas.lib.Closeable;
 import org.apache.jena.atlas.lib.Sink;
+import org.apache.jena.atlas.lib.SinkWithReturn;
 
 /**
  * Iter provides general utilities for working with {@linkplain Iterator Iterators}.
@@ -759,6 +761,22 @@ public class Iter<T> implements IteratorCloseable<T> {
         }
         sink.close();
     }
+     /** Send the elements of the iterator to a sink - consumes the iterator - returns a value*/
+    
+    public static <T,R> void sendToSink(Iterator<T> iter, Sink<T> sink,List<R> resultCollector) {
+        final SinkWithReturn<T,R> swr = (SinkWithReturn) sink;
+        
+        while ( iter.hasNext() ) {
+            T thing = iter.next();
+            final R ret = swr.sendWithReturn(thing);
+            resultCollector.add(ret);
+        }
+        sink.close();
+    }
+    
+   
+  
+
 
     // ----
     // Iter class part : factories

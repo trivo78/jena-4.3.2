@@ -18,6 +18,7 @@
 
 package org.apache.jena.sparql.modify;
 
+import java.util.List;
 import org.apache.http.client.HttpClient;
 import org.apache.http.protocol.HttpContext;
 import org.apache.jena.riot.WebContent ;
@@ -63,7 +64,7 @@ public class UpdateProcessRemote extends UpdateProcessRemoteBase
     }
 
     @Override
-    public void execute()
+    public List<UpdateResult> execute()
     {
         // Validation
         if ( this.getEndpoint() == null )
@@ -81,6 +82,8 @@ public class UpdateProcessRemote extends UpdateProcessRemoteBase
         // Execution
         String reqStr = this.getUpdateRequest().toString() ;
         HttpOp1.execHttpPost(endpoint, WebContent.contentTypeSPARQLUpdate, reqStr, getClient(), getHttpContext()) ;
+        
+        return null;
     }
 }
 

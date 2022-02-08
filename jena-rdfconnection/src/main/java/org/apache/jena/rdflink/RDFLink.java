@@ -18,6 +18,7 @@
 
 package org.apache.jena.rdflink;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import java.util.function.Consumer;
 
 import org.apache.jena.graph.Graph;
@@ -34,6 +35,7 @@ import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.exec.QueryExec;
 import org.apache.jena.sparql.exec.QueryExecBuilder;
 import org.apache.jena.sparql.exec.RowSet;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.system.Txn;
 import org.apache.jena.update.Update;
 import org.apache.jena.update.UpdateFactory;
@@ -297,8 +299,8 @@ public interface RDFLink extends
      * @param update
      */
     @Override
-    public default void update(Update update) {
-        update(new UpdateRequest(update));
+    public default UpdateResult update(Update update) {
+        return update(new UpdateRequest(update));
     }
 
     /**
@@ -306,15 +308,15 @@ public interface RDFLink extends
      * @param update
      */
     @Override
-    public void update(UpdateRequest update);
+    public UpdateResult update(UpdateRequest update);
 
     /**
      * Execute a SPARQL Update.
      * @param updateString
      */
     @Override
-    public default void update(String updateString) {
-        update(UpdateFactory.create(updateString));
+    public default UpdateResult update(String updateString) {
+        return update(UpdateFactory.create(updateString));
     }
 
     /** Fetch the default graph.

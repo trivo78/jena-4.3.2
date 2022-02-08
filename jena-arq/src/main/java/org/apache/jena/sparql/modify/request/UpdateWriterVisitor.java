@@ -18,6 +18,7 @@
 
 package org.apache.jena.sparql.modify.request;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import java.util.List;
 
 import org.apache.jena.atlas.io.IndentedWriter;

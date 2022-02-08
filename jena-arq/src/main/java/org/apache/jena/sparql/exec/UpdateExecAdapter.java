@@ -18,6 +18,9 @@
 
 package org.apache.jena.sparql.exec;
 
+import org.apache.jena.sparql.modify.UpdateResult;
+import java.util.List;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.update.UpdateExecution;
 
 public class UpdateExecAdapter implements UpdateExec {
@@ -38,5 +41,5 @@ public class UpdateExecAdapter implements UpdateExec {
     }
 
     @Override
-    public void execute() { updateProc.execute(); }
+    public List<UpdateResult> execute() { return updateProc.execute(); }
 }

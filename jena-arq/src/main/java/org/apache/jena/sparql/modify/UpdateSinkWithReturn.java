@@ -15,18 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.jena.sparql.modify;
 
-package org.apache.jena.sparql.modify.request;
+import org.apache.jena.atlas.lib.Sink;
+import org.apache.jena.atlas.lib.SinkWithReturn;
+import org.apache.jena.update.Update;
 
-import org.apache.jena.sparql.modify.UpdateResult;
-
-public class UpdateDataInsert extends UpdateData
-{
-    public UpdateDataInsert(QuadDataAcc qd) { super(qd) ; }
-
-    @Override
-    public UpdateResult visit(UpdateVisitor visitor){ 
-        visitor.visit(this) ; 
-        return null;
-    }
+/**
+ *
+ * @author Lorenzo
+ */
+public interface UpdateSinkWithReturn extends SinkWithReturn<Update, UpdateResult>,UpdateSink{
+    
 }

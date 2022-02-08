@@ -18,6 +18,8 @@
 
 package org.apache.jena.sparql.modify;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.jena.atlas.iterator.Iter ;
 import org.apache.jena.sparql.core.DatasetGraph ;
 import org.apache.jena.sparql.engine.binding.Binding ;
@@ -51,16 +53,19 @@ public class UpdateProcessorBase implements UpdateProcessor
     }
 
     @Override
-    public void execute() {
+    public List<UpdateResult>  execute() {
         UpdateEngine uProc = factory.create(datasetGraph, inputBinding, context);
+        List<UpdateResult> ret = new ArrayList<>();
         uProc.startRequest();
         
         try {
             UpdateSink sink = uProc.getUpdateSink();
-            Iter.sendToSink(request.iterator(), sink);     // Will call close on sink if there are no exceptions
+            Iter.sendToSink(request.iterator(), sink,ret);     // Will call close on sink if there are no exceptions
         } finally {
             uProc.finishRequest() ;
         }
+        
+        return ret;
     }
 
     @Override

@@ -18,7 +18,9 @@
 
 package org.apache.jena.sparql.exec;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,6 +31,7 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.modify.UpdateEngineFactory;
 import org.apache.jena.sparql.modify.UpdateEngineRegistry;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.syntax.syntaxtransform.UpdateTransformOps;
 import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.Symbol;
@@ -160,13 +163,13 @@ public class UpdateExecDatasetBuilder implements UpdateExecBuilder {
     // Abbreviated forms
 
     @Override
-    public void execute() {
-        build().execute();
+    public List<UpdateResult> execute() {
+        return build().execute();
     }
 
-    public void execute(DatasetGraph dsg) {
+    public List<UpdateResult> execute(DatasetGraph dsg) {
         dataset(dsg);
-        execute();
+        return execute();
     }
 
     private void add(UpdateRequest request) {

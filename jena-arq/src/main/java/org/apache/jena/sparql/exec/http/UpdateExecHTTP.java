@@ -36,6 +36,7 @@ import org.apache.jena.riot.WebContent;
 import org.apache.jena.riot.web.HttpNames;
 import org.apache.jena.sparql.engine.http.HttpParams;
 import org.apache.jena.sparql.exec.UpdateExec;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.util.Context;
 import org.apache.jena.update.UpdateRequest;
 
@@ -90,7 +91,7 @@ public class UpdateExecHTTP implements UpdateExec {
 //    }
 
     @Override
-    public void execute() {
+    public List<UpdateResult> execute() {
         Params thisParams = Params.create(params);
         if ( usingGraphURIs != null ) {
             for ( String uri : usingGraphURIs )
@@ -110,6 +111,8 @@ public class UpdateExecHTTP implements UpdateExec {
             case asPostForm :
                 executePostForm(thisParams); break;
         }
+        
+        return null;
     }
 
     private void executePostBody(Params thisParams) {

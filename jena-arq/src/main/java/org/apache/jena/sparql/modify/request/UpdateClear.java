@@ -19,6 +19,7 @@
 package org.apache.jena.sparql.modify.request;
 
 import org.apache.jena.graph.Node ;
+import org.apache.jena.sparql.modify.UpdateResult;
 
 public class UpdateClear extends UpdateDropClear
 {
@@ -31,6 +32,8 @@ public class UpdateClear extends UpdateDropClear
     public UpdateClear(Node target)                     { super(target, false) ; }
     
     @Override
-    public void visit(UpdateVisitor visitor)
-    { visitor.visit(this) ; }
+    public UpdateResult visit(UpdateVisitor visitor){ 
+        visitor.visit(this) ; 
+        return null;
+    }
 }

@@ -18,6 +18,7 @@
 
 package org.apache.jena.rdfconnection;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import static org.apache.jena.rdfconnection.LibRDFConn.adapt;
 
 import java.net.Authenticator;
@@ -30,6 +31,7 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdflink.RDFLinkDatasetBuilder;
 import org.apache.jena.sparql.core.Transactional;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.system.Txn;
 import org.apache.jena.update.Update;
 import org.apache.jena.update.UpdateFactory;
@@ -352,8 +354,8 @@ public interface RDFConnection extends
      * @param update
      */
     @Override
-    public default void update(Update update) {
-        update(new UpdateRequest(update));
+    public default UpdateResult update(Update update) {
+        return update(new UpdateRequest(update));
     }
 
     /** Execute a SPARQL Update.
@@ -361,15 +363,15 @@ public interface RDFConnection extends
      * @param update
      */
     @Override
-    public void update(UpdateRequest update);
+    public UpdateResult update(UpdateRequest update);
 
     /** Execute a SPARQL Update.
      *
      * @param updateString
      */
     @Override
-    public default void update(String updateString) {
-        update(UpdateFactory.create(updateString));
+    public default UpdateResult update(String updateString) {
+        return update(UpdateFactory.create(updateString));
     }
 
     // ---- RDFDatasetConnection

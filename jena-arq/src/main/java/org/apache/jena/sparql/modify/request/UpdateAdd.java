@@ -18,6 +18,8 @@
 
 package org.apache.jena.sparql.modify.request;
 
+import org.apache.jena.sparql.modify.UpdateResult;
+
 
 public class UpdateAdd extends UpdateBinaryOp
 {
@@ -25,6 +27,8 @@ public class UpdateAdd extends UpdateBinaryOp
     public UpdateAdd(Target src, Target dest, boolean silent)  { super(src, dest, silent) ; }
 
     @Override
-    public void visit(UpdateVisitor visitor)
-    { visitor.visit(this) ; }
+    public UpdateResult visit(UpdateVisitor visitor){ 
+        visitor.visit(this) ; 
+        return null;
+    }
 }

@@ -18,6 +18,7 @@
 
 package org.apache.jena.sparql.modify;
 
+import java.util.List;
 import static org.apache.jena.riot.web.HttpOp1.execHttpPostForm;
 
 import org.apache.http.client.HttpClient;
@@ -79,7 +80,7 @@ public class UpdateProcessRemoteForm extends UpdateProcessRemoteBase {
     }
 
     @Override
-    public void execute() {
+    public List<UpdateResult> execute() {
         // Validation
         if (this.getEndpoint() == null)
             throw new ARQException("Null endpoint for remote update by form");
@@ -91,5 +92,7 @@ public class UpdateProcessRemoteForm extends UpdateProcessRemoteBase {
         Params ps = new Params(this.getParams());
         ps.addParam(HttpParams.pUpdate, reqStr);
         execHttpPostForm(this.getEndpoint(), ps, null, HttpResponseLib.nullResponse, getClient(), getHttpContext());
+        
+        return null;
     }
 }

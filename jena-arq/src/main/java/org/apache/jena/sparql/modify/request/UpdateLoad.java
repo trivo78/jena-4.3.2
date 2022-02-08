@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import org.apache.jena.graph.Node ;
 import org.apache.jena.graph.NodeFactory ;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.util.Iso ;
 import org.apache.jena.sparql.util.NodeIsomorphismMap ;
 import org.apache.jena.update.Update ;
@@ -60,8 +61,10 @@ public class UpdateLoad extends Update
     public boolean getSilent()      { return silent ; }
 
     @Override
-    public void visit(UpdateVisitor visitor)
-    { visitor.visit(this) ; }
+    public UpdateResult visit(UpdateVisitor visitor){ 
+        visitor.visit(this) ; 
+        return null;
+    }
 
     @Override
     public boolean equalTo(Update obj, NodeIsomorphismMap isoMap) {

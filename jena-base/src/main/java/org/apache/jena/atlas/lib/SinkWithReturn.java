@@ -16,17 +16,14 @@
  * limitations under the License.
  */
 
-package org.apache.jena.sparql.modify.request;
+package org.apache.jena.atlas.lib;
 
-import org.apache.jena.sparql.modify.UpdateResult;
 
-public class UpdateDataInsert extends UpdateData
+/** Interface for the destination of things */
+public interface SinkWithReturn<T,R> extends Sink<T>
 {
-    public UpdateDataInsert(QuadDataAcc qd) { super(qd) ; }
-
-    @Override
-    public UpdateResult visit(UpdateVisitor visitor){ 
-        visitor.visit(this) ; 
-        return null;
-    }
+    // Can't help but think it should be "Pipe"
+    // If Sync looses Sync(boolean), then make this "extends Sync"
+    R sendWithReturn(T item) ;
+    
 }

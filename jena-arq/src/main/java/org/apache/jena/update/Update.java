@@ -18,12 +18,13 @@
 
 package org.apache.jena.update;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.request.UpdateVisitor ;
 import org.apache.jena.sparql.util.NodeIsomorphismMap ;
 
 public abstract class Update
 {
-    public abstract void visit(UpdateVisitor visitor) ;
+    public abstract UpdateResult visit(UpdateVisitor visitor) ;
 
     /** Compare by isomorphism - if the isomorphism map is null, compare nodes by .equals */
     public abstract boolean equalTo(Update other, NodeIsomorphismMap isoMap) ;

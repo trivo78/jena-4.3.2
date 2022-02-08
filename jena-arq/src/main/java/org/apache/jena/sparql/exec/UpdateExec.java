@@ -18,8 +18,11 @@
 
 package org.apache.jena.sparql.exec;
 
+import org.apache.jena.sparql.modify.UpdateResult;
+import java.util.List;
 import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.jena.sparql.exec.http.UpdateExecHTTP;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.update.UpdateProcessor;
 
 public interface UpdateExec extends UpdateProcessor
@@ -40,5 +43,5 @@ public interface UpdateExec extends UpdateProcessor
 
     /** Execute */
     @Override
-    public void execute();
+    public List<UpdateResult> execute();
 }

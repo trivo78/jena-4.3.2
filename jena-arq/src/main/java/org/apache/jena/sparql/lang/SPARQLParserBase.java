@@ -18,6 +18,7 @@
 
 package org.apache.jena.sparql.lang;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import java.util.* ;
 
 import org.apache.jena.graph.Node ;

@@ -18,10 +18,13 @@
 
 package org.apache.jena.sparql.exec;
 
+import org.apache.jena.sparql.modify.UpdateResult;
+import java.util.List;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.ARQ;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.binding.Binding;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.update.Update;
@@ -64,7 +67,7 @@ public interface UpdateExecBuilder {
     public UpdateExec build();
 
     /** Build and execute. */
-    public default void execute() {
-        build().execute();
+    public default List<UpdateResult> execute() {
+        return build().execute();
     }
 }

@@ -18,6 +18,7 @@
 
 package org.apache.jena.sparql.syntax.syntaxtransform ;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import java.util.ArrayList ;
 import java.util.List ;
 import java.util.Map ;

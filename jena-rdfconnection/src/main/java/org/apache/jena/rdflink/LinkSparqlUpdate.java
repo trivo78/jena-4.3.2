@@ -18,7 +18,9 @@
 
 package org.apache.jena.rdflink;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.core.Transactional;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.update.Update;
 import org.apache.jena.update.UpdateRequest;
 
@@ -32,19 +34,19 @@ public interface LinkSparqlUpdate extends Transactional, AutoCloseable
      *
      * @param update
      */
-    public void update(Update update);
+    public UpdateResult update(Update update);
 
     /** Execute a SPARQL Update.
      *
      * @param update
      */
-    public void update(UpdateRequest update);
+    public UpdateResult update(UpdateRequest update);
 
     /** Execute a SPARQL Update.
      *
      * @param updateString
      */
-    public void update(String updateString);
+    public UpdateResult update(String updateString);
 
     /** Close this connection. */
     @Override public void close();

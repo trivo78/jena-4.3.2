@@ -18,6 +18,7 @@
 
 package org.apache.jena.rdfconnection;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import java.util.Objects;
 
 import org.apache.jena.atlas.lib.InternalErrorException;
@@ -33,6 +34,7 @@ import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.jena.sparql.core.DatasetGraphFactory;
 import org.apache.jena.sparql.core.DatasetGraphReadOnly;
 import org.apache.jena.sparql.graph.GraphReadOnly;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.system.Txn;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateRequest;
@@ -79,11 +81,33 @@ public class RDFConnectionLocal implements RDFConnection {
     public QueryExecutionBuilder newQuery() {
         return QueryExecution.create().dataset(dataset);
     }
-
+    private class RunnableUpdate implements Runnable {
+        private final UpdateRequest update;
+        private final Dataset       dataSet;
+        private UpdateResult        result;
+        public UpdateResult getResult() {
+            return result;
+        }
+        public RunnableUpdate(UpdateRequest u, Dataset d ) {
+            update = u;
+            dataSet = d;
+        }
+        @Override
+        public void run() {
+            result = UpdateExecutionFactory.create(update, dataset).execute();
+        }
+        
+    }
     @Override
-    public void update(UpdateRequest update) {
+    public UpdateResult update(UpdateRequest update) {
         checkOpen();
-        Txn.executeWrite(dataset, ()->UpdateExecutionFactory.create(update, dataset).execute() );
+        final RunnableUpdate ru = new RunnableUpdate(update, dataset);
+        Txn.executeWrite(
+                dataset, 
+                ru
+        );
+        
+        return ru.getResult();
     }
 
     @Override

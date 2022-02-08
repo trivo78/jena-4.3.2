@@ -19,6 +19,7 @@
 package org.apache.jena.sparql.modify.request;
 
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.modify.UpdateResult;
 
 public interface UpdateVisitor
 {

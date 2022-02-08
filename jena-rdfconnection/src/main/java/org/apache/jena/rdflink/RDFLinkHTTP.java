@@ -18,6 +18,7 @@
 
 package org.apache.jena.rdflink;
 
+import org.apache.jena.sparql.modify.UpdateResult;
 import java.net.http.HttpClient;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -41,6 +42,7 @@ import org.apache.jena.sparql.exec.RowSet;
 import org.apache.jena.sparql.exec.http.GSP;
 import org.apache.jena.sparql.exec.http.QueryExecHTTPBuilder;
 import org.apache.jena.sparql.exec.http.UpdateExecHTTP;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.system.Txn;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateRequest;
@@ -328,18 +330,18 @@ public class RDFLinkHTTP implements RDFLink {
     }
 
     @Override
-    public void update(String updateString) {
+    public UpdateResult update(String updateString) {
         Objects.requireNonNull(updateString);
-        updateExec(null, updateString);
+        return updateExec(null, updateString);
     }
 
     @Override
-    public void update(UpdateRequest update) {
+    public UpdateResult update(UpdateRequest update) {
         Objects.requireNonNull(update);
-        updateExec(update, null);
+        return updateExec(update, null);
     }
 
-    private void updateExec(UpdateRequest update, String updateString ) {
+    private UpdateResult updateExec(UpdateRequest update, String updateString ) {
         checkUpdate();
         if ( update == null && updateString == null )
             throw new InternalErrorException("Both update request and update string are null");
@@ -356,6 +358,9 @@ public class RDFLinkHTTP implements RDFLink {
             .updateString(updateStringToSend)
             .build()
             .execute();
+        
+        //TBD !!!!
+        return null;
     }
 
 //    /** Convert HTTP status codes to exceptions */

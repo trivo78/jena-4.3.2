@@ -18,6 +18,7 @@
 
 package org.apache.jena.rdflink;
 
+import java.util.List;
 import static org.apache.jena.riot.other.G.clear;
 import static org.apache.jena.riot.other.G.copyGraphSrcToDst;
 
@@ -43,6 +44,7 @@ import org.apache.jena.sparql.exec.QueryExecBuilder;
 import org.apache.jena.sparql.exec.UpdateExecDatasetBuilder;
 import org.apache.jena.sparql.graph.GraphFactory;
 import org.apache.jena.sparql.graph.GraphReadOnly;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.system.Txn;
 import org.apache.jena.update.UpdateRequest;
 
@@ -92,10 +94,32 @@ public class RDFLinkDataset implements RDFLink {
         return QueryExec.dataset(dataset);
     }
 
+    private class RunnableUpdater implements Runnable{
+        private final UpdateRequest         update;
+        private final DatasetGraph          dataset;
+        private UpdateResult                result;
+        public UpdateResult getResult() {
+            return result;
+        }
+        public RunnableUpdater(UpdateRequest u, DatasetGraph d) {
+            update = u;
+            dataset = d;
+        }
+
+        @Override
+        public void run() {
+            final  UpdateExecDatasetBuilder  uedsb =  UpdateExecDatasetBuilder.create().update(update);
+            final List<UpdateResult> r = uedsb.execute(dataset);
+            result = (r == null || r.size() == 0 ) ? null : r.get(0);
+        }
+    }
     @Override
-    public void update(UpdateRequest update) {
+    public UpdateResult update(UpdateRequest update) {
         checkOpen();
-        Txn.executeWrite(dataset, ()->UpdateExecDatasetBuilder.create().update(update).execute(dataset));
+        final RunnableUpdater   ru = new RunnableUpdater(update, dataset);
+        Txn.executeWrite(dataset, ru);
+        
+        return ru.getResult();
     }
 
     @Override

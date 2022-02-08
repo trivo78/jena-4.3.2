@@ -18,9 +18,12 @@
 
 package org.apache.jena.update;
 
+import org.apache.jena.sparql.modify.UpdateResult;
+import java.util.List;
 import org.apache.jena.sparql.core.DatasetGraph ;
 import org.apache.jena.sparql.exec.UpdateExecDatasetBuilder;
 import org.apache.jena.sparql.exec.http.UpdateExecHTTPBuilder;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.util.Context ;
 
 /** An instance of a execution of an UpdateRequest.
@@ -47,5 +50,5 @@ public interface UpdateProcessor
     public default DatasetGraph getDatasetGraph() { return null; }
 
     /** Execute */
-    public void execute() ;
+    public List<UpdateResult> execute() ;
 }
