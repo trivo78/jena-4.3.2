@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdflink;
 
-import org.apache.jena.sparql.modify.UpdateResult;
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.jena.graph.Graph;
@@ -299,7 +299,7 @@ public interface RDFLink extends
      * @param update
      */
     @Override
-    public default UpdateResult update(Update update) {
+    public default List<UpdateResult> update(Update update) {
         return update(new UpdateRequest(update));
     }
 
@@ -308,14 +308,14 @@ public interface RDFLink extends
      * @param update
      */
     @Override
-    public UpdateResult update(UpdateRequest update);
+    public List<UpdateResult> update(UpdateRequest update);
 
     /**
      * Execute a SPARQL Update.
      * @param updateString
      */
     @Override
-    public default UpdateResult update(String updateString) {
+    public default List<UpdateResult> update(String updateString) {
         return update(UpdateFactory.create(updateString));
     }
 

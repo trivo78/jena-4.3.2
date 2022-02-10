@@ -23,6 +23,7 @@ import static org.apache.jena.rdfconnection.LibRDFConn.adapt;
 
 import java.net.Authenticator;
 import java.net.http.HttpClient;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -354,7 +355,7 @@ public interface RDFConnection extends
      * @param update
      */
     @Override
-    public default UpdateResult update(Update update) {
+    public default List<UpdateResult> update(Update update) {
         return update(new UpdateRequest(update));
     }
 
@@ -363,14 +364,14 @@ public interface RDFConnection extends
      * @param update
      */
     @Override
-    public UpdateResult update(UpdateRequest update);
+    public List<UpdateResult> update(UpdateRequest update);
 
     /** Execute a SPARQL Update.
      *
      * @param updateString
      */
     @Override
-    public default UpdateResult update(String updateString) {
+    public default List<UpdateResult> update(String updateString) {
         return update(UpdateFactory.create(updateString));
     }
 

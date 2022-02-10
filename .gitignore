@@ -1,0 +1,12 @@
+*.class
+target/
+surefire-reports/
+.settings/
+.classpath
+.project 
+
+jena-shacl/pom.xml-old
+jena-shacl/.pom.xml.un~
+*.xml~
+*.log
+*.log

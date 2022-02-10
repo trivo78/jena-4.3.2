@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdfconnection;
 
-import org.apache.jena.sparql.modify.UpdateResult;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.jena.atlas.lib.InternalErrorException;
@@ -84,8 +84,8 @@ public class RDFConnectionLocal implements RDFConnection {
     private class RunnableUpdate implements Runnable {
         private final UpdateRequest update;
         private final Dataset       dataSet;
-        private UpdateResult        result;
-        public UpdateResult getResult() {
+        private List<UpdateResult>       result;
+        public List<UpdateResult> getResult() {
             return result;
         }
         public RunnableUpdate(UpdateRequest u, Dataset d ) {
@@ -99,7 +99,7 @@ public class RDFConnectionLocal implements RDFConnection {
         
     }
     @Override
-    public UpdateResult update(UpdateRequest update) {
+    public List<UpdateResult> update(UpdateRequest update) {
         checkOpen();
         final RunnableUpdate ru = new RunnableUpdate(update, dataset);
         Txn.executeWrite(

@@ -18,6 +18,7 @@
 
 package org.apache.jena.rdflink;
 
+import java.util.List;
 import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.atlas.lib.NotImplemented;
 import org.apache.jena.graph.Graph;
@@ -95,10 +96,10 @@ public class RDFLinkAdapter implements RDFLink {
     }
 
     @Override
-    public UpdateResult update(UpdateRequest update) { throw new NotImplemented("Impleemntation needed");}// UpdateProcessorAdapter.adapt(conn.update(update)); }
+    public List<UpdateResult> update(UpdateRequest update) { throw new NotImplemented("Impleemntation needed");}// UpdateProcessorAdapter.adapt(conn.update(update)); }
 
     @Override
-    public UpdateResult update(String update) { throw new NotImplemented("Impleemntation needed");} //return UpdateProcessorAdapter.adapt(conn.update(update)); }
+    public List<UpdateResult> update(String update) { throw new NotImplemented("Impleemntation needed");} //return UpdateProcessorAdapter.adapt(conn.update(update)); }
 
     @Override
     public Graph get() {

@@ -769,7 +769,8 @@ public class Iter<T> implements IteratorCloseable<T> {
         while ( iter.hasNext() ) {
             T thing = iter.next();
             final R ret = swr.sendWithReturn(thing);
-            resultCollector.add(ret);
+            if (ret != null)
+                resultCollector.add(ret);
         }
         sink.close();
     }

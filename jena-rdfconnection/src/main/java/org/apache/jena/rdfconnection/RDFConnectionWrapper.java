@@ -18,6 +18,7 @@
 
 package org.apache.jena.rdfconnection;
 
+import java.util.List;
 import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
@@ -56,7 +57,7 @@ public class RDFConnectionWrapper implements RDFConnection {
     }
 
     @Override
-    public UpdateResult update(UpdateRequest update) {
+    public List<UpdateResult> update(UpdateRequest update) {
         return get().update(update);
     }
 

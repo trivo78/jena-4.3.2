@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdflink;
 
-import org.apache.jena.sparql.modify.UpdateResult;
+import java.util.List;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.Query;
@@ -98,7 +98,7 @@ public class RDFLinkModular implements RDFLink {
     public QueryExecBuilder newQuery() { return queryConnection().newQuery(); }
 
     @Override
-    public UpdateResult update(UpdateRequest update) {
+    public List<UpdateResult> update(UpdateRequest update) {
         return updateConnection().update(update);
     }
 

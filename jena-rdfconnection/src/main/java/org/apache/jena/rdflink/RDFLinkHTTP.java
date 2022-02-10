@@ -20,6 +20,7 @@ package org.apache.jena.rdflink;
 
 import org.apache.jena.sparql.modify.UpdateResult;
 import java.net.http.HttpClient;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -330,18 +331,18 @@ public class RDFLinkHTTP implements RDFLink {
     }
 
     @Override
-    public UpdateResult update(String updateString) {
+    public List<UpdateResult> update(String updateString) {
         Objects.requireNonNull(updateString);
         return updateExec(null, updateString);
     }
 
     @Override
-    public UpdateResult update(UpdateRequest update) {
+    public List<UpdateResult> update(UpdateRequest update) {
         Objects.requireNonNull(update);
         return updateExec(update, null);
     }
 
-    private UpdateResult updateExec(UpdateRequest update, String updateString ) {
+    private List<UpdateResult> updateExec(UpdateRequest update, String updateString ) {
         checkUpdate();
         if ( update == null && updateString == null )
             throw new InternalErrorException("Both update request and update string are null");

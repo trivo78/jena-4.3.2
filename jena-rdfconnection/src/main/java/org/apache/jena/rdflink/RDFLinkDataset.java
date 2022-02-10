@@ -97,8 +97,8 @@ public class RDFLinkDataset implements RDFLink {
     private class RunnableUpdater implements Runnable{
         private final UpdateRequest         update;
         private final DatasetGraph          dataset;
-        private UpdateResult                result;
-        public UpdateResult getResult() {
+        private List<UpdateResult>          result;
+        public List<UpdateResult> getResult() {
             return result;
         }
         public RunnableUpdater(UpdateRequest u, DatasetGraph d) {
@@ -110,11 +110,11 @@ public class RDFLinkDataset implements RDFLink {
         public void run() {
             final  UpdateExecDatasetBuilder  uedsb =  UpdateExecDatasetBuilder.create().update(update);
             final List<UpdateResult> r = uedsb.execute(dataset);
-            result = (r == null || r.size() == 0 ) ? null : r.get(0);
+            result = r;
         }
     }
     @Override
-    public UpdateResult update(UpdateRequest update) {
+    public List<UpdateResult> update(UpdateRequest update) {
         checkOpen();
         final RunnableUpdater   ru = new RunnableUpdater(update, dataset);
         Txn.executeWrite(dataset, ru);
