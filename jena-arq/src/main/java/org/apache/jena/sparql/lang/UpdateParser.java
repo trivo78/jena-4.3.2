@@ -22,11 +22,13 @@ import java.io.FileReader;
 import java.io.InputStream ;
 import java.io.Reader ;
 import java.io.StringReader;
+import java.util.List;
 
 import org.apache.jena.atlas.logging.Log;
 import org.apache.jena.query.QueryParseException ;
 import org.apache.jena.query.Syntax ;
 import org.apache.jena.sparql.core.Prologue;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.UpdateSink ;
 import org.apache.jena.util.FileUtils ;
 
@@ -41,27 +43,27 @@ public abstract class UpdateParser
     protected UpdateParser() {}
     
     /** Parse a string */ 
-    public final void parse(UpdateSink sink, Prologue prologue, String updateString) throws QueryParseException {
+    public final List<UpdateResult> parse(UpdateSink sink, Prologue prologue, String updateString) throws QueryParseException {
         Reader r = new StringReader(updateString);
-        executeParse(sink, prologue, r);
+        return executeParse(sink, prologue, r);
     }
 
     /** Parse an input stream */ 
-    public final void parse(UpdateSink sink, Prologue prologue, InputStream input) throws QueryParseException {
+    public final List<UpdateResult> parse(UpdateSink sink, Prologue prologue, InputStream input) throws QueryParseException {
         // BOM processing moved to the grammar.
         Reader r = FileUtils.asBufferedUTF8(input);
-        executeParse(sink, prologue, r);
+        return executeParse(sink, prologue, r);
     }
 
     /** Use with care - Reader must be UTF-8 */
-    public void parse(UpdateSink sink, Prologue prologue, Reader r) {
+    public List<UpdateResult> parse(UpdateSink sink, Prologue prologue, Reader r) {
         if ( r instanceof FileReader )
             Log.warn(this, "FileReader passed to Update parser - use a FileInputStream");
-        executeParse(sink, prologue, r);
+        return executeParse(sink, prologue, r);
     }
 
     // Subclass action.
-    protected abstract void executeParse(UpdateSink sink, Prologue prologue, Reader r);
+    protected abstract List<UpdateResult> executeParse(UpdateSink sink, Prologue prologue, Reader r);
     
     public static boolean canParse(Syntax syntaxURI) {
         return UpdateParserRegistry.get().containsFactory(syntaxURI);

@@ -33,6 +33,7 @@ import static org.apache.jena.riot.web.HttpNames.paramUsingNamedGraphURI;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -41,6 +42,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.jena.atlas.io.IO;
+import org.apache.jena.atlas.json.JsonArray;
+import org.apache.jena.atlas.json.JsonObject;
+import org.apache.jena.atlas.json.JsonValue;
 import org.apache.jena.atlas.lib.Bytes;
 import org.apache.jena.atlas.lib.StrUtils;
 import org.apache.jena.atlas.web.ContentType;
@@ -54,7 +58,9 @@ import org.apache.jena.query.QueryParseException;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.riot.web.HttpNames;
 import org.apache.jena.shared.OperationDeniedException;
+import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.engine.http.QueryExceptionHTTP;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.UsingList;
 import org.apache.jena.update.UpdateAction;
 import org.apache.jena.update.UpdateException;
@@ -188,8 +194,24 @@ public class SPARQL_Update extends ActionService
             // Some kind of log message to show its an update.
             action.log.info(format("[%d] Update", action.id));
         }
-        execute(action, input);
-        ServletOps.successNoContent(action);
+        List<UpdateResult> ret = execute(action, input);
+        
+        if (ret != null) {
+            final JsonObject jret  = new JsonObject();
+            for(final UpdateResult ur : ret ) {
+                appendUpdateResult("deleted", jret, ur.deletedTuples);
+                appendUpdateResult("updated", jret, ur.updatedTuples);
+                   
+            }
+            final List<JsonObject> dummy = new ArrayList<>();
+            dummy.add(jret);
+            
+            ResponseJson.doResponseJson(action, dummy.iterator());
+            
+        } else {
+            ServletOps.successNoContent(action);
+        }
+ 
     }
 
     private void executeForm(HttpAction action) {
@@ -208,7 +230,7 @@ public class SPARQL_Update extends ActionService
         ServletOps.successPage(action,"Update succeeded");
     }
 
-    protected void execute(HttpAction action, InputStream input) {
+    protected List<UpdateResult> execute(HttpAction action, InputStream input) {
         UsingList usingList = processProtocol(action.getRequest());
 
         // If the dsg is transactional, then we can parse and execute the update in a streaming fashion.
@@ -219,17 +241,26 @@ public class SPARQL_Update extends ActionService
             try {
                 req = UpdateFactory.read(usingList, input, UpdateParseBase, Syntax.syntaxARQ);
             }
-            catch (UpdateException ex) { ServletOps.errorBadRequest(ex.getMessage()); return; }
-            catch (QueryParseException ex) { ServletOps.errorBadRequest(messageForException(ex)); return; }
+            catch (UpdateException ex) { 
+                ServletOps.errorBadRequest(ex.getMessage()); 
+                return null; 
+            }
+            catch (QueryParseException ex) { 
+                ServletOps.errorBadRequest(messageForException(ex)); 
+                return null ; 
+            }
         }
 
         action.beginWrite();
         try {
+            List<UpdateResult> ret;
             if (req == null )
-                UpdateAction.parseExecute(usingList, action.getActiveDSG(), input, UpdateParseBase, Syntax.syntaxARQ);
+                ret = UpdateAction.parseExecute(usingList, action.getActiveDSG(), input, UpdateParseBase, Syntax.syntaxARQ);
             else
-                UpdateAction.execute(req, action.getActiveDSG());
+                ret = UpdateAction.execute(req, action.getActiveDSG());
             action.commit();
+            
+            return ret;
         } catch (UpdateException ex) {
             ActionLib.consumeBody(action);
             abortSilent(action);
@@ -259,6 +290,8 @@ public class SPARQL_Update extends ActionService
                 ServletOps.errorOccurred(ex.getMessage(), ex);
             }
         } finally { action.end(); }
+        
+        return null ;
     }
 
     /* [It is an error to supply the using-graph-uri or using-named-graph-uri parameters
@@ -308,5 +341,33 @@ public class SPARQL_Update extends ActionService
             return null;
         }
 
+    }
+    private void appendUpdateResult(final String name, final JsonObject tgt, final List<Quad> ql) {
+        if (ql == null || ql.size() == 0 )
+            return;
+        
+        JsonValue child = tgt.get(name);
+        if (child == null ) {
+            child  = new JsonArray();
+            tgt.put(name, child);
+        } 
+        
+        for(final Quad q : ql ) {
+            final JsonObject nepew = new JsonObject();
+            appendNode("graph", q.getGraph(), nepew);
+            appendNode("subject", q.getSubject(), nepew);
+            appendNode("predicate", q.getPredicate(), nepew);
+            appendNode("object", q.getObject(), nepew);
+            
+            child.getAsArray().add(nepew);
+            
+           
+        }
+        
+    }    
+    private void appendNode(final String name, final Node n, final JsonObject tgt) {
+        final String v = (n == null ? null : n.toString());
+        if (v != null)
+            tgt.put(name,v);
     }
 }

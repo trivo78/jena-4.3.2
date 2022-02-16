@@ -19,6 +19,7 @@
 package org.apache.jena.sparql.lang;
 
 import java.io.Reader ;
+import java.util.List;
 
 import org.apache.jena.atlas.logging.Log ;
 import org.apache.jena.query.QueryException ;
@@ -26,6 +27,7 @@ import org.apache.jena.query.QueryParseException ;
 import org.apache.jena.shared.JenaException ;
 import org.apache.jena.sparql.core.Prologue;
 import org.apache.jena.sparql.lang.arq.ARQParser ;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.UpdateSink ;
 
 public class ParserARQUpdate extends UpdateParser
@@ -33,13 +35,13 @@ public class ParserARQUpdate extends UpdateParser
     public ParserARQUpdate() {}
 
     @Override
-    protected void executeParse(UpdateSink sink, Prologue prologue, Reader r)
+    protected List<UpdateResult> executeParse(UpdateSink sink, Prologue prologue, Reader r)
     {
         ARQParser parser = null ;
         try {
             parser = new ARQParser(r) ;
             parser.setUpdate(prologue, sink) ;
-            parser.UpdateUnit() ;
+            return parser.UpdateUnit() ;
         }
         catch (org.apache.jena.sparql.lang.arq.ParseException ex)
         {

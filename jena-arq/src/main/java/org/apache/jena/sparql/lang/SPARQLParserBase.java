@@ -18,7 +18,6 @@
 
 package org.apache.jena.sparql.lang;
 
-import org.apache.jena.sparql.modify.UpdateResult;
 import java.util.* ;
 
 import org.apache.jena.graph.Node ;
@@ -31,6 +30,7 @@ import org.apache.jena.sparql.engine.binding.Binding ;
 import org.apache.jena.sparql.engine.binding.BindingBuilder;
 import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.UpdateSink ;
+import org.apache.jena.sparql.modify.UpdateSinkWithReturn;
 import org.apache.jena.sparql.modify.request.* ;
 import org.apache.jena.update.Update ;
 
@@ -165,14 +165,24 @@ public class SPARQLParserBase extends QueryParserBase {
         setBNodesAreAllowed(oldBNodesAreAllowed);
     }
 
-    protected void emitUpdate(Update update) {
+    protected UpdateResult emitUpdate(Update update) {
         // The parser can send null if it already performed an INSERT_DATA or
         // DELETE_DATA
+        UpdateResult ret = null;
         if ( null != update ) {
             // Verify each operation
             verifyUpdate(update);
-            sink.send(update);
+            
+            if (sink instanceof UpdateSinkWithReturn) {
+                final UpdateSinkWithReturn uswr = (UpdateSinkWithReturn) sink;
+                ret = uswr.sendWithReturn(update);
+            } else {
+                sink.send(update);
+                
+            }
+            
         }
+        return ret;
     }
 
     private static UpdateVisitor v = new UpdateVisitorBase() {

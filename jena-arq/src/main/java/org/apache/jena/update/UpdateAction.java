@@ -19,6 +19,7 @@
 package org.apache.jena.update;
 
 import java.io.InputStream ;
+import java.util.List;
 
 import org.apache.jena.atlas.io.IO ;
 import org.apache.jena.graph.Graph ;
@@ -33,6 +34,7 @@ import org.apache.jena.sparql.engine.binding.Binding ;
 import org.apache.jena.sparql.engine.binding.BindingLib;
 import org.apache.jena.sparql.exec.UpdateExec;
 import org.apache.jena.sparql.lang.UpdateParser ;
+import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.UpdateSink ;
 import org.apache.jena.sparql.modify.UsingList ;
 import org.apache.jena.sparql.modify.UsingUpdateSink ;
@@ -49,36 +51,36 @@ public class UpdateAction
      * @param filename
      * @param model
      */
-    public static void readExecute(String filename, Model model)
+    public static List<UpdateResult> readExecute(String filename, Model model)
     {
-        readExecute(filename, toDatasetGraph(model.getGraph())) ;
+        return readExecute(filename, toDatasetGraph(model.getGraph())) ;
     }
 
     /** Read a file containing SPARQL Update operations, and execute the operations.
      * @param filename
      * @param graph
      */
-    public static void readExecute(String filename, Graph graph)
+    public static List<UpdateResult> readExecute(String filename, Graph graph)
     {
-        readExecute(filename, toDatasetGraph(graph)) ;
+        return readExecute(filename, toDatasetGraph(graph)) ;
     }
 
     /** Read a file containing SPARQL Update operations, and execute the operations.
      * @param filename
      * @param dataset
      */
-    public static void readExecute(String filename, Dataset dataset)
+    public static List<UpdateResult> readExecute(String filename, Dataset dataset)
     {
-        readExecute(filename, dataset.asDatasetGraph()) ;
+        return readExecute(filename, dataset.asDatasetGraph()) ;
     }
 
     /** Read a file containing SPARQL Update operations, and execute the operations.
      * @param filename
      * @param dataset
      */
-    public static void readExecute(String filename, DatasetGraph dataset)
+    public static List<UpdateResult>readExecute(String filename, DatasetGraph dataset)
     {
-        readExecute(filename, dataset, null) ;
+        return readExecute(filename, dataset, null) ;
     }
 
     /** Read a file containing SPARQL Update operations, and execute the operations.
@@ -86,9 +88,9 @@ public class UpdateAction
      * @param dataset
      * @param inputBinding
      */
-    public static void readExecute(String filename, Dataset dataset, QuerySolution inputBinding) {
+    public static List<UpdateResult> readExecute(String filename, Dataset dataset, QuerySolution inputBinding) {
         UpdateRequest req = UpdateFactory.read(filename) ;
-        execute(req, dataset, inputBinding) ;
+        return execute(req, dataset, inputBinding) ;
     }
 
     /** Read a file containing SPARQL Update operations, and execute the operations.
@@ -96,46 +98,46 @@ public class UpdateAction
      * @param datasetGraph
      * @param inputBinding
      */
-    public static void readExecute(String filename, DatasetGraph datasetGraph, Binding inputBinding) {
+    public static List<UpdateResult> readExecute(String filename, DatasetGraph datasetGraph, Binding inputBinding) {
         UpdateRequest req = UpdateFactory.read(filename) ;
-        execute$(req, datasetGraph, inputBinding) ;
+        return execute$(req, datasetGraph, inputBinding) ;
     }
 
     /** Parse a string containing SPARQL Update operations, and execute the operations.
      * @param updateString
      * @param model
      */
-    public static void parseExecute(String updateString, Model model)
+    public static List<UpdateResult> parseExecute(String updateString, Model model)
     {
-        parseExecute(updateString, model.getGraph()) ;
+        return parseExecute(updateString, model.getGraph()) ;
     }
 
     /** Parse a string containing SPARQL Update operations, and execute the operations.
      * @param updateString
      * @param graph
      */
-    public static void parseExecute(String updateString, Graph graph)
+    public static List<UpdateResult> parseExecute(String updateString, Graph graph)
     {
-        parseExecute(updateString, toDatasetGraph(graph)) ;
+        return parseExecute(updateString, toDatasetGraph(graph)) ;
     }
 
     /** Parse a string containing SPARQL Update operations, and execute the operations.
      * @param updateString
      * @param dataset
      */
-    public static void parseExecute(String updateString, Dataset dataset)
+    public static List<UpdateResult> parseExecute(String updateString, Dataset dataset)
     {
-        parseExecute(updateString, dataset.asDatasetGraph()) ;
+        return parseExecute(updateString, dataset.asDatasetGraph()) ;
     }
 
     /** Parse a string containing SPARQL Update operations, and execute the operations.
      * @param updateString
      * @param dataset
      */
-    public static void parseExecute(String updateString, DatasetGraph dataset)
+    public static List<UpdateResult> parseExecute(String updateString, DatasetGraph dataset)
     {
         UpdateRequest req = UpdateFactory.create(updateString) ;
-        execute(req, dataset) ;
+        return execute(req, dataset) ;
     }
 
     /** Parse a string containing SPARQL Update operations, and execute the operations.
@@ -143,9 +145,9 @@ public class UpdateAction
      * @param dataset
      * @param inputBinding
      */
-    public static void parseExecute(String updateString, Dataset dataset, QuerySolution inputBinding)
+    public static List<UpdateResult> parseExecute(String updateString, Dataset dataset, QuerySolution inputBinding)
     {
-        parseExecute(updateString, dataset.asDatasetGraph(), BindingLib.asBinding(inputBinding)) ;
+        return parseExecute(updateString, dataset.asDatasetGraph(), BindingLib.asBinding(inputBinding)) ;
     }
 
     /** Parse a string containing SPARQL Update operations, and execute the operations.
@@ -153,46 +155,46 @@ public class UpdateAction
      * @param dataset
      * @param inputBinding
      */
-    public static void parseExecute(String updateString, DatasetGraph dataset, Binding inputBinding)
+    public static List<UpdateResult> parseExecute(String updateString, DatasetGraph dataset, Binding inputBinding)
     {
         UpdateRequest req = UpdateFactory.create(updateString) ;
-        execute(req, dataset, inputBinding) ;
+        return execute(req, dataset, inputBinding) ;
     }
 
     /** Execute SPARQL Update operations.
      * @param request
      * @param model
      */
-    public static void execute(UpdateRequest request, Model model)
+    public static List<UpdateResult> execute(UpdateRequest request, Model model)
     {
-        execute(request, model.getGraph()) ;
+        return execute(request, model.getGraph()) ;
     }
 
     /** Execute SPARQL Update operations.
      * @param request
      * @param graph
      */
-    public static void execute(UpdateRequest request, Graph graph)
+    public static List<UpdateResult> execute(UpdateRequest request, Graph graph)
     {
-        execute(request, toDatasetGraph(graph)) ;
+        return execute(request, toDatasetGraph(graph)) ;
     }
 
     /** Execute SPARQL Update operations.
      * @param request
      * @param dataset
      */
-    public static void execute(UpdateRequest request, Dataset dataset)
+    public static List<UpdateResult> execute(UpdateRequest request, Dataset dataset)
     {
-        execute(request, dataset.asDatasetGraph()) ;
+        return execute(request, dataset.asDatasetGraph()) ;
     }
 
     /** Execute SPARQL Update operations.
      * @param request
      * @param dataset
      */
-    public static void execute(UpdateRequest request, DatasetGraph dataset)
+    public static List<UpdateResult> execute(UpdateRequest request, DatasetGraph dataset)
     {
-        execute$(request, dataset, null) ;
+        return execute$(request, dataset, null) ;
     }
 
     /** Execute SPARQL Update operations.
@@ -200,9 +202,9 @@ public class UpdateAction
      * @param dataset
      * @param inputBinding
      */
-    public static void execute(UpdateRequest request, Dataset dataset, QuerySolution inputBinding)
+    public static List<UpdateResult> execute(UpdateRequest request, Dataset dataset, QuerySolution inputBinding)
     {
-        execute(request, dataset.asDatasetGraph(), BindingLib.asBinding(inputBinding)) ;
+        return execute(request, dataset.asDatasetGraph(), BindingLib.asBinding(inputBinding)) ;
     }
 
     /** Execute SPARQL Update operations.
@@ -210,9 +212,9 @@ public class UpdateAction
      * @param datasetGraph
      * @param inputBinding
      */
-    public static void execute(UpdateRequest request, DatasetGraph datasetGraph, Binding inputBinding)
+    public static List<UpdateResult> execute(UpdateRequest request, DatasetGraph datasetGraph, Binding inputBinding)
     {
-        execute$(request, datasetGraph, inputBinding) ;
+        return execute$(request, datasetGraph, inputBinding) ;
     }
 
 
@@ -221,12 +223,12 @@ public class UpdateAction
     }
 
     // All non-streaming updates come through here.
-    private static void execute$(UpdateRequest request, DatasetGraph datasetGraph, Binding inputBinding)
+    private static List<UpdateResult> execute$(UpdateRequest request, DatasetGraph datasetGraph, Binding inputBinding)
     {
         UpdateProcessor uProc = UpdateExec.newBuilder().update(request).dataset(datasetGraph).initialBinding(inputBinding).build();
         if (uProc == null)
             throw new ARQException("No suitable update procesors are registered/able to execute your updates");
-        uProc.execute();
+        return uProc.execute();
     }
 
 
@@ -234,36 +236,36 @@ public class UpdateAction
      * @param update
      * @param model
      */
-    public static void execute(Update update, Model model)
+    public static List<UpdateResult> execute(Update update, Model model)
     {
-        execute(update, model.getGraph()) ;
+        return execute(update, model.getGraph()) ;
     }
 
     /** Execute a single SPARQL Update operation.
      * @param update
      * @param graph
      */
-    public static void execute(Update update, Graph graph)
+    public static List<UpdateResult> execute(Update update, Graph graph)
     {
-        execute(update, toDatasetGraph(graph)) ;
+        return execute(update, toDatasetGraph(graph)) ;
     }
 
     /** Execute a single SPARQL Update operation.
      * @param update
      * @param dataset
      */
-    public static void execute(Update update, Dataset dataset)
+    public static List<UpdateResult> execute(Update update, Dataset dataset)
     {
-        execute(update, dataset.asDatasetGraph()) ;
+        return execute(update, dataset.asDatasetGraph()) ;
     }
 
     /** Execute a single SPARQL Update operation.
      * @param update
      * @param dataset
      */
-    public static void execute(Update update, DatasetGraph dataset)
+    public static List<UpdateResult> execute(Update update, DatasetGraph dataset)
     {
-        execute(update, dataset, null) ;
+        return execute(update, dataset, null) ;
     }
 
     /** Execute a single SPARQL Update operation.
@@ -271,9 +273,9 @@ public class UpdateAction
      * @param dataset
      * @param inputBinding
      */
-    public static void execute(Update update, Dataset dataset, QuerySolution inputBinding)
+    public static List<UpdateResult> execute(Update update, Dataset dataset, QuerySolution inputBinding)
     {
-        execute(update, dataset.asDatasetGraph(), BindingLib.asBinding(inputBinding)) ;
+        return execute(update, dataset.asDatasetGraph(), BindingLib.asBinding(inputBinding)) ;
     }
 
     /** Execute a single SPARQL Update operation.
@@ -281,47 +283,47 @@ public class UpdateAction
      * @param datasetGraph
      * @param inputBinding
      */
-    public static void execute(Update update, DatasetGraph datasetGraph, Binding inputBinding)
+    public static List<UpdateResult> execute(Update update, DatasetGraph datasetGraph, Binding inputBinding)
     {
-        execute$(update, datasetGraph, inputBinding) ;
+        return execute$(update, datasetGraph, inputBinding) ;
     }
 
-    private static void execute$(Update update, DatasetGraph datasetGraph, Binding inputBinding)
+    private static List<UpdateResult> execute$(Update update, DatasetGraph datasetGraph, Binding inputBinding)
     {
         UpdateRequest request = new UpdateRequest() ;
         request.add(update) ;
-        execute$(request, datasetGraph, inputBinding) ;
+        return execute$(request, datasetGraph, inputBinding) ;
     }
 
     // Streaming Updates:
 
     /** Parse update operations into a DatasetGraph by reading it from a file */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, String fileName)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, String fileName)
     {
-        parseExecute(usingList, dataset, fileName, null, Syntax.defaultUpdateSyntax) ;
+        return parseExecute(usingList, dataset, fileName, null, Syntax.defaultUpdateSyntax) ;
     }
 
     /** Parse update operations into a DatasetGraph by reading it from a file */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, String fileName, Syntax syntax)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, String fileName, Syntax syntax)
     {
-        parseExecute(usingList, dataset, fileName, null, syntax) ;
+        return parseExecute(usingList, dataset, fileName, null, syntax) ;
     }
 
     /** Parse update operations into a DatasetGraph by reading it from a file */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, String fileName, String baseURI, Syntax syntax)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, String fileName, String baseURI, Syntax syntax)
     {
-        parseExecute(usingList, dataset, fileName, (Binding)null, baseURI, syntax);
+        return parseExecute(usingList, dataset, fileName, (Binding)null, baseURI, syntax);
     }
 
     /** Parse update operations into a DatasetGraph by reading it from a file */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, String fileName, QuerySolution inputBinding, String baseURI, Syntax syntax)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, String fileName, QuerySolution inputBinding, String baseURI, Syntax syntax)
     {
-        parseExecute(usingList, dataset, fileName, BindingLib.asBinding(inputBinding), baseURI, syntax) ;
+       return  parseExecute(usingList, dataset, fileName, BindingLib.asBinding(inputBinding), baseURI, syntax) ;
     }
 
     /** Parse update operations into a DatasetGraph by reading it from a file */
     @SuppressWarnings("resource")
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, String fileName, Binding inputBinding, String baseURI, Syntax syntax)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, String fileName, Binding inputBinding, String baseURI, Syntax syntax)
     {
         InputStream in = null ;
         if ( fileName.equals("-") )
@@ -331,9 +333,10 @@ public class UpdateAction
             if ( in == null )
                 throw new UpdateException("File could not be opened: "+fileName) ;
         }
-        parseExecute(usingList, dataset, in, inputBinding, baseURI, syntax) ;
+        final List<UpdateResult> ret = parseExecute(usingList, dataset, in, inputBinding, baseURI, syntax) ;
         if ( in != System.in )
             IO.close(in) ;
+        return ret;
     }
 
     /**
@@ -341,9 +344,9 @@ public class UpdateAction
      * @param usingList A list of USING or USING NAMED statements that be added to all {@link UpdateWithUsing} queries
      * @param input     The source of the update request (must be UTF-8).
      */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input)
     {
-        parseExecute(usingList, dataset, input, Syntax.defaultUpdateSyntax) ;
+        return parseExecute(usingList, dataset, input, Syntax.defaultUpdateSyntax) ;
     }
 
     /**
@@ -352,9 +355,9 @@ public class UpdateAction
      * @param input     The source of the update request (must be UTF-8).
      * @param syntax    The update language syntax
      */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, Syntax syntax)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, Syntax syntax)
     {
-        parseExecute(usingList, dataset, input, null, syntax) ;
+        return  parseExecute(usingList, dataset, input, null, syntax) ;
     }
 
     /**
@@ -363,9 +366,9 @@ public class UpdateAction
      * @param input     The source of the update request (must be UTF-8).
      * @param baseURI   The base URI for resolving relative URIs.
      */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, String baseURI)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, String baseURI)
     {
-        parseExecute(usingList, dataset, input, baseURI, Syntax.defaultUpdateSyntax) ;
+        return parseExecute(usingList, dataset, input, baseURI, Syntax.defaultUpdateSyntax) ;
     }
 
     /**
@@ -376,9 +379,9 @@ public class UpdateAction
      * @param baseURI   The base URI for resolving relative URIs (may be <code>null</code>)
      * @param syntax    The update language syntax
      */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, String baseURI, Syntax syntax)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, String baseURI, Syntax syntax)
     {
-        parseExecute(usingList, dataset, input, (Binding)null, baseURI, syntax);
+        return parseExecute(usingList, dataset, input, (Binding)null, baseURI, syntax);
     }
 
     /**
@@ -391,9 +394,9 @@ public class UpdateAction
      * @param baseURI      The base URI for resolving relative URIs (may be <code>null</code>)
      * @param syntax       The update language syntax
      */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, QuerySolution inputBinding, String baseURI, Syntax syntax)
+    public static List<UpdateResult> parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, QuerySolution inputBinding, String baseURI, Syntax syntax)
     {
-        parseExecute(usingList, dataset, input, BindingLib.asBinding(inputBinding), baseURI, syntax) ;
+        return parseExecute(usingList, dataset, input, BindingLib.asBinding(inputBinding), baseURI, syntax) ;
     }
 
     /**
@@ -406,7 +409,7 @@ public class UpdateAction
      * @param baseURI      The base URI for resolving relative URIs (may be <code>null</code>)
      * @param syntax       The update language syntax
      */
-    public static void parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, Binding inputBinding, String baseURI, Syntax syntax)
+    public static List<UpdateResult>parseExecute(UsingList usingList, DatasetGraph dataset, InputStream input, Binding inputBinding, String baseURI, Syntax syntax)
     {
         @SuppressWarnings("deprecation")
         UpdateProcessorStreaming uProc = UpdateExecutionFactory.createStreaming(dataset, inputBinding) ;
@@ -420,7 +423,7 @@ public class UpdateAction
             try
             {
                 UpdateParser parser = UpdateFactory.setupParser(uProc.getPrologue(), baseURI, syntax) ;
-                parser.parse(sink, uProc.getPrologue(), input) ;
+                return parser.parse(sink, uProc.getPrologue(), input) ;
             }
             finally
             {
@@ -431,5 +434,7 @@ public class UpdateAction
         {
             uProc.finishRequest();
         }
+        
+        
     }
 }
