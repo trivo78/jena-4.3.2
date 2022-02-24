@@ -515,8 +515,8 @@ public class UpdateEngineWorker implements UpdateVisitor
     private static void addToDatasetGraph(DatasetGraph datasetGraph, Quad quad,List<Quad> result) {
         // Check legal triple.
         if ( quad.isLegalAsData() ) {
-            datasetGraph.add(quad);
-            result.add(quad);
+            if(datasetGraph.add(quad))
+                result.add(quad);
         }
         // Else drop.
         // Log.warn(UpdateEngineWorker.class, "Bad quad as data: "+quad) ;
@@ -526,8 +526,9 @@ public class UpdateEngineWorker implements UpdateVisitor
     private static void deleteFromDatasetGraph(DatasetGraph datasetGraph, Quad quad,List<Quad> result) {
         if ( datasetGraph instanceof DatasetGraphReadOnly )
             Log.warn(UpdateEngineWorker.class, "Read only dataset");
-        datasetGraph.delete(quad);
-        result.add(quad);
+        
+        if(datasetGraph.delete(quad))
+            result.add(quad);
     }
 
     protected Query elementToQuery(Element pattern) {

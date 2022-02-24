@@ -197,15 +197,26 @@ public class TestUpdateOperations
         assertEquals(1, m.listStatements(anon, null, (RDFNode)null).toList().size());
         assertEquals(1, m.listStatements(null, null, anon).toList().size());
     }
-    
+    private static boolean checkEmpty(final List<Quad> l) {
+            return l == null || l.size() == 0;
+    }
     // Check constant and template quads 
     @Test public void delete_insert_where_01() {
         DatasetGraph dsg0 = DatasetGraphFactory.create() ;
         UpdateRequest req = UpdateFactory.create("INSERT DATA { <x> <p> 2 . <z> <q> 2 . <z> <q> 3 . }") ;
         final List<UpdateResult> ur1 = UpdateAction.execute(req, dsg0);
         assertEquals(3, dsg0.getDefaultGraph().size()) ;
+        assertEquals(1, ur1.size());
+        assertEquals(3, ur1.get(0).updatedTuples.size());
+        assertEquals(true, checkEmpty(ur1.get(0).deletedTuples));
+        
+        
         
         final List<UpdateResult> ur2 = UpdateAction.execute(req, dsg0);
+        assertEquals(1, ur2.size());
+        assertEquals(true, checkEmpty(ur2.get(0).updatedTuples));
+        assertEquals(true, checkEmpty(ur2.get(0).deletedTuples));
+        
         
         AtomicLong counterIns = new AtomicLong(0) ;
         AtomicLong counterDel = new AtomicLong(0) ;
@@ -232,5 +243,33 @@ public class TestUpdateOperations
         assertEquals(3, dsg.getDefaultGraph().size()) ;
     }
 
+    //check delete data
+    @Test public void delete_data_01 () {
+        DatasetGraph dsg0 = DatasetGraphFactory.create() ;
+        UpdateRequest req = UpdateFactory.create("INSERT DATA { <x> <p> 2 . <z> <q> 2 . <z> <q> 3 . }") ;
+        final List<UpdateResult> ur1 = UpdateAction.execute(req, dsg0);
+        assertEquals(3, dsg0.getDefaultGraph().size()) ;
+        assertEquals(1, ur1.size());
+        assertEquals(3, ur1.get(0).updatedTuples.size());
+        assertEquals(true, checkEmpty(ur1.get(0).deletedTuples));
+        
+        req = UpdateFactory.create("DELETE DATA { <x> <p> 2 . <z> <q> 2 .}") ;
+        final List<UpdateResult> ur2 = UpdateAction.execute(req, dsg0);
+        assertEquals(1, dsg0.getDefaultGraph().size()) ;
+        assertEquals(1, ur2.size());
+        assertEquals(true, checkEmpty(ur2.get(0).updatedTuples));
+        assertEquals(2, ur2.get(0).deletedTuples.size());
+        
+        
+        req = UpdateFactory.create("DELETE DATA { <x> <p> 2 . <z> <q> 2 .}") ;
+        final List<UpdateResult> ur3 = UpdateAction.execute(req, dsg0);
+        assertEquals(1, dsg0.getDefaultGraph().size()) ;
+        assertEquals(1, ur3.size());
+        assertEquals(true, checkEmpty(ur3.get(0).deletedTuples));
+        assertEquals(true, checkEmpty(ur3.get(0).updatedTuples));
+        
+
+    }
+    
 }
 
