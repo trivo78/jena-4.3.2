@@ -10,3 +10,4 @@ jena-shacl/.pom.xml.un~
 *.xml~
 *.log
 *.log
+jena-geosparql/derby.log
