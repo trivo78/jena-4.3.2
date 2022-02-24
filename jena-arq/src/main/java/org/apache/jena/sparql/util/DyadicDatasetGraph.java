@@ -149,23 +149,27 @@ public abstract class DyadicDatasetGraph extends PairOfSameType<DatasetGraph> im
     }
 
     @Override
-    public void add(Quad quad) {
+    public boolean add(Quad quad) {
         throwNoMutationAllowed();
+        return false;
     }
 
     @Override
-    public void delete(Quad quad) {
+    public boolean delete(Quad quad) {
         throwNoMutationAllowed();
+        return false;
     }
 
     @Override
-    public void add(Node g, Node s, Node p, Node o) {
+    public boolean add(Node g, Node s, Node p, Node o) {
         throwNoMutationAllowed();
+        return false;
     }
 
     @Override
-    public void delete(Node g, Node s, Node p, Node o) {
+    public boolean delete(Node g, Node s, Node p, Node o) {
         throwNoMutationAllowed();
+        return false;
     }
 
     @Override

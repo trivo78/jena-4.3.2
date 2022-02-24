@@ -55,26 +55,32 @@ public abstract class GraphTripleStoreBase implements TripleStore
           Add a triple to this triple store.
      */
      @Override
-    public void add( Triple t )
+    public boolean add( Triple t )
          {
-         if (subjects.add( t ))
+         boolean f = subjects.add( t );
+         if (f)
              {
              predicates.add( t );
              objects.add( t ); 
              }
+         
+         return f;
          }
      
      /**
           Remove a triple from this triple store.
      */
      @Override
-    public void delete( Triple t )
+    public boolean  delete( Triple t )
          {
-         if (subjects.remove( t ))
+         boolean f = subjects.remove( t );
+         if (f)
              {
              predicates.remove( t );
              objects.remove( t ); 
              }
+         
+         return f;
          }
      
      /**

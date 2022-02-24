@@ -40,9 +40,15 @@ public class DisjointUnion extends Dyadic
     @Override public boolean graphBaseContains( Triple t )
         { return L.contains( t ) || R.contains( t ); }
     
-    @Override public void performDelete( Triple t )
-        { L.delete( t ); R.delete( t ); }
+    @Override public boolean performDelete( Triple t )
+        {  L.delete( t ); R.delete( t ); return true;}
     
-    @Override public void performAdd( Triple t )
-        { if (!R.contains( t )) L.add( t ); }
+    @Override public boolean  performAdd( Triple t ){ 
+        boolean f = false;
+        if (!R.contains( t ))  {
+            L.add( t ); 
+            f = true;
+        }
+        return f;
+     }
     }

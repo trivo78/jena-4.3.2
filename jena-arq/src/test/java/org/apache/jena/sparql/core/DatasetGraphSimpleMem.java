@@ -72,6 +72,10 @@ public class DatasetGraphSimpleMem extends DatasetGraphTriplesQuads implements T
         int size() {
             return store.size();
         }
+        
+        boolean contains(T t) {
+            return store.contains(t);
+        }
     }
 
     public DatasetGraphSimpleMem() {}
@@ -132,36 +136,50 @@ public class DatasetGraphSimpleMem extends DatasetGraphTriplesQuads implements T
     }
 
     @Override
-    protected void addToDftGraph(Node s, Node p, Node o) {
-        Triple t = new Triple(s, p, o);
+    protected boolean addToDftGraph(Node s, Node p, Node o) {
+        final Triple t = new Triple(s, p, o);
+        final boolean f = triples.contains(t);
         triples.add(t);
+        return !f;
     }
 
     @Override
-    protected void addToNamedGraph(Node g, Node s, Node p, Node o) {
-        Quad q = new Quad(g, s, p, o);
+    protected boolean addToNamedGraph(Node g, Node s, Node p, Node o) {
+        final Quad q = new Quad(g, s, p, o);
+        final boolean f = quads.contains(q);
         quads.add(q);
+        return !f;
     }
 
     @Override
-    protected void deleteFromDftGraph(Node s, Node p, Node o) {
-        triples.remove(new Triple(s, p, o));
+    protected boolean deleteFromDftGraph(Node s, Node p, Node o) {
+        final Triple t = new Triple(s, p, o);
+        final boolean f = triples.contains(t);
+        triples.remove(t);
+        return f;
     }
 
     @Override
-    protected void deleteFromNamedGraph(Node g, Node s, Node p, Node o) {
-        quads.remove(new Quad(g, s, p, o));
+    protected boolean deleteFromNamedGraph(Node g, Node s, Node p, Node o) {
+        final Quad q = new Quad(g, s, p, o);
+        final boolean f = quads.contains(q);
+        quads.remove(q);
+        return f;
     }
 
     class GraphDft extends GraphBase {
         @Override
-        public void performAdd(Triple t) {
+        public boolean performAdd(Triple t) {
+            final boolean f = triples.contains(t);
             triples.add(t);
+            return !f;
         }
 
         @Override
-        public void performDelete(Triple t) {
+        public boolean performDelete(Triple t) {
+            final boolean f = triples.contains(t);
             triples.remove(t);
+            return f;
         }
 
         @Override
@@ -182,15 +200,19 @@ public class DatasetGraphSimpleMem extends DatasetGraphTriplesQuads implements T
         }
 
         @Override
-        public void performAdd(Triple t) {
+        public boolean  performAdd(Triple t) {
             Quad q = new Quad(graphName, t);
+            final boolean f = quads.contains(q);
             quads.add(q);
+            return !f;
         }
 
         @Override
-        public void performDelete(Triple t) {
-            Quad q = new Quad(graphName, t);
+        public boolean performDelete(Triple t) {
+            final Quad q = new Quad(graphName, t);
+            final boolean f = quads.contains(q);
             quads.remove(q);
+            return f;
         }
 
         @Override

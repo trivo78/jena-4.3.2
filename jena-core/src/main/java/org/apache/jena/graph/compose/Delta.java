@@ -76,22 +76,30 @@ public class Delta extends CompositionBase implements Graph
      * the removals.
      */
     @Override
-    public void performAdd(Triple t)
+    public boolean performAdd(Triple t)
     {
-        if (!base.contains(t))
+        boolean f = false;
+        if (!base.contains(t))  {
+            f = true;
             additions.add(t) ;
+        }
         deletions.delete(t) ;
+        return f;
     }
 
     /**
      * Remove the triple, ie, remove it from the adds, add it to the removals.
      */
     @Override
-    public void performDelete(Triple t)
+    public boolean performDelete(Triple t)
     {
+        boolean f = false;
         additions.delete(t) ;
-        if (base.contains(t))
+        if (base.contains(t)) {
+            f = true;
             deletions.add(t) ;
+        }
+        return f;
     }
 
     /**

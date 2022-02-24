@@ -138,25 +138,25 @@ public class GraphView extends GraphBase implements NamedGraph, Sync
     }
 
     @Override
-    public void performAdd( Triple t ) {
+    public boolean performAdd( Triple t ) {
         Node g = graphNode(graphName) ;
         if ( Quad.isUnionGraph(g) )
             throw new AddDeniedException("Can't update the union graph of a dataset") ;
         Node s = t.getSubject() ;
         Node p = t.getPredicate() ;
         Node o = t.getObject() ;
-        dsg.add(g, s, p, o) ;
+        return dsg.add(g, s, p, o) ;
     }
 
     @Override
-    public void performDelete( Triple t ) {
+    public boolean performDelete( Triple t ) {
         Node g = graphNode(graphName) ;
         if ( Quad.isUnionGraph(g) )
             throw new DeleteDeniedException("Can't update the union graph of a dataset") ;
         Node s = t.getSubject() ;
         Node p = t.getPredicate() ;
         Node o = t.getObject() ;
-        dsg.delete(g, s, p, o) ;
+        return dsg.delete(g, s, p, o) ;
     }
 
     @Override

@@ -27,35 +27,35 @@ import org.apache.jena.graph.Node ;
 public abstract class DatasetGraphTriplesQuads extends DatasetGraphBaseFind
 {
     @Override
-    final public void add(Quad quad) {
-        add(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()) ;
+    final public boolean add(Quad quad) {
+        return add(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()) ;
     }
 
     @Override
-    final public void delete(Quad quad) {
-        delete(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()) ;
+    final public boolean delete(Quad quad) {
+        return delete(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()) ;
     }
 
     @Override
-    final public void add(Node g, Node s, Node p, Node o) {
+    final public boolean add(Node g, Node s, Node p, Node o) {
         if ( Quad.isDefaultGraph(g) )
-            addToDftGraph(s, p, o) ;
+            return addToDftGraph(s, p, o) ;
         else
-            addToNamedGraph(g, s, p, o) ;
+            return addToNamedGraph(g, s, p, o) ;
     }
 
     @Override
-    final public void delete(Node g, Node s, Node p, Node o) {
+    final public boolean delete(Node g, Node s, Node p, Node o) {
         if ( Quad.isDefaultGraph(g) )
-            deleteFromDftGraph(s, p, o) ;
+            return deleteFromDftGraph(s, p, o) ;
         else
-            deleteFromNamedGraph(g, s, p, o) ;
+            return deleteFromNamedGraph(g, s, p, o) ;
     }
     
-    protected abstract void addToDftGraph(Node s, Node p, Node o) ;
-    protected abstract void addToNamedGraph(Node g, Node s, Node p, Node o) ;
-    protected abstract void deleteFromDftGraph(Node s, Node p, Node o) ;
-    protected abstract void deleteFromNamedGraph(Node g, Node s, Node p, Node o) ;
+    protected abstract boolean addToDftGraph(Node s, Node p, Node o) ;
+    protected abstract boolean addToNamedGraph(Node g, Node s, Node p, Node o) ;
+    protected abstract boolean deleteFromDftGraph(Node s, Node p, Node o) ;
+    protected abstract boolean deleteFromNamedGraph(Node g, Node s, Node p, Node o) ;
     
 //    // Ensure we loop back here
 //    @Override

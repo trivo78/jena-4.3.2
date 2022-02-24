@@ -32,19 +32,19 @@ public class GraphReadOnly extends WrappedGraph
     public GraphReadOnly(Graph graph) { super(graph) ; }
     
     @Override
-    public void add(Triple t) throws AddDeniedException
+    public boolean add(Triple t) throws AddDeniedException
     { throw new AddDeniedException("read-only graph") ; }
 
     @Override
-    public void performAdd(Triple t) throws AddDeniedException
+    public boolean performAdd(Triple t) throws AddDeniedException
     { throw new AddDeniedException("read-only graph") ; }
 
     @Override
-    public void delete(Triple t) throws DeleteDeniedException
+    public boolean delete(Triple t) throws DeleteDeniedException
     { throw new DeleteDeniedException("read-only graph") ; }
     
     @Override
-    public void performDelete(Triple t) throws DeleteDeniedException
+    public boolean performDelete(Triple t) throws DeleteDeniedException
     { throw new DeleteDeniedException("read-only graph") ; }
     
     @Override

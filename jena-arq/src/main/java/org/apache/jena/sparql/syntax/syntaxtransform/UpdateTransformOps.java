@@ -139,13 +139,15 @@ public class UpdateTransformOps {
         }
 
         @Override
-        public void visit(UpdateDataInsert update) {
+        public UpdateResult visit(UpdateDataInsert update) {
             result = update ;
+            return null;
         }
 
         @Override
-        public void visit(UpdateDataDelete update) {
+        public UpdateResult visit(UpdateDataDelete update) {
             result = update ;
+            return null;
         }
 
         @Override

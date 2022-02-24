@@ -74,10 +74,10 @@ public class SecuredGraphImpl extends SecuredItemImpl implements SecuredGraph {
      *                                         required to be.
      */
     @Override
-    public void add(final Triple t) throws AddDeniedException, UpdateDeniedException, AuthenticationRequiredException {
+    public boolean add(final Triple t) throws AddDeniedException, UpdateDeniedException, AuthenticationRequiredException {
         checkUpdate();
         checkCreate(t);
-        holder.getBaseItem().add(t);
+        return holder.getBaseItem().add(t);
     }
 
     /**
@@ -154,10 +154,10 @@ public class SecuredGraphImpl extends SecuredItemImpl implements SecuredGraph {
      *                                         required to be.
      */
     @Override
-    public void delete(final Triple t) throws DeleteDeniedException, AuthenticationRequiredException {
+    public boolean delete(final Triple t) throws DeleteDeniedException, AuthenticationRequiredException {
         checkUpdate();
         checkDelete(t);
-        holder.getBaseItem().delete(t);
+        return holder.getBaseItem().delete(t);
     }
 
     /**

@@ -33,10 +33,10 @@ public class UnmodifiableGraph extends WrappedGraph
     public Graph unwrap()   { return super.base ; }
     
     @Override
-    public void performAdd(Triple triple)
+    public boolean performAdd(Triple triple)
     { throw new UnsupportedOperationException() ; }
     
     @Override
-    public void performDelete(Triple triple)
+    public boolean performDelete(Triple triple)
     { throw new UnsupportedOperationException() ; }
 }

@@ -65,10 +65,10 @@ public class GraphZero extends GraphBase {
     // UnsupportedOperationException is the general java "no" for not available ata ll,
     // but is different from the Jena core exceptions.
     @Override
-    public void performAdd( Triple t ) { throw new UnsupportedOperationException("add triple"); }
+    public boolean performAdd( Triple t ) { throw new UnsupportedOperationException("add triple"); }
 
     @Override
-    public void performDelete( Triple t ) { throw new UnsupportedOperationException("delete triple"); }
+    public boolean performDelete( Triple t ) { throw new UnsupportedOperationException("delete triple"); }
 
     @Override
     public Capabilities getCapabilities() {

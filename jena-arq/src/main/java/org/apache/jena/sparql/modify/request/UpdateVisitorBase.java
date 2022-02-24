@@ -33,8 +33,8 @@ public class UpdateVisitorBase implements UpdateVisitor
     @Override public void visit(UpdateCopy update)        {}
     @Override public void visit(UpdateMove update)        {}
     
-    @Override public void visit(UpdateDataInsert update)  {}
-    @Override public void visit(UpdateDataDelete update)  {}
+    @Override public UpdateResult visit(UpdateDataInsert update)  {return null;}
+    @Override public UpdateResult visit(UpdateDataDelete update)  {return null; }
     @Override public UpdateResult visit(UpdateDeleteWhere update) { return null;}
     @Override public UpdateResult visit(UpdateModify update)      { return null;}
 }

@@ -85,7 +85,7 @@ public class TupleTable implements Sync, Closeable
     }
 
     /** Insert a tuple */
-    public void add(Tuple<NodeId> t) {
+    public boolean add(Tuple<NodeId> t) {
         // A "contains test" could be used to avoid needing to hit all
         // the indexes when the triple is already present.
         if ( tupleLen != t.len() )
@@ -95,6 +95,8 @@ public class TupleTable implements Sync, Closeable
             indexes[i].add(t);
             syncNeeded = true;
         }
+        
+        return true;
     }
 
     /** Insert tuples */

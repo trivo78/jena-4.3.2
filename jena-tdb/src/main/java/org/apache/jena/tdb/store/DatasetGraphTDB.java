@@ -89,20 +89,20 @@ public class DatasetGraphTDB extends DatasetGraphTriplesQuads
     { return getQuadTable().find(Node.ANY, s, p, o) ; }
 
     @Override
-    protected void addToDftGraph(Node s, Node p, Node o)
-    { getTripleTable().add(s,p,o) ; }
+    protected boolean addToDftGraph(Node s, Node p, Node o)
+    { return getTripleTable().add(s,p,o) ; }
 
     @Override
-    protected void addToNamedGraph(Node g, Node s, Node p, Node o)
-    { getQuadTable().add(g, s, p, o) ; }
+    protected boolean addToNamedGraph(Node g, Node s, Node p, Node o)
+    { return getQuadTable().add(g, s, p, o) ; }
 
     @Override
-    protected void deleteFromDftGraph(Node s, Node p, Node o)
-    { getTripleTable().delete(s,p,o) ; }
+    protected boolean deleteFromDftGraph(Node s, Node p, Node o)
+    { return getTripleTable().delete(s,p,o) ; }
 
     @Override
-    protected void deleteFromNamedGraph(Node g, Node s, Node p, Node o)
-    { getQuadTable().delete(g, s, p, o) ; }
+    protected boolean deleteFromNamedGraph(Node g, Node s, Node p, Node o)
+    { return getQuadTable().delete(g, s, p, o) ; }
 
     public GraphTDB getDefaultGraphTDB()
     { return (GraphTDB)getDefaultGraph() ; }

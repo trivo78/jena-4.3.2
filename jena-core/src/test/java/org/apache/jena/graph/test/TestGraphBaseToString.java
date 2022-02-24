@@ -37,8 +37,8 @@ public class TestGraphBaseToString extends GraphTestBase
         {
         Set<Triple> triples = new HashSet<>();
         
-        @Override public void performAdd( Triple t )
-            { triples.add( t ); }
+        @Override public boolean performAdd( Triple t )
+            { triples.add( t ); return true;}
         
         @Override protected ExtendedIterator<Triple> graphBaseFind( Triple m )
             { return WrappedIterator.<Triple>create( triples.iterator() ); }

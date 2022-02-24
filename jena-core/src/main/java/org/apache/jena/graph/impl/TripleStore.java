@@ -34,12 +34,12 @@ public interface TripleStore
     /**
          Add a triple to this triple store.
     */
-    public abstract void add( Triple t );
+    public abstract boolean add( Triple t );
 
     /**
          Remove a triple from this triple store.
     */
-    public abstract void delete( Triple t );
+    public abstract boolean delete( Triple t );
 
     /**
          Answer the size (number of triples) of this triple store.

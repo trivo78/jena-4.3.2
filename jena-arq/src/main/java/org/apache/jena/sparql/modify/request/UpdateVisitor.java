@@ -33,8 +33,8 @@ public interface UpdateVisitor
     public void visit(UpdateCopy update) ;
     public void visit(UpdateMove update) ;
     
-    public void visit(UpdateDataInsert update) ;
-    public void visit(UpdateDataDelete update) ;
+    public UpdateResult visit(UpdateDataInsert update) ;
+    public UpdateResult visit(UpdateDataDelete update) ;
     public UpdateResult visit(UpdateDeleteWhere update) ;
     public UpdateResult visit(UpdateModify update) ;
     

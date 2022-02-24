@@ -91,8 +91,8 @@ public class MultiUnion extends Polyadic
      * @param t A triple to add to the union graph
      * @exception JenaException if the union does not contain any sub-graphs yet
      */
-    @Override  public void performAdd( Triple t ) {
-        getRequiredBaseGraph().add( t );
+    @Override  public boolean performAdd( Triple t ) {
+        return getRequiredBaseGraph().add( t );
     }
 
     /**
@@ -104,8 +104,8 @@ public class MultiUnion extends Polyadic
      * @param t A triple to from the union graph
      * @exception JenaException if the union does not contain any sub-graphs yet
      */
-    @Override  public void performDelete( Triple t ) {
-        getRequiredBaseGraph().delete( t );
+    @Override  public boolean performDelete( Triple t ) {
+        return getRequiredBaseGraph().delete( t );
     }
 
 

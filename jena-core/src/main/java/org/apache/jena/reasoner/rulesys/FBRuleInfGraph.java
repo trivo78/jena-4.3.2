@@ -615,9 +615,9 @@ public class FBRuleInfGraph  extends BasicForwardRuleInfGraph implements Backwar
      * the new data item, recursively adding any generated triples.
      */
     @Override
-    public synchronized void performAdd(Triple t) {
+    public synchronized boolean performAdd(Triple t) {
         version++;
-        fdata.getGraph().add(t);
+        final boolean f =  fdata.getGraph().add(t);
         if (useTGCCaching) {
             if (transitiveEngine.add(t)) this.setPreparedState(false);
         }
@@ -644,16 +644,18 @@ public class FBRuleInfGraph  extends BasicForwardRuleInfGraph implements Backwar
             }
         }
         bEngine.reset();
+        
+        return f;
     }
 
     /** 
      * Removes the triple t (if possible) from the set belonging to this graph. 
      */   
     @Override
-    public void performDelete(Triple t) {
+    public boolean performDelete(Triple t) {
         version++;
         //boolean removeIsFromBase = fdata.getGraph().contains(t);
-        fdata.getGraph().delete(t);
+        final boolean f = fdata.getGraph().delete(t);
         if (useTGCCaching) {
             if (transitiveEngine.delete(t)) {
                 if (this.isPrepared()) {
@@ -673,6 +675,8 @@ public class FBRuleInfGraph  extends BasicForwardRuleInfGraph implements Backwar
             // if (removeIsFromBase) engine.delete(t);
         }
         bEngine.reset();
+        
+        return f;
     }
     
     /**

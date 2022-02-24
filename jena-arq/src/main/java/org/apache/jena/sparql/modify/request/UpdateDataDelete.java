@@ -26,7 +26,7 @@ public class UpdateDataDelete extends UpdateData
 
     @Override
     public UpdateResult visit(UpdateVisitor visitor){ 
-        visitor.visit(this) ; 
-        return null;
+        
+        return visitor.visit(this) ;
     }
 }

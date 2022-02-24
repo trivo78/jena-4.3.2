@@ -110,10 +110,10 @@ public class TestRestartableLBRule extends TestCase {
         Graph base = new GraphMem();
 
         @Override
-        public void performAdd( Triple t ) { base.add(t); }
+        public boolean performAdd( Triple t ) { return base.add(t); }
 
         @Override
-        public void performDelete( Triple t ) { base.delete(t); }
+        public boolean performDelete( Triple t ) {return  base.delete(t); }
 
         @Override
         public TransactionHandler getTransactionHandler() { return th; }

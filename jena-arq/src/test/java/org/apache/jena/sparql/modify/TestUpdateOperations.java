@@ -18,6 +18,7 @@
 
 package org.apache.jena.sparql.modify;
 
+import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -201,22 +202,24 @@ public class TestUpdateOperations
     @Test public void delete_insert_where_01() {
         DatasetGraph dsg0 = DatasetGraphFactory.create() ;
         UpdateRequest req = UpdateFactory.create("INSERT DATA { <x> <p> 2 . <z> <q> 2 . <z> <q> 3 . }") ;
-        UpdateAction.execute(req, dsg0);
+        final List<UpdateResult> ur1 = UpdateAction.execute(req, dsg0);
         assertEquals(3, dsg0.getDefaultGraph().size()) ;
+        
+        final List<UpdateResult> ur2 = UpdateAction.execute(req, dsg0);
         
         AtomicLong counterIns = new AtomicLong(0) ;
         AtomicLong counterDel = new AtomicLong(0) ;
         DatasetGraph dsg = new DatasetGraphWrapper(dsg0) {
             @Override
-            public void add(Quad quad) { 
+            public boolean add(Quad quad) { 
                 counterIns.incrementAndGet() ;
-                super.add(quad) ;
+                return super.add(quad) ;
             }
 
             @Override
-            public void delete(Quad quad) {
+            public boolean delete(Quad quad) {
                 counterDel.incrementAndGet() ;
-                super.delete(quad) ; 
+                return super.delete(quad) ; 
             }
         } ;
         

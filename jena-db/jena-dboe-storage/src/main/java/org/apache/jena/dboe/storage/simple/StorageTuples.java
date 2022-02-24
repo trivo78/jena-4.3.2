@@ -45,16 +45,16 @@ public abstract class StorageTuples implements StorageRDF {
     }
 
     @Override
-    public void add(Node s, Node p, Node o) { triples.add(tuple(s, p, o)); }
+    public boolean add(Node s, Node p, Node o) { return triples.add(tuple(s, p, o)); }
 
     @Override
-    public void add(Node g, Node s, Node p, Node o) { quads.add(tuple(g, s, p, o)); }
+    public boolean add(Node g, Node s, Node p, Node o) { return quads.add(tuple(g, s, p, o)); }
 
     @Override
-    public void delete(Node s, Node p, Node o) { triples.delete(tuple(s, p, o)); }
+    public boolean delete(Node s, Node p, Node o) { return triples.delete(tuple(s, p, o)); }
 
     @Override
-    public void delete(Node g, Node s, Node p, Node o) { quads.delete(tuple(g, s, p, o)); }
+    public boolean delete(Node g, Node s, Node p, Node o) { return quads.delete(tuple(g, s, p, o)); }
 
     private static Tuple<Node> tuple(Node...n) {
         return TupleFactory.create(n);

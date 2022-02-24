@@ -39,14 +39,20 @@ public class StorageTuplesN {
         this.N = N;
     }
 
-    public void add(Tuple<Node> terms) {
+    public boolean add(Tuple<Node> terms) {
         check(terms);
+        final boolean f = tuples.contains(terms);
+        
         tuples.add(terms);
+        
+        return !f;
     }
 
-    public void delete(Tuple<Node> terms) {
+    public boolean  delete(Tuple<Node> terms) {
         check(terms);
+        final boolean f = tuples.contains(terms);
         tuples.remove(terms);
+        return f;
     }
 
     public void removeAll(Tuple<Node> pattern) {

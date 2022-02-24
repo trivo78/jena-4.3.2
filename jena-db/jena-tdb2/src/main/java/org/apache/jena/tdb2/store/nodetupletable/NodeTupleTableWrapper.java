@@ -41,12 +41,12 @@ public class NodeTupleTableWrapper implements NodeTupleTable
     }
 
     @Override
-    public void addRow(Node... nodes)
-    { nodeTupleTable.addRow(nodes); }
+    public boolean addRow(Node... nodes)
+    { return  nodeTupleTable.addRow(nodes); }
 
     @Override
-    public void deleteRow(Node... nodes)
-    { nodeTupleTable.deleteRow(nodes); }
+    public boolean deleteRow(Node... nodes)
+    { return nodeTupleTable.deleteRow(nodes); }
 
     @Override
     public int getTupleLen()

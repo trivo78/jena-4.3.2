@@ -30,9 +30,9 @@ import org.apache.jena.tdb2.store.tupletable.TupleTable;
 
 public interface NodeTupleTable extends Sync, Closeable
 {
-    public void addRow(Node... nodes);
+    public boolean addRow(Node... nodes);
 
-    public void deleteRow(Node... nodes);
+    public boolean deleteRow(Node... nodes);
 
     /** The length of tuples managed. -1 indicates "variable length" */
     public int getTupleLen();

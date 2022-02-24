@@ -39,16 +39,20 @@ public class Union extends Dyadic implements Graph
     /**
         To add a triple to the union, add it to the left operand; this is asymmetric.
     */
-	@Override public void performAdd( Triple t )
-		{ L.add( t ); }
+	@Override public boolean performAdd( Triple t )
+		{ 
+                    L.add( t ); 
+                    return true;
+                }
 
     /**
         To remove a triple, remove it from <i>both</i> operands.
     */
-	@Override public void performDelete( Triple t )
+	@Override public boolean performDelete( Triple t )
 		{
 		L.delete( t );
 		R.delete( t );
+                return true;
 		}
 
     @Override public boolean graphBaseContains( Triple t )

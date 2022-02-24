@@ -149,7 +149,7 @@ public class UpdateWriterVisitor implements UpdateVisitor {
     { printUpdate2(update, "MOVE") ; }
 
     @Override
-    public void visit(UpdateDataInsert update) {
+    public UpdateResult visit(UpdateDataInsert update) {
         UpdateDataWriter udw = new UpdateDataWriter(UpdateMode.INSERT, out, sCxt);
         udw.open();
         try {
@@ -158,10 +158,12 @@ public class UpdateWriterVisitor implements UpdateVisitor {
         finally {
             udw.close();
         }
+        
+        return null;
     }
 
     @Override
-    public void visit(UpdateDataDelete update) {
+    public UpdateResult visit(UpdateDataDelete update) {
         UpdateDataWriter udw = new UpdateDataWriter(UpdateMode.DELETE, out, sCxt);
         udw.open();
         try {
@@ -170,6 +172,8 @@ public class UpdateWriterVisitor implements UpdateVisitor {
         finally {
             udw.close();
         }
+        
+        return null;
     }
 
     protected void outputQuadsBraced(List<Quad> quads) {

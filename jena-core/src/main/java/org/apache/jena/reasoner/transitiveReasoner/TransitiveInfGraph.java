@@ -136,21 +136,23 @@ public class TransitiveInfGraph extends BaseInfGraph {
      * the new data item, recursively adding any generated triples.
      */
     @Override
-    public synchronized void performAdd(Triple t) {
+    public synchronized boolean performAdd(Triple t) {
         this.requirePrepared();
         fdata.getGraph().add(t);
         transitiveEngine.add(t);
+        return true;
     }
 
     /** 
      * Removes the triple t (if possible) from the set belonging to this graph.
      */   
     @Override
-    public synchronized void performDelete(Triple t) {
-        fdata.getGraph().delete(t);
+    public synchronized boolean performDelete(Triple t) {
+        boolean f = fdata.getGraph().delete(t);
         if (this.isPrepared()) {
             transitiveEngine.delete(t);
         }
+        return f;
     }
     /**
     Answer the InfCapabilities of this InfGraph.

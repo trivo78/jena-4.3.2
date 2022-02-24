@@ -40,23 +40,23 @@ public class TripleTable extends TableBase {
     }
 
     /** Add triple */
-    public void add(Triple triple) {
-        add(triple.getSubject(), triple.getPredicate(), triple.getObject());
+    public boolean add(Triple triple) {
+        return add(triple.getSubject(), triple.getPredicate(), triple.getObject());
     }
 
     /** Add triple */
-    public void add(Node s, Node p, Node o) {
-        table.addRow(s, p, o);
+    public boolean add(Node s, Node p, Node o) {
+        return table.addRow(s, p, o);
     }
 
     /** Delete a triple */
-    public void delete(Triple triple) {
-        delete(triple.getSubject(), triple.getPredicate(), triple.getObject());
+    public boolean delete(Triple triple) {
+        return delete(triple.getSubject(), triple.getPredicate(), triple.getObject());
     }
 
     /** Delete a triple */
-    public void delete(Node s, Node p, Node o) {
-        table.deleteRow(s, p, o);
+    public boolean delete(Node s, Node p, Node o) {
+        return table.deleteRow(s, p, o);
     }
 
     /** Find matching triples */

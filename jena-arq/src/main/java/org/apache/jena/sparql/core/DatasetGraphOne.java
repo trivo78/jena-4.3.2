@@ -147,35 +147,43 @@ public class DatasetGraphOne extends DatasetGraphBaseFind {
     }
 
     @Override
-    public void add(Node g, Node s, Node p, Node o) {
+    public boolean add(Node g, Node s, Node p, Node o) {
         if ( Quad.isDefaultGraph(g) )
-            graph.add(new Triple(s, p, o));
-        else
+            return graph.add(new Triple(s, p, o));
+        else {
             unsupportedMethod(this, "add(named graph)");
+            return false;
+        }
     }
 
     @Override
-    public void add(Quad quad) {
+    public boolean add(Quad quad) {
         if ( isDefaultGraph(quad) )
-            graph.add(quad.asTriple());
-        else
+            return graph.add(quad.asTriple());
+        else {
             unsupportedMethod(this, "add(named graph)");
+            return false;
+        }
     }
 
     @Override
-    public void delete(Node g, Node s, Node p, Node o) {
+    public boolean delete(Node g, Node s, Node p, Node o) {
         if ( Quad.isDefaultGraph(g) )
-            graph.delete(new Triple(s, p, o));
-        else
+            return graph.delete(new Triple(s, p, o));
+        else {
             unsupportedMethod(this, "delete(named graph)");
+            return false;
+        }
     }
 
     @Override
-    public void delete(Quad quad) {
+    public boolean  delete(Quad quad) {
         if ( isDefaultGraph(quad) )
-            graph.delete(quad.asTriple());
-        else
+            return graph.delete(quad.asTriple());
+        else {
             unsupportedMethod(this, "delete(named graph)");
+            return false;
+        }
     }
 
     @Override

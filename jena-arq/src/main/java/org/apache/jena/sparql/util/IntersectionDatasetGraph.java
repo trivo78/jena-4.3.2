@@ -71,13 +71,15 @@ public class IntersectionDatasetGraph extends DyadicDatasetGraph {
         }
 
         @Override
-        public void performAdd(Triple t) {
+        public boolean performAdd(Triple t) {
             throwNoMutationAllowed();
+            return false;
         }
 
         @Override
-        public void performDelete(Triple t) {
+        public boolean performDelete(Triple t) {
             throwNoMutationAllowed();
+            return false;
         }
 
         @Override

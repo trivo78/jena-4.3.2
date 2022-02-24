@@ -200,22 +200,24 @@ public class LPBackwardRuleInfGraph extends BaseInfGraph implements BackwardRule
      * the new data item, recursively adding any generated triples.
      */
     @Override
-    public synchronized void performAdd(Triple t) {
+    public synchronized boolean performAdd(Triple t) {
         version++;
         engine.checkSafeToUpdate();
-        fdata.getGraph().add(t);
+        final boolean f = fdata.getGraph().add(t);
         this.setPreparedState(false);
+        return f;
     }
      
     /** 
      * Removes the triple t (if possible) from the set belonging to this graph. 
      */   
     @Override
-    public synchronized void performDelete(Triple t) {
+    public synchronized boolean  performDelete(Triple t) {
         version++;
         engine.checkSafeToUpdate();
-        fdata.getGraph().delete(t);
+        final boolean f = fdata.getGraph().delete(t);
         this.setPreparedState(false);
+        return f;
     }
        
     /**

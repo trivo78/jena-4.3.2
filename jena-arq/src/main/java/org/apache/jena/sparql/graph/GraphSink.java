@@ -42,10 +42,10 @@ public class GraphSink extends GraphBase
     { return NullIterator.instance() ; }
     
     @Override
-    public void performAdd( Triple t ) {}
+    public boolean performAdd( Triple t ) {return true;}
     
     @Override
-    public void performDelete( Triple t ) {}
+    public boolean performDelete( Triple t ) {return true;}
     
     @Override
     protected PrefixMapping createPrefixMapping() { 

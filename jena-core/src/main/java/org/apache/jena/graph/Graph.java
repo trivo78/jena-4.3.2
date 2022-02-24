@@ -77,18 +77,18 @@ public interface Graph
         @param t the triple to add to the graph
         @throws AddDeniedException if the triple cannot be added
      */
-    void add( Triple t ) throws AddDeniedException;
+    boolean add( Triple t ) throws AddDeniedException;
 
     /**
      * Add the triple comprised of s,p,o to the set belonging to this graph
      *
      * @throws AddDeniedException if the triple cannot be added
      */
-    default void add(Node s, Node p, Node o) throws AddDeniedException {
+    default boolean add(Node s, Node p, Node o) throws AddDeniedException {
         Objects.requireNonNull(s, "Subject must not be null");
         Objects.requireNonNull(p, "Predicate must not be null");
         Objects.requireNonNull(o, "Object must not be null");
-        add(Triple.create(s, p, o));
+        return add(Triple.create(s, p, o));
     }
 
     /**
@@ -97,18 +97,18 @@ public interface Graph
         @param  t the triple to delete to the graph
         @throws DeleteDeniedException if the triple cannot be removed
     */
-	void delete(Triple t) throws DeleteDeniedException;
+	boolean delete(Triple t) throws DeleteDeniedException;
 
     /**
      * Delete the triple comprised of s,p,o from the set belonging to this graph
      *
      * @throws AddDeniedException if the triple cannot be added
      */
-    default void delete(Node s, Node p, Node o) throws DeleteDeniedException {
+    default boolean delete(Node s, Node p, Node o) throws DeleteDeniedException {
         Objects.requireNonNull(s, "Subject must not be null");
         Objects.requireNonNull(p, "Predicate must not be null");
         Objects.requireNonNull(o, "Object must not be null");
-        delete(Triple.create(s, p, o));
+        return delete(Triple.create(s, p, o));
     }
 
 	/**

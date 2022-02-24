@@ -86,26 +86,31 @@ public class RETERuleInfGraph extends BasicForwardRuleInfGraph {
      * the new data item, recursively adding any generated triples.
      */
     @Override
-    public synchronized void performAdd(Triple t) {
+    public synchronized boolean performAdd(Triple t) {
         this.requirePrepared();
-        fdata.getGraph().add(t);
+        final boolean f = fdata.getGraph().add(t);
         engine.add(t);
+        return f;
     }
     
     /** 
      * Removes the triple t (if possible) from the set belonging to this graph. 
      */   
     @Override
-    public void performDelete(Triple t) {
+    public boolean performDelete(Triple t) {
         this.requirePrepared();
+        boolean f = false;
         if (fdata != null) {
             Graph data = fdata.getGraph();
             if (data != null) {
+                f = true;
                 data.delete(t);
             }
         }
         engine.delete(t);
         fdeductions.getGraph().delete(t);
+        
+        return f;
     }
 
 }

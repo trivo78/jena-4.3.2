@@ -138,12 +138,12 @@ public class GraphUnionRead extends GraphBase {
     // Override to give more specific message.
     
     @Override
-    public void performAdd(Triple t) {
+    public boolean performAdd(Triple t) {
         throw new AddDeniedException("GraphUnionRead::performAdd - Read-only graph") ;
     }
 
     @Override
-    public void performDelete(Triple t) {
+    public boolean performDelete(Triple t) {
         throw new DeleteDeniedException("GraphUnionRead::performDelete - Read-only graph") ;
     }
 }

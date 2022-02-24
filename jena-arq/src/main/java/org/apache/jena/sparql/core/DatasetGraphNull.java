@@ -98,10 +98,10 @@ public abstract class DatasetGraphNull extends DatasetGraphBaseFind {
     }
     
     @Override
-    public void add(Quad quad) { unsupportedMethod(this, "add") ; } 
+    public boolean add(Quad quad) { unsupportedMethod(this, "add") ;return false; } 
     
     @Override
-    public void delete(Quad quad) { unsupportedMethod(this, "delete") ; }
+    public boolean delete(Quad quad) { unsupportedMethod(this, "delete") ; return false;}
     
     @Override
     public void deleteAny(Node g, Node s, Node p, Node o) {

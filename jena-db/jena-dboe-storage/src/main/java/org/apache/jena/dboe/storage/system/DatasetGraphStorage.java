@@ -158,35 +158,35 @@ public class DatasetGraphStorage extends DatasetGraphBaseFind implements Databas
     }
 
     @Override
-    public void add(Quad quad) {
+    public boolean  add(Quad quad) {
         if ( Quad.isDefaultGraph(quad.getGraph()) )
-            storage.add(quad.getSubject(), quad.getPredicate(), quad.getObject());
+            return storage.add(quad.getSubject(), quad.getPredicate(), quad.getObject());
         else
-            storage.add(quad);
+            return  storage.add(quad);
     }
 
     @Override
-    public void delete(Quad quad) {
+    public boolean delete(Quad quad) {
         if ( Quad.isDefaultGraph(quad.getGraph()) )
-            storage.delete(quad.getSubject(), quad.getPredicate(), quad.getObject());
+            return storage.delete(quad.getSubject(), quad.getPredicate(), quad.getObject());
         else
-            storage.delete(quad);
+            return storage.delete(quad);
     }
 
     @Override
-    public void add(Node g, Node s, Node p, Node o) {
+    public boolean  add(Node g, Node s, Node p, Node o) {
         if ( g == null || Quad.isDefaultGraph(g) )
-            storage.add(s,p,o);
+            return storage.add(s,p,o);
         else
-            storage.add(g,s,p,o);
+            return storage.add(g,s,p,o);
     }
 
     @Override
-    public void delete(Node g, Node s, Node p, Node o) {
+    public boolean delete(Node g, Node s, Node p, Node o) {
         if ( g == null || Quad.isDefaultGraph(g) )
-            storage.delete(s,p,o);
+            return storage.delete(s,p,o);
         else
-            storage.delete(g,s,p,o);
+            return storage.delete(g,s,p,o);
     }
 
     @Override

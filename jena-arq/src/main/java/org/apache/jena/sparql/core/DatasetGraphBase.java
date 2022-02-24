@@ -89,15 +89,15 @@ abstract public class DatasetGraphBase implements DatasetGraph
     { throw new UnsupportedOperationException("DatasetGraph.setDefaultGraph") ; }
 
     @Override
-    public void add(Quad quad) { throw new UnsupportedOperationException("DatasetGraph.add(Quad)") ; }
+    public boolean add(Quad quad) { throw new UnsupportedOperationException("DatasetGraph.add(Quad)") ; }
 
     @Override
-    public void delete(Quad quad) { throw new UnsupportedOperationException("DatasetGraph.delete(Quad)") ; }
+    public boolean  delete(Quad quad) { throw new UnsupportedOperationException("DatasetGraph.delete(Quad)") ; }
 
     @Override
-    public void add(Node g, Node s, Node p, Node o)     { add(new Quad(g,s,p,o)) ; }
+    public boolean  add(Node g, Node s, Node p, Node o)     { return add(new Quad(g,s,p,o)) ; }
     @Override
-    public void delete(Node g, Node s, Node p, Node o)  { delete(new Quad(g,s,p,o)) ; }
+    public boolean  delete(Node g, Node s, Node p, Node o)  { return delete(new Quad(g,s,p,o)) ; }
 
     @Override
     /** Simple implementation but done without assuming iterator.remove() */

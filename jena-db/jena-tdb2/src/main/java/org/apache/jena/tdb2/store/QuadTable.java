@@ -40,39 +40,39 @@ public class QuadTable extends TableBase {
     }
 
     /** Add a quad - return true if it was added, false if it already existed */
-    public void add(Quad quad) {
-        add(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject());
+    public boolean add(Quad quad) {
+        return add(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject());
     }
 
     /**
      * Add a quad (as graph node and triple) - return true if it was added,
      * false if it already existed
      */
-    public void add(Node gn, Triple triple) {
-        add(gn, triple.getSubject(), triple.getPredicate(), triple.getObject());
+    public boolean add(Node gn, Triple triple) {
+        return add(gn, triple.getSubject(), triple.getPredicate(), triple.getObject());
     }
 
     /** Add a quad - return true if it was added, false if it already existed */
-    public void add(Node g, Node s, Node p, Node o) {
-        table.addRow(g, s, p, o);
+    public boolean add(Node g, Node s, Node p, Node o) {
+        return table.addRow(g, s, p, o);
     }
 
     /** Delete a quad - return true if it was deleted, false if it didn't exist */
-    public void delete(Quad quad) {
-        delete(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject());
+    public boolean delete(Quad quad) {
+        return delete(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject());
     }
 
     /**
      * Delete a quad (as graph node and triple) - return true if it was deleted,
      * false if it didn't exist
      */
-    public void delete(Node gn, Triple triple) {
-        delete(gn, triple.getSubject(), triple.getPredicate(), triple.getObject());
+    public boolean delete(Node gn, Triple triple) {
+        return delete(gn, triple.getSubject(), triple.getPredicate(), triple.getObject());
     }
 
     /** Delete a quad - return true if it was deleted, false if it didn't exist */
-    public void delete(Node g, Node s, Node p, Node o) {
-        table.deleteRow(g, s, p, o);
+    public boolean delete(Node g, Node s, Node p, Node o) {
+        return table.deleteRow(g, s, p, o);
     }
 
     /** Find matching quads */

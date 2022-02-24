@@ -143,10 +143,10 @@ public class FRuleEngineIFactoryTest extends TestCase {
         public PrefixMapping getPrefixMapping() { return null; }
 
         @Override
-        public void add(Triple t) throws AddDeniedException {}
+        public boolean add(Triple t) throws AddDeniedException {return true;}
 
         @Override
-        public void delete(Triple t) throws DeleteDeniedException {}
+        public boolean delete(Triple t) throws DeleteDeniedException {return true;}
 
         @Override
         public ExtendedIterator<Triple> find(Triple m) { return null; }

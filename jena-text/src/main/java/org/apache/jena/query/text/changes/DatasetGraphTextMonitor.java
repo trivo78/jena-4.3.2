@@ -89,73 +89,77 @@ public class DatasetGraphTextMonitor extends DatasetGraphWrapper
     /** Return the monitored DatasetGraph */
     public DatasetGraph   monitored()       { return getWrapped() ; }
 
-    @Override public void add(Quad quad)
+    @Override public boolean add(Quad quad)
     {
         if ( CheckFirst && contains(quad) )
         {
             if ( RecordNoAction )
                 record(TextQuadAction.NO_ADD, quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()) ;
-            return ;
+            return false;
         }
-        add$(quad) ;
+        return add$(quad) ;
     }
 
-    @Override public void add(Node g, Node s, Node p, Node o)
+    @Override public boolean add(Node g, Node s, Node p, Node o)
     {
         if ( CheckFirst && contains(g,s,p,o) )
         {
             if ( RecordNoAction )
                 record(TextQuadAction.NO_ADD,g,s,p,o) ;
-            return ;
+            return false;
         }
 
-        add$(g,s,p,o) ;
+        return add$(g,s,p,o) ;
     }
 
-    private void add$(Node g, Node s, Node p, Node o)
+    private boolean add$(Node g, Node s, Node p, Node o)
     {
         super.add(g,s,p,o) ;
         record(TextQuadAction.ADD,g,s,p,o) ;
+        return true;
     }
 
-    private void add$(Quad quad)
+    private boolean add$(Quad quad)
     {
         super.add(quad) ;
         record(TextQuadAction.ADD, quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()) ;
+        return true;
     }
 
-    @Override public void delete(Quad quad)
+    @Override public boolean  delete(Quad quad)
     {
         if ( CheckFirst && ! contains(quad) )
         {
             if ( RecordNoAction )
                 record(TextQuadAction.NO_DELETE, quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()) ;
-            return ;
+            return false ;
         }
-        delete$(quad) ;
+        return delete$(quad) ;
     }
 
-    @Override public void delete(Node g, Node s, Node p, Node o)
+    @Override public boolean delete(Node g, Node s, Node p, Node o)
     {
         if ( CheckFirst && ! contains(g,s,p,o) )
         {
             if ( RecordNoAction )
                 record(TextQuadAction.NO_DELETE, g,s,p,o) ;
-            return ;
+            return false;
         }
-        delete$(g,s,p,o) ;
+        return delete$(g,s,p,o) ;
     }
 
-    private void delete$(Quad quad)
+    private  boolean  delete$(Quad quad)
     {
         super.delete(quad) ;
         record(TextQuadAction.DELETE, quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()) ;
+        return true;
     }
 
-    private void delete$(Node g, Node s, Node p, Node o)
+    private boolean delete$(Node g, Node s, Node p, Node o)
     {
         super.delete(g,s,p,o) ;
         record(TextQuadAction.DELETE,g,s,p,o) ;
+        return true;
     }
 
 

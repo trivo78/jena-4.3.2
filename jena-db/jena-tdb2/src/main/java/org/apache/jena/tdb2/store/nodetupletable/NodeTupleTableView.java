@@ -43,17 +43,17 @@ public class NodeTupleTableView extends NodeTupleTableWrapper
     }
 
     @Override
-    public void addRow(Node... nodes)
+    public boolean addRow(Node... nodes)
     {
         nodes = push(Node.class, prefix, nodes);
-        super.addRow(nodes);
+        return super.addRow(nodes);
     }
 
     @Override
-    public void deleteRow(Node... nodes)
+    public boolean deleteRow(Node... nodes)
     {
         nodes = push(Node.class, prefix, nodes);
-        super.deleteRow(nodes);
+        return super.deleteRow(nodes);
     }
 
     @Override

@@ -36,21 +36,21 @@ import org.apache.jena.shared.JenaException ;
 public abstract class DatasetGraphCollection extends DatasetGraphBaseFind
 {
     @Override
-    public void add(Quad quad)
+    public boolean add(Quad quad)
     {
         Graph g = fetchGraph(quad.getGraph()) ;
         if ( g == null )
             throw new JenaException("No such graph: "+quad.getGraph()) ;
-        g.add(quad.asTriple()) ;
+        return g.add(quad.asTriple()) ;
     }
 
     @Override
-    public void delete(Quad quad)
+    public boolean delete(Quad quad)
     {
         Graph g = fetchGraph(quad.getGraph()) ;
         if ( g == null )
             throw new JenaException("No such graph: "+quad.getGraph()) ;
-        g.delete(quad.asTriple()) ;
+        return g.delete(quad.asTriple()) ;
     }
     
     @Override

@@ -110,15 +110,19 @@ public class CollectionGraph extends GraphBase
     }
 
     @Override
-    public void performAdd(final Triple t) {
+    public boolean performAdd(final Triple t) {
         if ( uniqueOnly || !triples.contains(t) ) {
             triples.add(t);
-        }
+            return true ;
+        } else
+            return false;
     }
 
     @Override
-    public void performDelete(final Triple t) {
+    public boolean performDelete(final Triple t) {
+        final boolean f = triples.contains(t);
         triples.remove(t);
+        return f;
     }
 
     @Override

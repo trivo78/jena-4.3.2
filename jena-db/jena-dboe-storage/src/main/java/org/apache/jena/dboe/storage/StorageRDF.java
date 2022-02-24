@@ -59,51 +59,51 @@ public interface StorageRDF {
     /** Add a triple to the default graph.
      * <p>Concrete operation.
      */
-    public default void add(Triple triple)
-    { add(triple.getSubject(), triple.getPredicate(), triple.getObject()); }
+    public default boolean  add(Triple triple)
+    { return add(triple.getSubject(), triple.getPredicate(), triple.getObject()); }
 
     /** Add a quad.
      * <p>Concrete operation.
      */
-    public default void add(Quad quad)
-    { add(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()); }
+    public default boolean add(Quad quad)
+    { return add(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()); }
 
     /** Delete a triple from the default graph.
      * <p>Concrete operation.
      */
-    public default void delete(Triple triple)
-    { delete(triple.getSubject(), triple.getPredicate(), triple.getObject()); }
+    public default boolean  delete(Triple triple)
+    { return delete(triple.getSubject(), triple.getPredicate(), triple.getObject()); }
 
     /** Delete a quad from the default graph. All terms are concrete, and not {@code Node#ANY}.
      * For delete-by-pattern, see {@link #removeAll(Node, Node, Node, Node)}.
      * <p>Concrete operation.
      */
-    public default void delete(Quad quad)
-    { delete(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()); }
+    public default boolean delete(Quad quad)
+    { return delete(quad.getGraph(), quad.getSubject(), quad.getPredicate(), quad.getObject()); }
 
     /** Add a triple to the default graph.
      * <p>Concrete operation.
      */
-    public void add(Node s, Node p, Node o);
+    public boolean  add(Node s, Node p, Node o);
 
     /** Add to a named graph.
      * <p>Concrete operation.
      */
-    public void add(Node g, Node s, Node p, Node o);
+    public boolean add(Node g, Node s, Node p, Node o);
 
     /**
      * Delete from the default graph. {@code s}, {@code p}, {@code o} are all concrete.
      * <p>Concrete operation.
      * <p>See {@link #removeAll(Node, Node, Node)} for remove by pattern.
      */
-    public void delete(Node s, Node p, Node o);
+    public boolean delete(Node s, Node p, Node o);
 
     /**
      * Delete from a named graph. {@code s}, {@code p}, {@code o} are all concrete.
      * <p>Concrete operation.
      * <p>See {@link #removeAll(Node, Node, Node, Node)} for remove by pattern.
      */
-    public void delete(Node g, Node s, Node p, Node o);
+    public boolean delete(Node g, Node s, Node p, Node o);
 
     /** Delete all triples matching a {@code find}-like pattern.
      *  <p>Pattern operation.

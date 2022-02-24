@@ -50,9 +50,10 @@ public class TestRemoveSPO extends AbstractModelTestBase
 		final List<Triple> deleted = new ArrayList<>();
 		final Graph base = new WrappedGraph(model.getGraph()) {
 			@Override
-			public void delete( final Triple t )
+			public boolean delete( final Triple t )
 			{
 				deleted.add(t);
+                                return true;
 			}
 		};
 		model = createModel(base);

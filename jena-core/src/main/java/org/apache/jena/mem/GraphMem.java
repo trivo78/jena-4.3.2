@@ -33,11 +33,11 @@ public class GraphMem extends GraphMemBase
     @Override protected void destroy()
     { store.close(); }
 
-    @Override public void performAdd( Triple t )
-    { store.add( t ); }
+    @Override public boolean performAdd( Triple t )
+    { return store.add( t ); }
 
-    @Override public void performDelete( Triple t )
-    { store.delete( t ); }
+    @Override public boolean performDelete( Triple t )
+    { return store.delete( t ); }
 
     @Override public int graphBaseSize()
     { return store.size(); }

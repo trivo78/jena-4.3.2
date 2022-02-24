@@ -59,17 +59,19 @@ public class WrappedGraph implements GraphWithPerform
     { return base.getPrefixMapping(); }
 
     @Override
-    public void add(Triple t)
+    public boolean add(Triple t)
     {
-        base.add(t) ;
+        final boolean f = base.add(t) ;
         getEventManager().notifyAddTriple(this, t) ;
+        return f;
     }
 
     @Override
-    public void delete(Triple t)
+    public boolean delete(Triple t)
     {
-        base.delete(t) ;
+        final boolean f = base.delete(t) ;
         getEventManager().notifyDeleteTriple(this, t) ;
+        return f;
     }
 
     @Override
@@ -123,10 +125,10 @@ public class WrappedGraph implements GraphWithPerform
     { return base.size(); }
 
     @Override
-    public void performAdd(Triple t)
-    { base.add( t ); }
+    public boolean performAdd(Triple t)
+    { return base.add( t ); }
 
     @Override
-    public void performDelete(Triple t)
-    { base.delete( t ); }
+    public boolean  performDelete(Triple t)
+    { return base.delete( t ); }
  }

@@ -38,15 +38,19 @@ public class Intersection extends Dyadic implements Graph
 	    super( L, R );
 	    }
 	    
-	@Override public void performAdd( Triple t )
+	@Override public boolean performAdd( Triple t )
 	    {
 	    L.add( t );
 	    R.add( t );
+            return true;
 	    }
 
-	@Override public void performDelete( Triple t )
+	@Override public boolean performDelete( Triple t )
 		{
-		if (this.contains( t )) L.delete( t );
+                    final boolean f = this.contains( t);
+                    if (f) L.delete( t );
+                
+                    return f;
 		}
 		
 	@Override protected ExtendedIterator<Triple> _graphBaseFind( Triple s )

@@ -36,8 +36,8 @@ public class GraphWrapper implements Graph
     public Graph get() { return graph; }
 
     @Override
-    public void add(Triple t) throws AddDeniedException {
-        get().add(t);
+    public boolean add(Triple t) throws AddDeniedException {
+        return get().add(t);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class GraphWrapper implements Graph
     }
 
     @Override
-    public void delete(Triple t) throws DeleteDeniedException {
-        get().delete(t);
+    public boolean delete(Triple t) throws DeleteDeniedException {
+        return get().delete(t);
     }
 
     @Override

@@ -163,11 +163,12 @@ public abstract class GraphBase implements GraphWithPerform
        and notification done by notifyAdd.
 	*/
 	@Override
-    public void add( Triple t )
+    public boolean add( Triple t )
         {
         checkOpen();
-        performAdd( t );
+        final boolean f = performAdd( t );
         notifyAdd( t );
+        return f;
         }
 
     /**
@@ -176,7 +177,7 @@ public abstract class GraphBase implements GraphWithPerform
          add triples.
     */
     @Override
-    public void performAdd( Triple t )
+    public boolean performAdd( Triple t )
         { throw new AddDeniedException( "GraphBase::performAdd" ); }
 
 	/**
@@ -186,11 +187,12 @@ public abstract class GraphBase implements GraphWithPerform
 	 */
 
     @Override
-    public final void delete( Triple t )
+    public final boolean delete( Triple t )
         {
         checkOpen();
-        performDelete( t );
+        final boolean f = performDelete( t );
         notifyDelete( t );
+        return f;
         }
 
     /**
@@ -199,7 +201,7 @@ public abstract class GraphBase implements GraphWithPerform
          to remove triples.
     */
 	@Override
-    public void performDelete( Triple t )
+    public boolean performDelete( Triple t )
         { throw new DeleteDeniedException( "GraphBase::delete" ); }
 
     /**

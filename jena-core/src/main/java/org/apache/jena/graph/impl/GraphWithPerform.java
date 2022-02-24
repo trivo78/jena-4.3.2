@@ -31,10 +31,10 @@ public interface GraphWithPerform extends Graph
     /** 
         add <code>t</code> to this graph, but do not generate any event 
     */
-    public void performAdd( Triple t );
+    public boolean performAdd( Triple t );
    
     /** 
     	remove <code>t</code> from this graph, but do not generate any event 
     */
-    public void performDelete( Triple t );
+    public boolean performDelete( Triple t );
     }

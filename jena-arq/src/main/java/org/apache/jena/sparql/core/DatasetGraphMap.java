@@ -111,23 +111,23 @@ public class DatasetGraphMap extends DatasetGraphTriplesQuads
     }
 
     @Override
-    protected void addToDftGraph(Node s, Node p, Node o) {
-        getDefaultGraph().add(Triple.create(s, p, o)) ;
+    protected boolean addToDftGraph(Node s, Node p, Node o) {
+        return getDefaultGraph().add(Triple.create(s, p, o)) ;
     }
 
     @Override
-    protected void addToNamedGraph(Node g, Node s, Node p, Node o) {
-        getGraph(g).add(Triple.create(s, p, o)) ;
+    protected boolean addToNamedGraph(Node g, Node s, Node p, Node o) {
+        return getGraph(g).add(Triple.create(s, p, o)) ;
     }
 
     @Override
-    protected void deleteFromDftGraph(Node s, Node p, Node o) {
-        getDefaultGraph().delete(Triple.create(s, p, o)) ;
+    protected boolean deleteFromDftGraph(Node s, Node p, Node o) {
+        return getDefaultGraph().delete(Triple.create(s, p, o)) ;
     }
 
     @Override
-    protected void deleteFromNamedGraph(Node g, Node s, Node p, Node o) {
-        getGraph(g).delete(Triple.create(s, p, o)) ;
+    protected boolean deleteFromNamedGraph(Node g, Node s, Node p, Node o) {
+        return getGraph(g).delete(Triple.create(s, p, o)) ;
     }
 
     @Override

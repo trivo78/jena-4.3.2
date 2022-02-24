@@ -373,7 +373,7 @@ public class DatasetGraphInMemory extends DatasetGraphTriplesQuads implements Tr
      * @param mutator
      * @param payload
      */
-    private <T> void mutate(final Consumer<T> mutator, final T payload) {
+    private <T> boolean mutate(final Consumer<T> mutator, final T payload) {
         if (isInTransaction()) {
             if (!transactionMode().equals(WRITE)) {
                 TxnType mode = transactionType.get();
@@ -391,6 +391,8 @@ public class DatasetGraphInMemory extends DatasetGraphTriplesQuads implements Tr
             }
             mutator.accept(payload);
         } else Txn.executeWrite(this, () -> mutator.accept(payload));
+        
+        return true;
     }
 
     /**
@@ -415,23 +417,23 @@ public class DatasetGraphInMemory extends DatasetGraphTriplesQuads implements Tr
     }
 
     @Override
-    protected void addToDftGraph(final Node s, final Node p, final Node o) {
-        mutate(defaultGraph()::add, Triple.create(s, p, o));
+    protected boolean addToDftGraph(final Node s, final Node p, final Node o) {
+        return mutate(defaultGraph()::add, Triple.create(s, p, o));
     }
 
     @Override
-    protected void addToNamedGraph(final Node g, final Node s, final Node p, final Node o) {
-        mutate(quadsIndex()::add, Quad.create(g, s, p, o));
+    protected boolean addToNamedGraph(final Node g, final Node s, final Node p, final Node o) {
+       return  mutate(quadsIndex()::add, Quad.create(g, s, p, o));
     }
 
     @Override
-    protected void deleteFromDftGraph(final Node s, final Node p, final Node o) {
-        mutate(defaultGraph()::delete, Triple.create(s, p, o));
+    protected boolean deleteFromDftGraph(final Node s, final Node p, final Node o) {
+        return  mutate(defaultGraph()::delete, Triple.create(s, p, o));
     }
 
     @Override
-    protected void deleteFromNamedGraph(final Node g, final Node s, final Node p, final Node o) {
-        mutate(quadsIndex()::delete, Quad.create(g, s, p, o));
+    protected boolean deleteFromNamedGraph(final Node g, final Node s, final Node p, final Node o) {
+        return mutate(quadsIndex()::delete, Quad.create(g, s, p, o));
     }
 
     @Override

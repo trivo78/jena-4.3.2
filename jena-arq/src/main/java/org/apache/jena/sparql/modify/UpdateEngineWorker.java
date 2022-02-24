@@ -274,17 +274,21 @@ public class UpdateEngineWorker implements UpdateVisitor
     // ----
     
     @Override
-    public void visit(UpdateDataInsert update) {
-        List<Quad> tmp = new ArrayList<>();
+    public UpdateResult visit(UpdateDataInsert update) {
+        List<Quad> ret = new ArrayList<>();
         for ( Quad quad : update.getQuads() )
-            addToDatasetGraph(datasetGraph, quad,tmp);
+            addToDatasetGraph(datasetGraph, quad,ret);
+        
+        return new UpdateResult(null,ret);
     }
 
     @Override
-    public void visit(UpdateDataDelete update) {
-        List<Quad> tmp = new ArrayList<>();
+    public UpdateResult visit(UpdateDataDelete update) {
+        List<Quad> ret = new ArrayList<>();
         for ( Quad quad : update.getQuads() )
-            deleteFromDatasetGraph(datasetGraph, quad,tmp);
+            deleteFromDatasetGraph(datasetGraph, quad,ret);
+        
+        return new UpdateResult(ret,null);
     }
 
     @Override

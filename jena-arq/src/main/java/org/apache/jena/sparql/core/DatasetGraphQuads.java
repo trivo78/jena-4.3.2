@@ -47,8 +47,8 @@ public abstract class DatasetGraphQuads extends DatasetGraphBase
     public abstract Iterator<Quad> findNG(Node g, Node s, Node p, Node o) ;
 
     @Override
-    public abstract void add(Quad quad) ;
+    public abstract boolean add(Quad quad) ;
 
     @Override
-    public abstract void delete(Quad quad) ;
+    public abstract boolean delete(Quad quad) ;
 }

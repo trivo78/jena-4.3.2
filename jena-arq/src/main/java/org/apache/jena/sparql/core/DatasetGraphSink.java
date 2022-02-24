@@ -44,10 +44,10 @@ public class DatasetGraphSink extends DatasetGraphNull {
     // Ignore all updates.
 
     @Override
-    public void add(Quad quad) { /* ignore */ }
+    public boolean add(Quad quad) { /* ignore */ return false; }
 
     @Override
-    public void delete(Quad quad) { /* ignore */ }
+    public boolean delete(Quad quad) { /* ignore */return false; }
 
     @Override
     public void deleteAny(Node g, Node s, Node p, Node o) { /* ignore */ }

@@ -416,20 +416,20 @@ public abstract class BaseInfGraph extends GraphBase implements InfGraph {
      * the new data item, recursively adding any generated triples.
      */
     @Override
-    public synchronized void performAdd(Triple t) {
+    public synchronized boolean performAdd(Triple t) {
         version++;
         this.requirePrepared();
-        fdata.getGraph().add(t);
+        return fdata.getGraph().add(t);
     }
 
     /**
      * Removes the triple t (if possible) from the set belonging to this graph.
      */
     @Override
-    public void performDelete(Triple t) {
+    public boolean performDelete(Triple t) {
         version++;
         this.requirePrepared();
-        fdata.getGraph().delete(t);
+        return fdata.getGraph().delete(t);
     }
 
     /**
