@@ -30,6 +30,7 @@ import org.apache.jena.atlas.lib.tuple.TFunction3;
 import org.apache.jena.atlas.lib.tuple.TupleMap;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.lambdaBoolWrapper;
 import org.apache.jena.sparql.core.mem.FourTupleMap.ThreeTupleMap;
 import org.apache.jena.sparql.core.mem.FourTupleMap.TwoTupleMap;
 import org.slf4j.Logger;
@@ -77,13 +78,13 @@ public class PMapTripleTable extends PMapTupleTable<ThreeTupleMap, Triple, TCons
     
     
     @Override
-    public void add(final Triple t) {
-        map(add()).accept(t);
+    public boolean add(final Triple t) {
+        return map(add()).test(t);
     }
 
     @Override
-    public void delete(final Triple t) {
-        map(delete()).accept(t);
+    public boolean delete(final Triple t) {
+        return map(delete()).test(t);
     }
     
     @Override
@@ -125,36 +126,52 @@ public class PMapTripleTable extends PMapTupleTable<ThreeTupleMap, Triple, TCons
     
     @Override
     protected TConsumer3<Node> add() {
-        return (first, second, third) -> {
-            debug("Adding three-tuple {} {} {}", first, second, third);
-            final ThreeTupleMap threeTuples = local().get();
-            TwoTupleMap twoTuples = threeTuples.get(first).orElse(new TwoTupleMap());
-            PersistentSet<Node> oneTuples = twoTuples.get(second).orElse(PersistentSet.empty());
+        return new TConsumer3<Node>() {
+            @Override
+            public boolean test(Node first, Node second, Node third) {
+                boolean f = false;
+                debug("Adding three-tuple {} {} {}", first, second, third);
+                final ThreeTupleMap threeTuples = local().get();
+                TwoTupleMap twoTuples = threeTuples.get(first).orElse(new TwoTupleMap());
+                PersistentSet<Node> oneTuples = twoTuples.get(second).orElse(PersistentSet.empty());
 
-            oneTuples = oneTuples.plus(third);
-            twoTuples = twoTuples.minus(second).plus(second, oneTuples);
-            local().set(threeTuples.minus(first).plus(first, twoTuples));
+                f = oneTuples.asSet().size() == 0;
+
+                oneTuples = oneTuples.plus(third);
+                twoTuples = twoTuples.minus(second).plus(second, oneTuples);
+                local().set(threeTuples.minus(first).plus(first, twoTuples));
+                return f;
+
+            }
         };
     }
     
     @Override
     protected TConsumer3<Node> delete() {
-        return (first, second, third) -> {
-            debug("Deleting three-tuple {} {} {}", first, second, third);
-            final ThreeTupleMap threeTuples = local().get();
-            threeTuples.get(first).ifPresent(twoTuples -> twoTuples.get(second).ifPresent(oneTuples -> {
-                if (oneTuples.contains(third)) {
-                    oneTuples = oneTuples.minus(third);
-                    final TwoTupleMap newTwoTuples = oneTuples.asSet().isEmpty()
-                            ? twoTuples.minus(second)
-                            : twoTuples.minus(second).plus(second, oneTuples);
-                    debug("Setting transactional index to new value.");
-                    final ThreeTupleMap newThreeTuples = twoTuples.asMap().isEmpty()
-                            ? threeTuples.minus(first)
-                            : threeTuples.minus(first).plus(first, newTwoTuples);
-                    local().set(newThreeTuples);
-                }
-            }));
+        return new TConsumer3<Node>() {
+            @Override
+            public boolean test(Node first, Node second, Node third) {
+                final lambdaBoolWrapper bw = new lambdaBoolWrapper();
+                debug("Deleting three-tuple {} {} {}", first, second, third);
+                final ThreeTupleMap threeTuples = local().get();
+                threeTuples.get(first).ifPresent(twoTuples -> twoTuples.get(second).ifPresent(oneTuples -> {
+                    if (oneTuples.contains(third)) {
+                        bw.result = true;
+                        oneTuples = oneTuples.minus(third);
+                        final TwoTupleMap newTwoTuples = oneTuples.asSet().isEmpty()
+                                ? twoTuples.minus(second)
+                                : twoTuples.minus(second).plus(second, oneTuples);
+                        debug("Setting transactional index to new value.");
+                        final ThreeTupleMap newThreeTuples = twoTuples.asMap().isEmpty()
+                                ? threeTuples.minus(first)
+                                : threeTuples.minus(first).plus(first, newTwoTuples);
+                        local().set(newThreeTuples);
+                    }
+                }));
+
+                return bw.result;
+
+            }
         };
     }
 }

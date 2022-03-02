@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicLong ;
 import java.util.concurrent.locks.ReentrantLock ;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.apache.jena.atlas.lib.InternalErrorException ;
@@ -333,6 +334,7 @@ public class DatasetGraphInMemory extends DatasetGraphTriplesQuads implements Tr
         mutate(graph -> {
             defaultGraph().clear();
             graph.find().forEachRemaining(defaultGraph()::add);
+            return true;
         }, g);
     }
 
@@ -351,11 +353,17 @@ public class DatasetGraphInMemory extends DatasetGraphTriplesQuads implements Tr
         return GraphView.createUnionGraph(this);
     }
 
-    private Consumer<Graph> addGraph(final Node name) {
-        return g -> g.find().mapWith(t -> new Quad(name, t)).forEachRemaining(this::add);
+    private Predicate<Graph> addGraph(final Node name) {
+        return g -> { 
+            g.find().mapWith(t -> new Quad(name, t)).forEachRemaining(this::add);
+            return true;
+        };
     }
 
-    private final Consumer<Graph> removeGraph = g -> g.find().forEachRemaining(g::delete);
+    private final Predicate<Graph> removeGraph = g -> { 
+        g.find().forEachRemaining(g::delete);
+        return true;
+    };
 
     @Override
     public void addGraph(final Node graphName, final Graph graph) {
@@ -364,7 +372,7 @@ public class DatasetGraphInMemory extends DatasetGraphTriplesQuads implements Tr
 
     @Override
     public void removeGraph(final Node graphName) {
-        mutate(removeGraph, getGraph(graphName));
+         mutate(removeGraph, getGraph(graphName));
     }
 
     /**
@@ -373,7 +381,8 @@ public class DatasetGraphInMemory extends DatasetGraphTriplesQuads implements Tr
      * @param mutator
      * @param payload
      */
-    private <T> boolean mutate(final Consumer<T> mutator, final T payload) {
+    private <T> boolean mutate(final Predicate<T> mutator, final T payload) {
+        boolean f = true;
         if (isInTransaction()) {
             if (!transactionMode().equals(WRITE)) {
                 TxnType mode = transactionType.get();
@@ -389,10 +398,14 @@ public class DatasetGraphInMemory extends DatasetGraphTriplesQuads implements Tr
                     break;
                 }
             }
-            mutator.accept(payload);
-        } else Txn.executeWrite(this, () -> mutator.accept(payload));
+            f = mutator.test(payload);
+        } else {
+            final lambdaBoolWrapper bw = new lambdaBoolWrapper();
+            Txn.executeWrite(this, () -> bw.result = mutator.test(payload));
+            f = bw.result;
+        }
         
-        return true;
+        return f;
     }
 
     /**
@@ -413,6 +426,7 @@ public class DatasetGraphInMemory extends DatasetGraphTriplesQuads implements Tr
         mutate(x -> {
             defaultGraph().clear();
             quadsIndex().clear();
+            return true;
         } , null);
     }
 

@@ -14,6 +14,7 @@
 package org.apache.jena.sparql.core.mem;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.jena.atlas.lib.tuple.TConsumer3;
 import org.apache.jena.atlas.lib.tuple.TConsumer4;
@@ -63,7 +64,7 @@ public abstract class OrderedTupleTable<TupleType, ConsumerType> implements Tupl
      */
     protected abstract ConsumerType delete();
 
-    protected Consumer<Quad> map(final TConsumer4<Node> consumer) {
+    protected Predicate<Quad> map(final TConsumer4<Node> consumer) {
         return q -> {
             final Node g = q.getGraph();
             final Node s = q.getSubject();
@@ -73,7 +74,7 @@ public abstract class OrderedTupleTable<TupleType, ConsumerType> implements Tupl
             final Node x2 = get(order.mapIdx(1), g, s, p, o);
             final Node x3 = get(order.mapIdx(2), g, s, p, o);
             final Node x4 = get(order.mapIdx(3), g, s, p, o);
-            consumer.accept(x1, x2, x3, x4);
+            return consumer.test(x1, x2, x3, x4);
         };
     }
 
@@ -85,7 +86,7 @@ public abstract class OrderedTupleTable<TupleType, ConsumerType> implements Tupl
         return apply(reverse, x1, x2, x3, x4, Quad::new);
     }
 
-    protected Consumer<Triple> map(final TConsumer3<Node> consumer) {
+    protected Predicate<Triple> map(final TConsumer3<Node> consumer) {
         return t -> {
             final Node s = t.getSubject();
             final Node p = t.getPredicate();
@@ -93,7 +94,7 @@ public abstract class OrderedTupleTable<TupleType, ConsumerType> implements Tupl
             final Node x1 = get(order.mapIdx(0), s, p, o);
             final Node x2 = get(order.mapIdx(1), s, p, o);
             final Node x3 = get(order.mapIdx(2), s, p, o);
-            consumer.accept(x1, x2, x3);
+            return consumer.test(x1, x2, x3);
         };
     }
 

@@ -30,6 +30,7 @@ import org.apache.jena.atlas.lib.tuple.TFunction4;
 import org.apache.jena.atlas.lib.tuple.TupleMap;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.lambdaBoolWrapper;
 import org.apache.jena.sparql.core.mem.FourTupleMap.ThreeTupleMap;
 import org.apache.jena.sparql.core.mem.FourTupleMap.TwoTupleMap;
 import org.slf4j.Logger;
@@ -78,13 +79,13 @@ public class PMapQuadTable extends PMapTupleTable<FourTupleMap, Quad, TConsumer4
     
     
     @Override
-    public void add(final Quad q) {
-        map(add()).accept(q);
+    public boolean add(final Quad q) {
+        return map(add()).test(q);
     }
 
     @Override
-    public void delete(final Quad q) {
-        map(delete()).accept(q);
+    public boolean delete(final Quad q) {
+        return map(delete()).test(q);
     }
 
     @Override
@@ -136,43 +137,63 @@ public class PMapQuadTable extends PMapTupleTable<FourTupleMap, Quad, TConsumer4
     
     @Override
     protected TConsumer4<Node> add() {
-        return (first, second, third, fourth) -> {
-            debug("Adding four-tuple: {} {} {} {} .", first, second, third, fourth);
-            final FourTupleMap fourTuples = local().get();
-            ThreeTupleMap threeTuples = fourTuples.get(first).orElse(new ThreeTupleMap());
-            TwoTupleMap twoTuples = threeTuples.get(second).orElse(new TwoTupleMap());
-            PersistentSet<Node> oneTuples = twoTuples.get(third).orElse(PersistentSet.empty());
+        return new TConsumer4<Node>() {
+            @Override
+            public boolean test(Node first, Node second, Node third, Node fourth) {
+                boolean f = false;
+                debug("Adding four-tuple: {} {} {} {} .", first, second, third, fourth);
+                final FourTupleMap fourTuples = local().get();
+                ThreeTupleMap threeTuples = fourTuples.get(first).orElse(new ThreeTupleMap());
+                TwoTupleMap twoTuples = threeTuples.get(second).orElse(new TwoTupleMap());
+                PersistentSet<Node> oneTuples = twoTuples.get(third).orElse(PersistentSet.empty());
 
-            if (!oneTuples.contains(fourth)) oneTuples = oneTuples.plus(fourth);
-            twoTuples = twoTuples.minus(third).plus(third, oneTuples);
-            threeTuples = threeTuples.minus(second).plus(second, twoTuples);
-            debug("Setting transactional index to new value.");
-            local().set(fourTuples.minus(first).plus(first, threeTuples));
+                if (!oneTuples.contains(fourth)) {
+                    f = true;
+                    oneTuples = oneTuples.plus(fourth);
+                }
+                twoTuples = twoTuples.minus(third).plus(third, oneTuples);
+                threeTuples = threeTuples.minus(second).plus(second, twoTuples);
+                debug("Setting transactional index to new value.");
+                local().set(fourTuples.minus(first).plus(first, threeTuples));
+                return f;
+
+            }
         };
     }
 
     @Override
     protected TConsumer4<Node> delete() {
-        return (first, second, third, fourth) -> {
-            debug("Removing four-tuple: {} {} {} {} .", first, second, third, fourth);
-            final FourTupleMap fourTuples = local().get();
-            fourTuples.get(first).ifPresent(threeTuples -> threeTuples.get(second)
-                    .ifPresent(twoTuples -> twoTuples.get(third).ifPresent(oneTuples -> {
-                        if (oneTuples.contains(fourth)) {
-                            oneTuples = oneTuples.minus(fourth);
-                            final TwoTupleMap newTwoTuples = oneTuples.asSet().isEmpty()
-                                    ? twoTuples.minus(third)
-                                    : twoTuples.minus(third).plus(third, oneTuples);
-                            final ThreeTupleMap newThreeTuples = newTwoTuples.asMap().isEmpty()
-                                    ? threeTuples.minus(second)
-                                    : threeTuples.minus(second).plus(second, newTwoTuples);
-                            final FourTupleMap newFourTuples = newThreeTuples.asMap().isEmpty()
-                                    ? fourTuples.minus(first)
-                                    : fourTuples.minus(first).plus(first, newThreeTuples);
-                            debug("Setting transactional index to new value.");
-                            local().set(newFourTuples);
-                        }
-                    })));
+        return new TConsumer4<Node>() {
+            @Override
+            public boolean test(Node first, Node second, Node third, Node fourth) {
+                final lambdaBoolWrapper bw = new lambdaBoolWrapper();
+                debug("Removing four-tuple: {} {} {} {} .", first, second, third, fourth);
+
+                final FourTupleMap fourTuples = local().get();
+                fourTuples.get(first).ifPresent(threeTuples -> threeTuples.get(second)
+                        .ifPresent(twoTuples -> twoTuples.get(third).ifPresent(oneTuples -> {
+
+                            if (oneTuples.contains(fourth)) {
+                                bw.result  = true;
+                                oneTuples = oneTuples.minus(fourth);
+                                final TwoTupleMap newTwoTuples = oneTuples.asSet().isEmpty()
+                                        ? twoTuples.minus(third)
+                                        : twoTuples.minus(third).plus(third, oneTuples);
+                                final ThreeTupleMap newThreeTuples = newTwoTuples.asMap().isEmpty()
+                                        ? threeTuples.minus(second)
+                                        : threeTuples.minus(second).plus(second, newTwoTuples);
+                                final FourTupleMap newFourTuples = newThreeTuples.asMap().isEmpty()
+                                        ? fourTuples.minus(first)
+                                        : fourTuples.minus(first).plus(first, newThreeTuples);
+                                debug("Setting transactional index to new value.");
+                                local().set(newFourTuples);
+                            }
+
+                        })));
+
+                return bw.result;
+
+            }
         };
     }
 }

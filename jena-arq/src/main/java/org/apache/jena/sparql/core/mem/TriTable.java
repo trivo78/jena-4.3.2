@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.ReadWrite;
+import org.apache.jena.sparql.core.lambdaBoolWrapper;
 
 /**
  * A three-way {@link TripleTable} using all of the available forms in {@link TripleTableForm}.
@@ -84,13 +85,31 @@ public class TriTable implements TripleTable {
     }
 
     @Override
-    public void add(final Triple t) {
-        indexBlock().values().forEach(index -> index.add(t));
+    public boolean add(final Triple t) {
+        final lambdaBoolWrapper bw = new lambdaBoolWrapper();
+        
+        indexBlock().values().forEach(
+                index -> { 
+                    final boolean f = index.add(t);
+                    bw.result = bw.result || f;
+                }
+        );
+        
+        return bw.result;
     }
 
     @Override
-    public void delete(final Triple t) {
-        indexBlock().values().forEach(index -> index.delete(t));
+    public boolean delete(final Triple t) {
+        final lambdaBoolWrapper bw = new lambdaBoolWrapper();
+        
+        indexBlock().values().forEach(
+                index -> {
+                    final boolean f = index.delete(t);
+                    bw.result = bw.result || f;
+                }
+        );
+        
+        return bw.result;
     }
 
     @Override

@@ -24,9 +24,9 @@ package org.apache.jena.atlas.lib.tuple;
  *
  * @param <X> the type of all arguments
  */
-@FunctionalInterface
+//@FunctionalInterface
 public interface TConsumer4<X> {
 
-    void accept(X x1, X x2, X x3, X x4);
+    boolean test(X x1, X x2, X x3, X x4);
 
 }

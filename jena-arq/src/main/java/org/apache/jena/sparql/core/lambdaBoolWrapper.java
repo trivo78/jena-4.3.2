@@ -16,31 +16,12 @@
  * limitations under the License.
  */
 
-package org.apache.jena.sparql.core.mem;
-
-import java.util.stream.Stream;
-
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Triple;
+package org.apache.jena.sparql.core;
 
 /**
- * A simplex or multiplex table of {@link Triple}s.
+ *
+ * @author Lorenzo
  */
-public interface TripleTable extends TupleTable<Triple> {
-
-    /**
-     * Search the table using a pattern of slots. {@link Node#ANY} or <code>null</code> will work as a wildcard.
-     *
-     * @param s the subject node of the pattern
-     * @param p the predicate node of the pattern
-     * @param o the object node of the pattern
-     * @return an {@link Stream} of matched triples
-     */
-    Stream<Triple> find(final Node s, final Node p, final Node o);
-
-    @Override
-    default void clear() {
-        find(null, null, null).forEach(this::delete);
-    }
-    
+public class lambdaBoolWrapper {
+   public boolean result; 
 }

@@ -30,14 +30,14 @@ public interface TupleTable<TupleType> extends TransactionalComponent {
      *
      * @param t the tuple to add
      */
-    void add(TupleType t);
+    boolean add(TupleType t);
 
     /**
      * Remove a tuple from the table
      *
      * @param t the tuple to remove
      */
-    void delete(TupleType t);
+    boolean delete(TupleType t);
 
     @Override
     default void abort() {
@@ -48,4 +48,6 @@ public interface TupleTable<TupleType> extends TransactionalComponent {
      * Clear all tuples from this table.
      */
     void clear();
+    
+    
 }

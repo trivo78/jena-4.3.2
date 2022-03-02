@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 import org.apache.jena.graph.Node;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.core.lambdaBoolWrapper;
 
 /**
  * A six-way {@link QuadTable} using all of the available forms in {@link QuadTableForm}. This class binds together all
@@ -73,13 +74,29 @@ public class HexTable implements QuadTable {
     }
 
     @Override
-    public void add(final Quad q) {
-        indexBlock().values().forEach(index -> index.add(q));
+    public boolean add(final Quad q) {
+        final lambdaBoolWrapper bw = new lambdaBoolWrapper();
+        bw.result = true;
+        indexBlock().values().forEach(
+                index -> { 
+                    final boolean f = index.add(q);
+                    bw.result = bw.result || f;
+                }
+        );
+        return bw.result;
     }
 
     @Override
-    public void delete(final Quad q) {
-        indexBlock().values().forEach(index -> index.delete(q));
+    public boolean delete(final Quad q) {
+        final lambdaBoolWrapper bw = new lambdaBoolWrapper();
+        indexBlock().values().forEach(
+                index -> { 
+                    final boolean f = index.delete(q);
+                    bw.result = bw.result || f;                    
+                }
+        );
+        
+        return bw.result;
     }
 
     @Override
