@@ -24,6 +24,6 @@ public interface Sink<T> extends Closeable
 {
     // Can't help but think it should be "Pipe"
     // If Sync looses Sync(boolean), then make this "extends Sync"
-    void send(T item) ;
+    boolean send(T item) ;
     void flush() ;
 }

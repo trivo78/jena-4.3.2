@@ -60,16 +60,17 @@ public class BasicPattern implements Iterable<Triple> {
         return new BasicPattern(triples) ;
     }
 
-    public void add(Triple t) {
-        triples.add(t) ;
+    public boolean add(Triple t) {
+        return triples.add(t) ;
     }
 
     public void addAll(BasicPattern other) {
         triples.addAll(other.triples) ;
     }
 
-    public void add(int i, Triple t) {
+    public boolean add(int i, Triple t) {
         triples.add(i, t) ;
+        return true;
     }
 
     public Triple get(int i) {

@@ -34,19 +34,24 @@ public class TripleCollectorBGP implements TripleCollectorMark
     public BasicPattern getBGP() { return bgp ; }
     
     @Override
-    public void addTriple(Triple t) { bgp.add(t) ; }
+    public boolean addTriple(Triple t) { 
+        return bgp.add(t) ; 
+    }
     
     @Override
     public int mark() { return bgp.size() ; }
     
     @Override
-    public void addTriple(int index, Triple t) { bgp.add(index, t) ; }
+    public boolean addTriple(int index, Triple t) { 
+        bgp.add(index, t) ; 
+        return true;
+    }
     
     @Override
-    public void addTriplePath(TriplePath path)
+    public boolean addTriplePath(TriplePath path)
     { throw new ARQException("Triples-only collector") ; }
 
     @Override
-    public void addTriplePath(int index, TriplePath path)
+    public boolean addTriplePath(int index, TriplePath path)
     { throw new ARQException("Triples-only collector") ; }
 }

@@ -87,9 +87,10 @@ public class SinkProgress<X> implements Sink<X>
     
     
     @Override
-    public void send(X item)
+    public boolean send(X item)
     {
         oneItem() ;
+        return true;
     }
 
     protected void oneItem()

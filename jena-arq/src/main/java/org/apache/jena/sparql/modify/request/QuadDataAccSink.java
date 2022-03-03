@@ -18,6 +18,8 @@
 
 package org.apache.jena.sparql.modify.request;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.jena.atlas.lib.Sink ;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple ;
@@ -27,6 +29,29 @@ import org.apache.jena.sparql.core.Quad ;
 /** Accumulate quads (excluding allowing variables) during parsing. */
 public class QuadDataAccSink extends QuadAccSink
 {
+    private final List<Quad>        quadList = new ArrayList<>();
+    
+    public List<Quad>  getQuadList() {
+        return quadList;
+    }    public boolean addQuad(Quad quad)
+    {
+        final boolean f = super.addQuad(quad);
+        if (f)
+            quadList.add(quad);
+        return f;
+    }
+
+    @Override
+    public boolean addTriple(Triple triple)
+    {
+        final boolean f = super.addTriple(triple);
+        if (f) {
+            final Quad q = new Quad(super.getGraph(),triple);
+            quadList.add(q);
+        }
+        return f;
+    }
+    
     public QuadDataAccSink(Sink<Quad> sink) {
         super(sink);
     }

@@ -40,10 +40,12 @@ public class SinkSplit<T> implements Sink<T>
     }
         
     @Override
-    public void send(T item)
+    public boolean send(T item)
     { 
-        sink1.send(item) ;
-        sink2.send(item) ;
+        
+        final boolean f1 = sink1.send(item) ;
+        final boolean f2 = sink2.send(item) ;
+        return f1 && f2;
     }
 
     @Override

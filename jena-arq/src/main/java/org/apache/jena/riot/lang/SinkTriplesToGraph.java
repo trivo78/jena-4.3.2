@@ -66,9 +66,9 @@ public class SinkTriplesToGraph implements Sink<Triple>
     }
 
     @Override
-    public void send(Triple triple)
+    public boolean send(Triple triple)
     {
-        graph.add(triple) ;
+        return graph.add(triple) ;
     }
 
     @Override

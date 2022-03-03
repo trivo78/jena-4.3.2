@@ -79,7 +79,7 @@ public interface DataBag<T> extends Sink<T>, Iterable<T>, Closeable {
      *
      * @param t tuple to add.
      */
-    void add(T t);
+    boolean add(T t);
 
     /**
      * Add contents of an Iterable to the bag.

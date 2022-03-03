@@ -25,7 +25,9 @@ public class SinkNull<T> implements Sink<T>
     public static <X> SinkNull<X> create() { return new SinkNull<>() ; }
     
     /*@Override*/ @Override
-    public void send(T thing)  {}
+    public boolean send(T thing)  {
+        return true;
+    }
     /*@Override*/ @Override
     public void close() {}
     /*@Override*/ @Override

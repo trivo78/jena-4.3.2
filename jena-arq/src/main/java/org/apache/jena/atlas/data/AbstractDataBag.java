@@ -61,8 +61,8 @@ public abstract class AbstractDataBag<E> implements DataBag<E>
     }
 
     @Override
-    public void send(E item) {
-        add(item);
+    public boolean send(E item) {
+        return add(item);
     }
 
     /**

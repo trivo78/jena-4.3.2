@@ -78,7 +78,7 @@ public class BindingOutputStream implements Sink<Binding>
     
     public final void write(Binding binding) { send(binding) ; }
     @Override
-    public void send(Binding binding)
+    public boolean send(Binding binding)
     {
         if ( needOutputPMap )
         {
@@ -122,7 +122,7 @@ public class BindingOutputStream implements Sink<Binding>
             {
                 bw.write(".\n") ;
                 needOutputVars = false ;
-                return ;
+                return true;
             }
 
             bw.write("VARS") ;
@@ -148,6 +148,7 @@ public class BindingOutputStream implements Sink<Binding>
             bw.write(" ") ;
         }
         bw.write(".\n") ;
+        return true;
     }
 
     private static boolean needVars(List<Var> vars, Binding binding)

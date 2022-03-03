@@ -45,23 +45,27 @@ public class ElementTriplesBlock extends Element implements TripleCollectorMark
     public boolean isEmpty() { return pattern.isEmpty() ; }
     
     @Override
-    public void addTriple(Triple t)
-    { pattern.add(t) ; }
+    public boolean addTriple(Triple t){ 
+        return pattern.add(t) ; 
+    }
     
     @Override
     public int mark() { return pattern.size() ; }
     
     @Override
-    public void addTriple(int index, Triple t)
-    { pattern.add(index, t) ; }
+    public boolean addTriple(int index, Triple t){ 
+        return pattern.add(index, t) ; 
+    }
     
     @Override
-    public void addTriplePath(TriplePath path)
-    { throw new ARQException("Triples-only collector") ; }
+    public boolean addTriplePath(TriplePath path){ 
+        throw new ARQException("Triples-only collector") ; 
+    }
 
     @Override
-    public void addTriplePath(int index, TriplePath path)
-    { throw new ARQException("Triples-only collector") ; }
+    public boolean addTriplePath(int index, TriplePath path){ 
+        throw new ARQException("Triples-only collector") ; 
+    }
     
     public BasicPattern getPattern() { return pattern ; }
     public Iterator<Triple> patternElts() { return pattern.iterator(); }

@@ -73,11 +73,11 @@ public class SinkQuadBracedOutput implements Sink<Quad>, Closeable
     }
 
     @Override
-    public void send(Quad quad) {
-        send(quad.getGraph(), quad.asTriple()) ;
+    public boolean send(Quad quad) {
+        return send(quad.getGraph(), quad.asTriple()) ;
     }
 
-    public void send(Node graphName, Triple triple) {
+    public boolean send(Node graphName, Triple triple) {
         checkOpen() ;
         if ( Quad.isDefaultGraph(graphName) ) {
             graphName = null ;
@@ -101,6 +101,7 @@ public class SinkQuadBracedOutput implements Sink<Quad>, Closeable
         out.println(" .") ;
 
         currentGraph = graphName ;
+        return true;
     }
 
     private void output(Node node) {

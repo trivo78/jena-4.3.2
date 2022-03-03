@@ -116,7 +116,7 @@ public class SortedDataBag<E> extends AbstractDataBag<E> {
     }
 
     @Override
-    public void add(E item) {
+    public boolean add(E item) {
         checkClosed();
         if ( finishedAdding )
             throw new AtlasException("SortedDataBag: Cannot add any more items after the writing phase is complete.");
@@ -125,10 +125,13 @@ public class SortedDataBag<E> extends AbstractDataBag<E> {
             spill();
         }
 
+        boolean ret = false;
         if ( memory.add(item) ) {
             policy.increment(item);
             size++;
+            ret = true;
         }
+        return ret;
     }
 
     @SuppressWarnings({"unchecked"})

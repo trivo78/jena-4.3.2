@@ -29,14 +29,15 @@ public class SinkToQueue<T> implements Sink<T>
     public SinkToQueue(BlockingQueue<T> queue) { this.queue = queue ; }
 
     @Override
-    public void send(T item)
+    public boolean send(T item)
     {
         try
         {
             if (Thread.interrupted()) throw new InterruptedException();
             // Hopefully we'll never get passed null... but just in case
-            if (null == item) return;
+            if (null == item) return false;
             queue.put(item);
+            return true;
         }
         catch (InterruptedException e)
         {

@@ -78,7 +78,7 @@ public class DefaultDataBag<E> extends AbstractDataBag<E> {
     }
 
     @Override
-    public void add(E item) {
+    public boolean add(E item) {
         checkClosed();
         if ( finishedAdding )
             throw new AtlasException("DefaultDataBag: Cannot add any more items after the writing phase is complete.");
@@ -97,6 +97,7 @@ public class DefaultDataBag<E> extends AbstractDataBag<E> {
 
         policy.increment(item);
         size++;
+        return true;
     }
 
     private void spill() {

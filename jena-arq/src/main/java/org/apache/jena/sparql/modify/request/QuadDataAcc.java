@@ -69,14 +69,15 @@ public class QuadDataAcc extends QuadDataAccSink implements TripleCollectorMark
     }
 
     @Override
-    public void addTriple(int index, Triple triple)
+    public boolean addTriple(int index, Triple triple)
     {
         check(triple) ;
         quads.add(index, new Quad(graphNode, triple)) ;
+        return true;
     }
 
     @Override
-    public void addTriplePath(int index, TriplePath tPath)
+    public boolean addTriplePath(int index, TriplePath tPath)
     {
         throw new UnsupportedOperationException("Can't add paths to quads") ;
     }

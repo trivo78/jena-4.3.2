@@ -18,7 +18,7 @@
 
 package org.apache.jena.sparql.modify;
 
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.apache.jena.atlas.lib.Sink;
 import org.apache.jena.sparql.core.DatasetGraph ;
@@ -85,10 +85,10 @@ public class UpdateEngineMain extends UpdateEngineBase
     }
 
     /** Direct a sink to a Consumer. */ 
-    private <X> Sink<X> sink(Consumer<X> action) {
+    private <X> Sink<X> sink(Predicate<X> action) {
         return new Sink<X>() {
             @Override
-            public void send(X item) { action.accept(item); }
+            public boolean send(X item) { return  action.test(item); }
 
             @Override public void close() {} 
 

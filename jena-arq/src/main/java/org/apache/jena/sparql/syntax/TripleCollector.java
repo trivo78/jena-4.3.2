@@ -24,7 +24,7 @@ import org.apache.jena.sparql.core.TriplePath ;
 
 public interface TripleCollector
 {
-    public void addTriple(Triple t) ;
+    public boolean addTriple(Triple t) ;
     
-    public void addTriplePath(TriplePath tPath) ;
+    public boolean addTriplePath(TriplePath tPath) ;
 }

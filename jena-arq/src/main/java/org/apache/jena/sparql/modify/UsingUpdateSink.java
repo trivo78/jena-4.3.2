@@ -38,7 +38,7 @@ public class UsingUpdateSink implements UpdateSinkWithReturn {
     }
 
     @Override
-    public void send(Update update) {
+    public boolean send(Update update) {
         // ---- check USING/USING NAMED/WITH not used.
         // ---- update request to have USING/USING NAMED
         if ( null != usingList && usingList.usingIsPresent() ) {
@@ -52,7 +52,7 @@ public class UsingUpdateSink implements UpdateSinkWithReturn {
                     upu.addUsingNamed(node);
             }
         }
-        sink.send(update);
+        return sink.send(update);
     }
 
     @Override

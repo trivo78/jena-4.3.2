@@ -34,8 +34,9 @@ public class UpdateRequestSink implements UpdateSink
     }
 
     @Override
-    public void send(Update update) {
+    public boolean send(Update update) {
         updateRequest.add(update);
+        return true;
     }
 
     @Override

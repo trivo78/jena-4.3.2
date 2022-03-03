@@ -28,7 +28,9 @@ public class SinkToCollection<T> implements Sink<T>
     public SinkToCollection(Collection<T> c) { this.c = c ; }
 
     @Override
-    public void send(T item) { c.add(item); }
+    public boolean send(T item) { 
+        return c.add(item);
+    }
 
     @Override
     public void flush() {}

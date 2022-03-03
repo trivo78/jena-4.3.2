@@ -35,8 +35,9 @@ public class SinkWrapper<T> implements Sink<T>
     { sink.flush(); }
 
     @Override
-    public void send(T item)
-    { sink.send(item) ; }
+    public boolean send(T item){ 
+        return sink.send(item) ; 
+    }
 
     @Override
     public void close()

@@ -34,9 +34,13 @@ public class PathBlock implements Iterable<TriplePath>
     public PathBlock() {}
     public PathBlock(PathBlock other) {triplePaths.addAll(other.triplePaths) ; }
 
-    public void add(TriplePath tp) { triplePaths.add(tp) ; }
+    public boolean add(TriplePath tp) { 
+        return  triplePaths.add(tp) ; 
+    }
     public void addAll(PathBlock other) { triplePaths.addAll(other.triplePaths) ; }
-    public void add(int i, TriplePath tp) { triplePaths.add(i, tp) ; }
+    public void add(int i, TriplePath tp) { 
+        triplePaths.add(i, tp) ; 
+    }
 
     public TriplePath get(int i) { return triplePaths.get(i) ; }
     @Override

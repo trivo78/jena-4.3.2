@@ -39,8 +39,9 @@ public class UpdateVisitorSinkWithReturn implements UpdateSinkWithReturn{
     }
 
     @Override
-    public void send(Update update) {
+    public boolean send(Update update) {
         update.visit(worker);
+        return true;
     }
     
     // The sink for INSERT DATA, DELETE DATA to go straight to sink handlers.

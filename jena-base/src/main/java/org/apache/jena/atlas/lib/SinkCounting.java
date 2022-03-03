@@ -31,10 +31,10 @@ public final class SinkCounting<T> extends SinkWrapper<T>
     { super(new SinkNull<T>()) ; }
     
     @Override
-    public void send(T thing)
+    public boolean send(T thing)
     {
         count++ ;
-        super.send(thing) ;
+        return super.send(thing) ;
     }
     
     public long getCount() { return count ; } 

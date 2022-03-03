@@ -76,7 +76,6 @@ public class HexTable implements QuadTable {
     @Override
     public boolean add(final Quad q) {
         final lambdaBoolWrapper bw = new lambdaBoolWrapper();
-        bw.result = true;
         indexBlock().values().forEach(
                 index -> { 
                     final boolean f = index.add(q);

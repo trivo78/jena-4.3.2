@@ -36,12 +36,12 @@ public class SinkQuadsToDataset implements Sink<Quad>
     }
     
     @Override
-    public void send(Quad quad)
+    public boolean send(Quad quad)
     {
         if ( quad.isTriple() )
-            dataset.getDefaultGraph().add(quad.asTriple()) ;
+            return dataset.getDefaultGraph().add(quad.asTriple()) ;
         else
-            dataset.add(quad) ;
+            return dataset.add(quad) ;
     }
 
     @Override

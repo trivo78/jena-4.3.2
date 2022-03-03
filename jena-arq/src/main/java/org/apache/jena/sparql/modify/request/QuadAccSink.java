@@ -47,21 +47,21 @@ public class QuadAccSink implements TripleCollector, Closeable
     
     public Node getGraph()    { return graphNode ; }
     
-    public void addQuad(Quad quad)
+    public boolean addQuad(Quad quad)
     {
         check(quad) ;
-        sink.send(quad) ;
+        return sink.send(quad) ;
     }
 
     @Override
-    public void addTriple(Triple triple)
+    public boolean addTriple(Triple triple)
     {
         check(triple) ;
-        sink.send(new Quad(graphNode, triple)) ;
+        return sink.send(new Quad(graphNode, triple)) ;
     }
 
     @Override
-    public void addTriplePath(TriplePath tPath)
+    public boolean addTriplePath(TriplePath tPath)
     { throw new UnsupportedOperationException("Can't add paths to quads") ; }
 
     @Override

@@ -1725,11 +1725,11 @@ startUpdateOperation() ;
       break;
       }
     case INSERT_DATA:{
-      InsertData();
+      ret = InsertData();
       break;
       }
     case DELETE_DATA:{
-      DeleteData();
+      ret = DeleteData();
       break;
       }
     default:
@@ -1737,7 +1737,12 @@ startUpdateOperation() ;
       jj_consume_token(-1);
       throw new ParseException();
     }
-if (null != up) ret = emitUpdate(up) ;
+    if (ret == null) {
+        if (null != up)  {
+            ret = emitUpdate(up) ;
+        
+        }
+    }
     finishUpdateOperation() ;
     
     return ret;
@@ -1878,22 +1883,25 @@ silent=true ;
     throw new Error("Missing return statement in function");
   }
 
-  final public void InsertData() throws ParseException {QuadDataAccSink qd = createInsertDataSink() ; Token t ;
+  final public UpdateResult InsertData() throws ParseException {QuadDataAccSink qd = createInsertDataSink() ; Token t ;
     t = jj_consume_token(INSERT_DATA);
-int beginLine = t.beginLine; int beginColumn = t.beginColumn; t = null;
-startDataInsert(qd, beginLine, beginColumn) ;
+    int beginLine = t.beginLine; int beginColumn = t.beginColumn; t = null;
+    startDataInsert(qd, beginLine, beginColumn) ;
     QuadData(qd);
-finishDataInsert(qd, beginLine, beginColumn) ;
+    finishDataInsert(qd, beginLine, beginColumn) ;
     qd.close() ;
+    return new UpdateResult(null,qd.getQuadList());
+
   }
 
-  final public void DeleteData() throws ParseException {QuadDataAccSink qd = createDeleteDataSink() ; Token t ;
+  final public UpdateResult DeleteData() throws ParseException {QuadDataAccSink qd = createDeleteDataSink() ; Token t ;
     t = jj_consume_token(DELETE_DATA);
-int beginLine = t.beginLine; int beginColumn = t.beginColumn; t = null;
-startDataDelete(qd, beginLine, beginColumn) ;
+    int beginLine = t.beginLine; int beginColumn = t.beginColumn; t = null;
+    startDataDelete(qd, beginLine, beginColumn) ;
     QuadData(qd);
-finishDataDelete(qd, beginLine, beginColumn) ;
+    finishDataDelete(qd, beginLine, beginColumn) ;
     qd.close() ;
+    return new UpdateResult(qd.getQuadList(),null);
   }
 
   final public Update DeleteWhere() throws ParseException {QuadAcc qp = new QuadAcc() ; Token t ;

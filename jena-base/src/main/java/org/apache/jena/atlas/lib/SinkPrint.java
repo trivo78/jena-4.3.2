@@ -32,9 +32,10 @@ public class SinkPrint<T> implements Sink<T>
     { this.out = out ; }
     
     @Override
-    public void send(T item)
+    public boolean send(T item)
     {
         out.println("Sink: "+item) ;
+        return true;
     }
 
     @Override 
