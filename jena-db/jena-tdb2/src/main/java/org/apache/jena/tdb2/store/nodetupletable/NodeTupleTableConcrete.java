@@ -80,7 +80,6 @@ public class NodeTupleTableConcrete implements NodeTupleTable
         } finally
         {
             finishWrite();
-            return false;
         }
         
         
@@ -101,12 +100,12 @@ public class NodeTupleTableConcrete implements NodeTupleTable
             }
 
             Tuple<NodeId> t = TupleFactory.create(n);
-            tupleTable.delete(t);
+            return tupleTable.delete(t);
         } finally
         {
             finishWrite();
         }
-        return true;
+        
     }
 
     @Override

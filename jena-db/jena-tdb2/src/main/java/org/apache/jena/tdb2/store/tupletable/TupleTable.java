@@ -90,13 +90,15 @@ public class TupleTable implements Sync, Closeable
         // the indexes when the triple is already present.
         if ( tupleLen != t.len() )
             throw new TDBException(format("Mismatch: inserting tuple of length %d into a table of tuples of length %d", t.len(), tupleLen));
+        boolean ret = false;
         for ( int i = 0; i < indexes.length ; i++ ) {
             if ( indexes[i] == null ) continue;
-            indexes[i].add(t);
+            final boolean f  = indexes[i].add(t);
+            ret = ret || f;
             syncNeeded = true;
         }
         
-        return true;
+        return ret;
     }
 
     /** Insert tuples */
@@ -110,15 +112,18 @@ public class TupleTable implements Sync, Closeable
     }
 
     /** Delete a tuple */
-    public void delete( Tuple<NodeId> t ) {
+    public boolean delete( Tuple<NodeId> t ) {
         if ( tupleLen != t.len() )
             throw new TDBException(format("Mismatch: deleting tuple of length %d from a table of tuples of length %d", t.len(), tupleLen));
 
+        boolean ret = false;
         for ( TupleIndex index : indexes ) {
             if ( index == null )
                 continue;
-            index.delete( t );
+            final boolean f = index.delete( t );
+            ret = ret || f;
         }
+        return ret;
     }
 
     /** Delete tuples */

@@ -30,10 +30,10 @@ import org.apache.jena.tdb2.store.NodeId;
 public interface TupleIndex extends Sync, Closeable
 {
     /** Insert a tuple */
-    public void add(Tuple<NodeId> tuple);
+    public boolean add(Tuple<NodeId> tuple);
 
     /** Delete a tuple */
-    public void delete(Tuple<NodeId> tuple);
+    public boolean delete(Tuple<NodeId> tuple);
 
     /** Insert tuples */
     public void addAll(Collection<Tuple<NodeId>> tuples);

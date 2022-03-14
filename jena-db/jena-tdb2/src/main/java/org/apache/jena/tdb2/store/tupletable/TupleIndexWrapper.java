@@ -37,8 +37,8 @@ public class TupleIndexWrapper implements TupleIndex
     }
 
     @Override
-    public void add(Tuple<NodeId> tuple) {
-        index.add(tuple);
+    public boolean add(Tuple<NodeId> tuple) {
+        return index.add(tuple);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class TupleIndexWrapper implements TupleIndex
     }
 
     @Override
-    public void delete(Tuple<NodeId> tuple) {
-        index.delete(tuple);
+    public boolean delete(Tuple<NodeId> tuple) {
+        return index.delete(tuple);
     }
 
     @Override

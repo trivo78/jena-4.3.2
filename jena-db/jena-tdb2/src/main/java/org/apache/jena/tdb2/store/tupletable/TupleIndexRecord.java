@@ -89,16 +89,16 @@ public class TupleIndexRecord extends TupleIndexBase
 
     /** Insert a tuple */
     @Override
-    protected void performAdd(Tuple<NodeId> tuple) {
+    protected boolean performAdd(Tuple<NodeId> tuple) {
         Record r = TupleLib.record(factory, tuple, tupleMap);
-        index.insert(r);
+        return index.insert(r);
     }
 
     /** Delete a tuple */
     @Override
-    protected void performDelete(Tuple<NodeId> tuple) {
+    protected boolean performDelete(Tuple<NodeId> tuple) {
         Record r = TupleLib.record(factory, tuple, tupleMap);
-        index.delete(r);
+        return index.delete(r);
     }
 
     /** Insert tuples */

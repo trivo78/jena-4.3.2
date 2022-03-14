@@ -47,34 +47,34 @@ public abstract class TupleIndexBase implements TupleIndex
     }
 
     /** Add tuple worker: Tuple passed in unmapped (untouched) order */
-    protected abstract void performAdd(Tuple<NodeId> tuple);
+    protected abstract boolean performAdd(Tuple<NodeId> tuple);
 
     /** Delete tuple worker: Tuple passed in unmapped (untouched) order */
-    protected abstract void performDelete(Tuple<NodeId> tuple);
+    protected abstract boolean performDelete(Tuple<NodeId> tuple);
 
     /** Find tuples worker: Tuple passed in unmapped (untouched) order */
     protected abstract Iterator<Tuple<NodeId>> performFind(Tuple<NodeId> tuple);
 
     /** Insert a tuple */
     @Override
-    public final void add(Tuple<NodeId> tuple)
+    public final boolean add(Tuple<NodeId> tuple)
     {
         if ( Check ) {
             if ( tupleLength != tuple.len() )
                 throw new TDBException(String.format("Mismatch: tuple length %d / index for length %d", tuple.len(), tupleLength));
         }
-        performAdd(tuple);
+        return performAdd(tuple);
     }
     /** Delete a tuple */
     @Override
-    public final void delete(Tuple<NodeId> tuple)
+    public final boolean delete(Tuple<NodeId> tuple)
     {
         if ( Check ) {
             if ( tupleLength != tuple.len() )
                 throw new TDBException(String.format("Mismatch: tuple length %d / index for length %d", tuple.len(), tupleLength));
         }
 
-        performDelete(tuple);
+        return performDelete(tuple);
     }
 
     /** Find all matching tuples - a slot of NodeId.NodeIdAny (or null) means match any.
