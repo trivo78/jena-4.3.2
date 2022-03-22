@@ -19,6 +19,7 @@
 package org.apache.jena.sparql.modify.request;
 
 import org.apache.jena.graph.Node ;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.NodeIsomorphismMap ;
 import org.apache.jena.update.Update ;
 
@@ -27,14 +28,17 @@ public abstract class UpdateDropClear extends Update
     protected final Target target ;
     protected final boolean silent ;
     
-    protected UpdateDropClear(String iri, boolean silent)
-    { this(Target.create(iri), silent) ; }
+    protected UpdateDropClear(String iri, boolean silent,Context connCtx)
+    { this(Target.create(iri), silent,connCtx) ; }
     
-    protected UpdateDropClear(Target target, boolean silent)
-    { this.target = target ; this.silent = silent ; }
+    protected UpdateDropClear(Target target, boolean silent,Context connCtx){ 
+        super(connCtx);
+        this.target = target ; 
+        this.silent = silent ; 
+    }
     
-    protected UpdateDropClear(Node target, boolean silent)
-    { this(Target.create(target), silent) ; }
+    protected UpdateDropClear(Node target, boolean silent,Context connCtx)
+    { this(Target.create(target), silent,connCtx) ; }
 
     public Target getTarget() { return target ; }
     public boolean isSilent() { return silent ; }

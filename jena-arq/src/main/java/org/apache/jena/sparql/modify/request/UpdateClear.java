@@ -20,16 +20,17 @@ package org.apache.jena.sparql.modify.request;
 
 import org.apache.jena.graph.Node ;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 
 public class UpdateClear extends UpdateDropClear
 {
-    public UpdateClear(String iri, boolean silent)      { super(iri, silent) ; }
-    public UpdateClear(Target target, boolean silent)   { super(target, silent) ; }
-    public UpdateClear(Node target, boolean silent)     { super(target, silent) ; }
+    public UpdateClear(String iri, boolean silent,Context connCtx)      { super(iri, silent,connCtx) ; }
+    public UpdateClear(Target target, boolean silent,Context connCtx)   { super(target, silent,connCtx) ; }
+    public UpdateClear(Node target, boolean silent,Context connCtx)     { super(target, silent,connCtx) ; }
     
-    public UpdateClear(String iri)                      { super(iri, false) ; }
-    public UpdateClear(Target target)                   { super(target, false) ; }
-    public UpdateClear(Node target)                     { super(target, false) ; }
+    public UpdateClear(String iri,Context connCtx)                      { super(iri, false,connCtx) ; }
+    public UpdateClear(Target target,Context connCtx)                   { super(target, false,connCtx) ; }
+    public UpdateClear(Node target,Context connCtx)                     { super(target, false,connCtx) ; }
     
     @Override
     public UpdateResult visit(UpdateVisitor visitor){ 

@@ -39,7 +39,7 @@ public class TestUpdateBuild {
 
     @Test public void update_build_01() {
         DatasetGraph dsg = DatasetGraphFactory.createTxnMem();
-        UpdateExec.newBuilder()
+        UpdateExec.newBuilder(null)
             .dataset(dsg)
             .update(update)
             .build()
@@ -53,7 +53,7 @@ public class TestUpdateBuild {
         UpdateRequest update = UpdateFactory.create(insertStr);
 
         Binding binding = SSE.parseBinding("(binding (?x 123))");
-        UpdateExec.newBuilder()
+        UpdateExec.newBuilder(null)
             .dataset(dsg)
             .update(update)
             .substitution(binding)
@@ -68,7 +68,7 @@ public class TestUpdateBuild {
         UpdateRequest update = UpdateFactory.create(insertStr);
 
         Binding binding = SSE.parseBinding("(binding (?x 456))");
-        UpdateExec.newBuilder()
+        UpdateExec.newBuilder(null)
             .dataset(dsg)
             .update(update)
             .substitution(binding)
@@ -81,7 +81,7 @@ public class TestUpdateBuild {
         DatasetGraph dsg = DatasetGraphFactory.createTxnMem();
         assertTrue(dsg.isEmpty());
         dsg.execute(()->{
-            UpdateExec.newBuilder()
+            UpdateExec.newBuilder(null)
                 .dataset(dsg)
                 .update("INSERT DATA { <x:s> <x:p> <x:o> }")
                 .execute();
@@ -93,7 +93,7 @@ public class TestUpdateBuild {
         DatasetGraph dsg = DatasetGraphFactory.createTxnMem();
         assertTrue(dsg.isEmpty());
         dsg.execute(()->{
-            UpdateExec.newBuilder()
+            UpdateExec.newBuilder(null)
                 .dataset(dsg)
                 .update("INSERT DATA { <x:s> <x:p> <x:o1> }")
                 .update("INSERT DATA { <x:s> <x:p> <x:o2> }")

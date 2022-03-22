@@ -46,7 +46,7 @@ public class UpdateEngineNonStreaming extends UpdateEngineMain
     public UpdateEngineNonStreaming(DatasetGraph datasetGraph, Binding inputBinding, Context context)
     {
         super(datasetGraph, inputBinding, context) ;
-        accRequests = new UpdateRequest();
+        accRequests = new UpdateRequest(context);
         updateSink = new UpdateRequestSink(accRequests)
         {
             @Override

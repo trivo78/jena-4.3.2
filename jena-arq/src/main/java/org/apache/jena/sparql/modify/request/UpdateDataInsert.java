@@ -19,10 +19,13 @@
 package org.apache.jena.sparql.modify.request;
 
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 
 public class UpdateDataInsert extends UpdateData
 {
-    public UpdateDataInsert(QuadDataAcc qd) { super(qd) ; }
+    
+    public UpdateDataInsert(QuadDataAcc qd)                 { super(qd,null) ; }
+    public UpdateDataInsert(QuadDataAcc qd,Context connCtx) { super(qd,connCtx) ; }
 
     @Override
     public UpdateResult visit(UpdateVisitor visitor){ 

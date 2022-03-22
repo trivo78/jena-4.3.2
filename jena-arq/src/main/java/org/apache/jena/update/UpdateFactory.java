@@ -32,27 +32,37 @@ import org.apache.jena.sparql.modify.UpdateRequestSink ;
 import org.apache.jena.sparql.modify.UpdateSink ;
 import org.apache.jena.sparql.modify.UsingList ;
 import org.apache.jena.sparql.modify.UsingUpdateSink ;
+import org.apache.jena.sparql.util.Context;
 
 public class UpdateFactory
 {
     /** Create an empty UpdateRequest */
-    public static UpdateRequest create() { return new UpdateRequest() ; }
+    public static UpdateRequest create(Context ctx) { return new UpdateRequest(ctx) ; }
+    
+    public static UpdateRequest create() { return new UpdateRequest(null) ; }
 
     /**  Create an UpdateRequest by parsing from a string.
      * See also <tt>read</tt> operations for parsing contents of a file.
      * @param string    The update request as a string.
      */
+    public static UpdateRequest create(String string,Context ctx) {
+        return create(string, defaultUpdateSyntax,ctx);
+    }
+
     public static UpdateRequest create(String string) {
-        return create(string, defaultUpdateSyntax);
+        return create(string, defaultUpdateSyntax,null);
     }
-
+    
     /**  Create an UpdateRequest by parsing from a string.
      * See also <tt>read</tt> operations for parsing contents of a file.
      * @param string    The update request as a string.
      * @param syntax    The update language syntax
      */
+    public static UpdateRequest create(String string, Syntax syntax,Context ctx) {
+        return create(string, null, syntax,ctx);
+    }
     public static UpdateRequest create(String string, Syntax syntax) {
-        return create(string, null, syntax);
+        return create(string, null, syntax,null);
     }
 
     /**  Create an UpdateRequest by parsing from a string.
@@ -60,8 +70,11 @@ public class UpdateFactory
      * @param string    The update request as a string.
      * @param baseURI   The base URI for resolving relative URIs.
      */
+    public static UpdateRequest create(String string, String baseURI,Context ctx) {
+        return create(string, baseURI, defaultUpdateSyntax,ctx);
+    }
     public static UpdateRequest create(String string, String baseURI) {
-        return create(string, baseURI, defaultUpdateSyntax);
+        return create(string, baseURI, defaultUpdateSyntax,null);
     }
 
     /**  Create an UpdateRequest by parsing from a string.
@@ -70,8 +83,13 @@ public class UpdateFactory
      * @param baseURI   The base URI for resolving relative URIs.
      * @param syntax    The update language syntax
      */
+    public static UpdateRequest create(String string, String baseURI, Syntax syntax,Context ctx) {
+        UpdateRequest request = new UpdateRequest(ctx);
+        make(request, string, baseURI, syntax);
+        return request;
+    }
     public static UpdateRequest create(String string, String baseURI, Syntax syntax) {
-        UpdateRequest request = new UpdateRequest();
+        UpdateRequest request = new UpdateRequest(null);
         make(request, string, baseURI, syntax);
         return request;
     }
@@ -125,32 +143,32 @@ public class UpdateFactory
     }
 
     /** Create an UpdateRequest by reading it from a file */
-    public static UpdateRequest read(UsingList usingList, String fileName) {
-        return read(usingList, fileName, null, defaultUpdateSyntax);
+    public static UpdateRequest read(UsingList usingList, String fileName,Context ctx) {
+        return read(usingList, fileName, null, defaultUpdateSyntax,ctx);
     }
 
     /** Create an UpdateRequest by reading it from a file */
-    public static UpdateRequest read(String fileName) {
-        return read(fileName, fileName, defaultUpdateSyntax);
+    public static UpdateRequest read(String fileName,Context ctx) {
+        return read(fileName, fileName, defaultUpdateSyntax,ctx);
     }
 
     /** Create an UpdateRequest by reading it from a file */
-    public static UpdateRequest read(String fileName, Syntax syntax) {
-        return read(fileName, fileName, syntax);
+    public static UpdateRequest read(String fileName, Syntax syntax,Context ctx) {
+        return read(fileName, fileName, syntax,ctx);
     }
 
     /** Create an UpdateRequest by reading it from a file */
-    public static UpdateRequest read(UsingList usingList, String fileName, Syntax syntax) {
-        return read(usingList, fileName, fileName, syntax);
+    public static UpdateRequest read(UsingList usingList, String fileName, Syntax syntax,Context ctx) {
+        return read(usingList, fileName, fileName, syntax,ctx);
     }
 
     /** Create an UpdateRequest by reading it from a file */
-    public static UpdateRequest read(String fileName, String baseURI, Syntax syntax) {
-        return read(null, fileName, baseURI, syntax);
+    public static UpdateRequest read(String fileName, String baseURI, Syntax syntax,Context ctx) {
+        return read(null, fileName, baseURI, syntax,ctx);
     }
 
     /** Create an UpdateRequest by reading it from a file */
-    public static UpdateRequest read(UsingList usingList, String fileName, String baseURI, Syntax syntax) {
+    public static UpdateRequest read(UsingList usingList, String fileName, String baseURI, Syntax syntax,Context ctx) {
         InputStream in = null;
         try {
             if ( fileName.equals("-") )
@@ -160,7 +178,7 @@ public class UpdateFactory
                 if ( in == null )
                     throw new UpdateException("File could not be opened: " + fileName);
             }
-            return read(usingList, in, baseURI, syntax);
+            return read(usingList, in, baseURI, syntax,ctx);
         }
         finally {
             if ( in != null && !fileName.equals("-") )
@@ -174,8 +192,8 @@ public class UpdateFactory
      *
      * @param input The source of the update request (must be UTF-8).
      */
-    public static UpdateRequest read(InputStream input) {
-        return read(input, defaultUpdateSyntax);
+    public static UpdateRequest read(InputStream input,Context ctx) {
+        return read(input, defaultUpdateSyntax,ctx);
     }
 
     /**
@@ -185,8 +203,8 @@ public class UpdateFactory
      * @param usingList The list of externally defined USING statements
      * @param input The source of the update request (must be UTF-8).
      */
-    public static UpdateRequest read(UsingList usingList, InputStream input) {
-        return read(usingList, input, defaultUpdateSyntax);
+    public static UpdateRequest read(UsingList usingList, InputStream input,Context ctx) {
+        return read(usingList, input, defaultUpdateSyntax,ctx);
     }
 
     /**
@@ -196,8 +214,8 @@ public class UpdateFactory
      * @param input The source of the update request (must be UTF-8).
      * @param syntax The update language syntax
      */
-    public static UpdateRequest read(InputStream input, Syntax syntax) {
-        return read(input, null, syntax);
+    public static UpdateRequest read(InputStream input, Syntax syntax,Context ctx) {
+        return read(input, null, syntax,ctx);
     }
 
     /**
@@ -208,8 +226,8 @@ public class UpdateFactory
      * @param input The source of the update request (must be UTF-8).
      * @param syntax The update language syntax
      */
-    public static UpdateRequest read(UsingList usingList, InputStream input, Syntax syntax) {
-        return read(usingList, input, null, syntax);
+    public static UpdateRequest read(UsingList usingList, InputStream input, Syntax syntax,Context ctx) {
+        return read(usingList, input, null, syntax,ctx);
     }
 
     /**
@@ -219,8 +237,8 @@ public class UpdateFactory
      * @param input The source of the update request (must be UTF-8).
      * @param baseURI The base URI for resolving relative URIs.
      */
-    public static UpdateRequest read(InputStream input, String baseURI) {
-        return read(input, baseURI, defaultUpdateSyntax);
+    public static UpdateRequest read(InputStream input, String baseURI,Context ctx) {
+        return read(input, baseURI, defaultUpdateSyntax,ctx);
     }
 
     /**
@@ -231,8 +249,8 @@ public class UpdateFactory
      * @param input The source of the update request (must be UTF-8).
      * @param baseURI The base URI for resolving relative URIs.
      */
-    public static UpdateRequest read(UsingList usingList, InputStream input, String baseURI) {
-        return read(usingList, input, baseURI, defaultUpdateSyntax);
+    public static UpdateRequest read(UsingList usingList, InputStream input, String baseURI,Context ctx) {
+        return read(usingList, input, baseURI, defaultUpdateSyntax,ctx);
     }
 
     /**
@@ -243,8 +261,8 @@ public class UpdateFactory
      * @param baseURI The base URI for resolving relative URIs.
      * @param syntax The update language syntax
      */
-    public static UpdateRequest read(InputStream input, String baseURI, Syntax syntax) {
-        return read(null, input, baseURI, syntax);
+    public static UpdateRequest read(InputStream input, String baseURI, Syntax syntax,Context ctx) {
+        return read(null, input, baseURI, syntax,ctx);
     }
 
     /**
@@ -256,8 +274,8 @@ public class UpdateFactory
      * @param baseURI The base URI for resolving relative URIs.
      * @param syntax The update language syntax
      */
-    public static UpdateRequest read(UsingList usingList, InputStream input, String baseURI, Syntax syntax) {
-        UpdateRequest request = new UpdateRequest();
+    public static UpdateRequest read(UsingList usingList, InputStream input, String baseURI, Syntax syntax,Context ctx) {
+        UpdateRequest request = new UpdateRequest(ctx);
         make(request, usingList, input, baseURI, syntax);
         return request;
     }

@@ -33,6 +33,7 @@ import org.apache.jena.sparql.modify.request.UpdateSerializer ;
 import org.apache.jena.sparql.modify.request.UpdateWriter ;
 import org.apache.jena.sparql.serializer.SerializerRegistry ;
 import org.apache.jena.sparql.serializer.UpdateSerializerFactory ;
+import org.apache.jena.sparql.util.Context;
 
 /**
  * A SPARQL Update consists of a number of operations (e.g. INSERT, CLEAR). A
@@ -41,13 +42,20 @@ import org.apache.jena.sparql.serializer.UpdateSerializerFactory ;
 public class UpdateRequest extends Prologue implements Printable, Iterable<Update> {
     private List<Update> operations = new ArrayList<>();
     private List<Update> operationsView = Collections.unmodifiableList(operations);
-
-    public UpdateRequest() {
+    
+    protected final Context   connectionContext;
+    
+    public Context getConnectionContext() {
+        return connectionContext;
+    }
+    
+    public UpdateRequest(Context ctx) {
         super();
+        this.connectionContext = ctx;
     }
 
-    public UpdateRequest(Update update) {
-        this();
+    public UpdateRequest(Update update,Context ctx) {
+        this(ctx);
         add(update);
     }
 

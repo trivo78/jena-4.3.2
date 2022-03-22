@@ -25,6 +25,9 @@ import java.util.ArrayList ;
 import java.util.Collection ;
 import java.util.Iterator ;
 import java.util.List ;
+import org.apache.jena.acl.ACLException;
+import org.apache.jena.acl.DatasetACL;
+import static org.apache.jena.acl.DatasetACL.ACL_ALL_GRAPHS;
 
 import org.apache.jena.atlas.data.BagFactory ;
 import org.apache.jena.atlas.data.DataBag ;
@@ -57,11 +60,15 @@ import org.apache.jena.sparql.syntax.ElementNamedGraph ;
 import org.apache.jena.sparql.syntax.ElementTriplesBlock ;
 import org.apache.jena.sparql.system.SerializationFactoryFinder;
 import org.apache.jena.sparql.util.Context ;
+import org.apache.jena.sparql.util.Symbol;
+import org.apache.jena.update.Update;
 import org.apache.jena.update.UpdateException ;
 
 /** Implementation of general purpose update request execution */ 
 public class UpdateEngineWorker implements UpdateVisitor
 {
+    private final static Symbol     USER_NAME_SYMBOL = Symbol.create(DatasetACL.ACL_USER_NAME);
+    private final static Symbol     ACL_NAME_SYMBOL = Symbol.create(DatasetACL.ACL_CONTEXT_NAME);
     
     final boolean enableDebugPrint = true;
     protected final DatasetGraph datasetGraph ;
@@ -103,18 +110,33 @@ public class UpdateEngineWorker implements UpdateVisitor
                 error("No such graph: " + g);
         }
 
+        final String graphName = g != null ? g.getURI() : ACL_ALL_GRAPHS;
+        
+        
+        
         if ( isClear ) {
-            if ( g == null || datasetGraph.containsGraph(g) )
+            if ( g == null || datasetGraph.containsGraph(g) ) {
+                checkACL(update, graphName, DatasetACL.aclId.aiClear);
                 graph(datasetGraph, g).clear();
-        } else
+            }
+        } else {
+            checkACL(update, graphName, DatasetACL.aclId.aiDrop);
             datasetGraph.removeGraph(g);
+        }
     }
 
     protected void execDropClearAllNamed(UpdateDropClear update, boolean isClear) {
         // Avoid ConcurrentModificationException
         List<Node> list = Iter.toList(datasetGraph.listGraphNodes());
-
-        for ( Node gn : list )
+        //first pass, check ACL 
+        
+        for ( Node gn : list )  {
+            final String graphName = gn.getURI();
+            checkACL(update, graphName, DatasetACL.aclId.aiDrop);
+            checkACL(update, graphName, DatasetACL.aclId.aiClear);
+        }
+        
+        for ( Node gn : list ) 
             execDropClear(update, gn, isClear);
     }
 
@@ -128,6 +150,8 @@ public class UpdateEngineWorker implements UpdateVisitor
                 error("Graph store already contains graph : " + g);
             return;
         }
+        
+        checkACL(update, g.getURI(), DatasetACL.aclId.aiCreate);
         // In-memory specific
         datasetGraph.addGraph(g, GraphFactory.createDefaultGraph());
     }
@@ -215,8 +239,13 @@ public class UpdateEngineWorker implements UpdateVisitor
             return;
         if ( update.getSrc().equals(update.getDest()) )
             return;
+        
+        
         // MOVE (DEFAULT or GRAPH) TO (DEFAULT or GRAPH)
         // Difefrent source and destination.
+        
+        checkACL(update, update.getSrc().getGraph().getName() , DatasetACL.aclId.aiDrop);
+        
         gsCopy(datasetGraph, update.getSrc(), update.getDest(), update.getSilent());
         gsDrop(datasetGraph, update.getSrc(), true);
     }
@@ -580,5 +609,17 @@ public class UpdateEngineWorker implements UpdateVisitor
 
     protected static void error(String msg) {
         throw new UpdateException(msg);
+    }
+    
+    private void checkACL(Update upd,String graphName, DatasetACL.aclId id) throws ACLException {
+        final Context connCtx = upd.getConnectionContext();
+        final String usrName = (this.context != null ? this.context.get(USER_NAME_SYMBOL) : null);
+        final DatasetACL acl = (this.context != null ? (DatasetACL) this.context.get(ACL_NAME_SYMBOL) : null);
+        
+        if (acl == null || usrName == null)
+            return ;    //NO ACL CHECK PERFORMED
+        
+        acl.checkGrap(id,graphName , usrName);
+        
     }
 }

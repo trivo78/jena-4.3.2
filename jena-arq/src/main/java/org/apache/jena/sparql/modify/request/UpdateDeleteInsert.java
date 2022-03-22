@@ -18,8 +18,13 @@
 
 package org.apache.jena.sparql.modify.request;
 
+import org.apache.jena.sparql.util.Context;
+
 
 /** Convenience class - renames UpdateModify so it follows the SPARQL Update spec. */
 public class UpdateDeleteInsert extends UpdateModify
 {
+    public UpdateDeleteInsert(Context connCtx) {
+        super(connCtx);
+    }
 }

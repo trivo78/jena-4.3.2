@@ -23,6 +23,7 @@ import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.update.UpdateRequest;
 
 /** Wrapper for an {@link RDFConnection}. */
@@ -184,5 +185,10 @@ public class RDFConnectionWrapper implements RDFConnection {
     @Override
     public boolean isInTransaction() {
         return get().isInTransaction();
+    }
+
+    @Override
+    public Context getContext() {
+        return get().getContext();
     }
 }

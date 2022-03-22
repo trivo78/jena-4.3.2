@@ -22,6 +22,7 @@ import org.apache.jena.atlas.lib.InternalErrorException;
 import org.apache.jena.rdflink.RDFConnectionAdapter;
 import org.apache.jena.rdflink.RDFLink;
 import org.apache.jena.rdflink.RDFLinkFuseki;
+import org.apache.jena.sparql.util.Context;
 
 /**
  * Implementation of the {@link RDFConnection} interface for connecting to an Apache Jena Fuseki.
@@ -83,7 +84,7 @@ public interface RDFConnectionFuseki extends RDFConnectionRemote {
         @Override
         protected RDFConnection adaptLink(RDFLink rdfLink) {
             try {
-                return new RDFConnectionFusekiImpl((RDFLinkFuseki)rdfLink);
+                return new RDFConnectionFusekiImpl((RDFLinkFuseki)rdfLink,null);
             } catch (ClassCastException ex) {
                 throw new InternalErrorException("Attempt to build a RDFConnectionFuseki from class "+rdfLink.getClass().getSimpleName());
             }
@@ -91,8 +92,15 @@ public interface RDFConnectionFuseki extends RDFConnectionRemote {
     }
 
     static class RDFConnectionFusekiImpl extends RDFConnectionAdapter implements RDFConnectionFuseki {
-        private RDFConnectionFusekiImpl(RDFLinkFuseki linkFuseki) {
+        private final Context   ctx;
+        private RDFConnectionFusekiImpl(RDFLinkFuseki linkFuseki,Context ctx) {
             super(linkFuseki);
+            this.ctx = ctx;
+        }
+
+        @Override
+        public Context getContext() {
+            return ctx;
         }
     }
 }

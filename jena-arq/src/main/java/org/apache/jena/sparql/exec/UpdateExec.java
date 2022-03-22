@@ -18,18 +18,19 @@
 
 package org.apache.jena.sparql.exec;
 
-import org.apache.jena.sparql.modify.UpdateResult;
 import java.util.List;
 import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.jena.sparql.exec.http.UpdateExecHTTP;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.update.UpdateProcessor;
 
 public interface UpdateExec extends UpdateProcessor
 {
+    
     /** Create a {@link UpdateExecBuilder} for a dataset. */
-    public static UpdateExecBuilder dataset(DatasetGraph dataset) {
-        return UpdateExecDatasetBuilder.create().dataset(dataset);
+    public static UpdateExecBuilder dataset(DatasetGraph dataset,Context ctx) {
+        return UpdateExecDatasetBuilder.create(ctx).dataset(dataset);
     }
 
     /** Create a {@link UpdateExecBuilder} for a remote endpoint. */
@@ -37,8 +38,8 @@ public interface UpdateExec extends UpdateProcessor
         return UpdateExecHTTP.newBuilder().endpoint(serviceURL);
     }
 
-    public static UpdateExecDatasetBuilder newBuilder() {
-        return UpdateExecDatasetBuilder.create();
+    public static UpdateExecDatasetBuilder newBuilder(Context ctx) {
+        return UpdateExecDatasetBuilder.create(ctx);
     }
 
     /** Execute */

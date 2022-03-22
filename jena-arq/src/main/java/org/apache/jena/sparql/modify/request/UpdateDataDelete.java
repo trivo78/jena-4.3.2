@@ -19,10 +19,16 @@
 package org.apache.jena.sparql.modify.request;
 
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 
 public class UpdateDataDelete extends UpdateData
 {
-    public UpdateDataDelete(QuadDataAcc qd) { super(qd) ; }
+    public UpdateDataDelete(QuadDataAcc qd,Context connCtx) { 
+        super(qd,connCtx) ; 
+    }
+    public UpdateDataDelete(QuadDataAcc qd) { 
+        super(qd,null) ; 
+    }
 
     @Override
     public UpdateResult visit(UpdateVisitor visitor){ 

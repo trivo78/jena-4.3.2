@@ -49,7 +49,7 @@ public class UpdateExecuteOperations
     public static void ex1(Dataset dataset)
     {
         // Execute one operation.
-        UpdateAction.parseExecute("LOAD <file:etc/update-data.ttl>", dataset) ;
+        UpdateAction.parseExecute("LOAD <file:etc/update-data.ttl>", dataset,null) ;
     }
     
     public static void ex2(Dataset dataset)
@@ -64,7 +64,7 @@ public class UpdateExecuteOperations
                                       "LOAD <file:etc/update-data.ttl> INTO GRAPH <http://example/g2>") ;
         // check string created
         System.out.println(cmd) ;
-        UpdateAction.parseExecute(cmd, dataset) ;
+        UpdateAction.parseExecute(cmd, dataset,null) ;
     }
     
     public static void ex3(Dataset dataset)

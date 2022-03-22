@@ -21,6 +21,7 @@ package org.apache.jena.rdfconnection;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Transactional;
+import org.apache.jena.sparql.util.Context;
 
 /**
  * SPARQL Graph Store Protocol and whole dataset access.
@@ -32,6 +33,7 @@ import org.apache.jena.sparql.core.Transactional;
  */  
 public interface RDFDatasetConnection extends RDFDatasetAccessConnection, Transactional, AutoCloseable
 {
+    public Context getContext();
     /** Load (add, append) RDF into a named graph in a dataset.
      * This is SPARQL Graph Store Protocol HTTP POST or equivalent. 
      * 

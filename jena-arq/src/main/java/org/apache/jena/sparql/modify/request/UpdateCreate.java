@@ -21,6 +21,7 @@ package org.apache.jena.sparql.modify.request;
 import org.apache.jena.graph.Node ;
 import org.apache.jena.graph.NodeFactory ;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.NodeIsomorphismMap ;
 import org.apache.jena.update.Update ;
 
@@ -30,6 +31,29 @@ public class UpdateCreate extends Update
     protected final Node graphRef ;
     protected final boolean silent ;
     
+    public UpdateCreate(String s,Context connCtx)
+    {
+        this(NodeFactory.createURI(s), false,connCtx) ;
+    }
+    
+    public UpdateCreate(String s, boolean silent,Context connCtx)
+    {
+        this(NodeFactory.createURI(s), silent,connCtx) ;
+    }
+    
+    public UpdateCreate(Node iri,Context connCtx)
+    {
+        this(iri, false,connCtx) ;
+    }
+    
+    public UpdateCreate(Node iri, boolean silent,Context connCtx)
+    { 
+        super(connCtx);
+        this.graphRef = iri ; 
+        this.silent = silent ;
+    }
+
+
     public UpdateCreate(String s)
     {
         this(NodeFactory.createURI(s), false) ;
@@ -47,6 +71,7 @@ public class UpdateCreate extends Update
     
     public UpdateCreate(Node iri, boolean silent)
     { 
+        super(null);
         this.graphRef = iri ; 
         this.silent = silent ;
     }

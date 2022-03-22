@@ -300,7 +300,7 @@ public interface RDFLink extends
      */
     @Override
     public default List<UpdateResult> update(Update update) {
-        return update(new UpdateRequest(update));
+        return update(new UpdateRequest(update,this.getContext()));
     }
 
     /**
@@ -316,7 +316,7 @@ public interface RDFLink extends
      */
     @Override
     public default List<UpdateResult> update(String updateString) {
-        return update(UpdateFactory.create(updateString));
+        return update(UpdateFactory.create(updateString,this.getContext()));
     }
 
     /** Fetch the default graph.

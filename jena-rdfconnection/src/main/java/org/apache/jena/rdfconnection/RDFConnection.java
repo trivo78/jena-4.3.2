@@ -18,7 +18,6 @@
 
 package org.apache.jena.rdfconnection;
 
-import org.apache.jena.sparql.modify.UpdateResult;
 import static org.apache.jena.rdfconnection.LibRDFConn.adapt;
 
 import java.net.Authenticator;
@@ -26,6 +25,7 @@ import java.net.http.HttpClient;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import org.apache.jena.acl.DatasetACL;
 
 import org.apache.jena.http.HttpEnv;
 import org.apache.jena.query.*;
@@ -33,6 +33,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdflink.RDFLinkDatasetBuilder;
 import org.apache.jena.sparql.core.Transactional;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.system.Txn;
 import org.apache.jena.update.Update;
 import org.apache.jena.update.UpdateFactory;
@@ -112,6 +113,49 @@ public interface RDFConnection extends
      */
     public static RDFConnection connect(Dataset dataset, Isolation isolation) {
         return adapt(RDFLinkDatasetBuilder.newBuilder().dataset(dataset.asDatasetGraph()).isolation(isolation).build());
+    }
+    /**
+     * Connect to a local (same JVM) dataset.
+     * The default isolation is {@code NONE}.
+     * See {@link #connect(Dataset, Isolation)} to select an isolation mode.
+     *
+     * @param dataset
+     * @param userName
+     * @return RDFConnection
+     * @see RDFConnectionLocal
+     
+     * 
+     */
+    public static RDFConnection connect(Dataset dataset,String userName) {
+        final RDFConnection ret =  adapt(RDFLinkDatasetBuilder.newBuilder().dataset(dataset.asDatasetGraph()).build());
+        ret.getContext().put(Symbol.create(DatasetACL.ACL_USER_NAME), userName);
+        return ret;
+        
+    }
+
+    /**
+     * Connect to a local (same JVM) dataset.
+     * <p>
+     * Multiple levels of {@link Isolation} are provided, The default {@code COPY} level makes a local
+     * {@link RDFConnection} behave like a remote connection.
+     * See <a href="https://jena.apache.org/documentation/rdfconnection/">the documentation for more details.</a>
+     * <ul>
+     * <li>{@code COPY} &ndash; {@code Model}s and {@code Dataset}s are copied.
+     *     This is most like a remote connection.
+     * <li>{@code READONLY} &ndash; Read-only wrappers are added but changes to
+     *     the underlying model or dataset will be seen.
+     * <li>{@code NONE} (default) &ndash; Changes to the returned {@code Model}s or {@code Dataset}s act on the original object.
+     * </ul>
+     *
+     * @param dataset
+     * @param isolation
+     * @param userName
+     * @return RDFConnection
+     */
+    public static RDFConnection connect(Dataset dataset, Isolation isolation,String userName) {
+        final RDFConnection ret =  adapt(RDFLinkDatasetBuilder.newBuilder().dataset(dataset.asDatasetGraph()).isolation(isolation).build());
+        ret.getContext().put(Symbol.create(DatasetACL.ACL_USER_NAME), userName);
+        return ret;
     }
 
     /**
@@ -356,7 +400,7 @@ public interface RDFConnection extends
      */
     @Override
     public default List<UpdateResult> update(Update update) {
-        return update(new UpdateRequest(update));
+        return update(new UpdateRequest(update,this.getContext()));
     }
 
     /** Execute a SPARQL Update.
@@ -372,7 +416,7 @@ public interface RDFConnection extends
      */
     @Override
     public default List<UpdateResult> update(String updateString) {
-        return update(UpdateFactory.create(updateString));
+        return update(UpdateFactory.create(updateString,this.getContext()));
     }
 
     // ---- RDFDatasetConnection

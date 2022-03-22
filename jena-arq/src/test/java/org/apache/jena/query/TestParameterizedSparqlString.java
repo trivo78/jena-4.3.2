@@ -30,6 +30,7 @@ import org.apache.jena.sparql.ARQException ;
 import org.apache.jena.sparql.syntax.Element ;
 import org.apache.jena.sparql.syntax.ElementGroup ;
 import org.apache.jena.sparql.syntax.ElementTriplesBlock ;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.update.UpdateExecutionFactory ;
 import org.apache.jena.update.UpdateProcessor ;
 import org.apache.jena.update.UpdateRequest ;
@@ -78,7 +79,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_constructor_2() {
         // Test constructor with null command - null command should map to empty
         // command automagically
-        ParameterizedSparqlString query = new ParameterizedSparqlString((String) null);
+        ParameterizedSparqlString query = new ParameterizedSparqlString((String) null,(Context) null);
         Assert.assertEquals("", query.getCommandText());
     }
 
@@ -95,7 +96,7 @@ public class TestParameterizedSparqlString {
         QuerySolutionMap map = new QuerySolutionMap();
         Resource r = ResourceFactory.createResource("http://example.org");
         map.add("s", r);
-        ParameterizedSparqlString query = new ParameterizedSparqlString("", map);
+        ParameterizedSparqlString query = new ParameterizedSparqlString("", map,null);
 
         Assert.assertEquals(r.asNode(), query.getParam("s"));
     }
@@ -107,7 +108,7 @@ public class TestParameterizedSparqlString {
         QuerySolutionMap map = new QuerySolutionMap();
         Resource r = ResourceFactory.createResource("http://example.org");
         map.add("s", r);
-        ParameterizedSparqlString query = new ParameterizedSparqlString(map);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(map,(Context) null);
 
         Assert.assertEquals(r.asNode(), query.getParam("s"));
     }
@@ -120,7 +121,7 @@ public class TestParameterizedSparqlString {
         map.add("s", r);
         Literal l = ResourceFactory.createPlainLiteral("example");
         map.add("o", l);
-        ParameterizedSparqlString query = new ParameterizedSparqlString("", map);
+        ParameterizedSparqlString query = new ParameterizedSparqlString("", map,(Context) null);
 
         Assert.assertEquals(r.asNode(), query.getParam("s"));
         Assert.assertEquals(l.asNode(), query.getParam("o"));
@@ -135,7 +136,7 @@ public class TestParameterizedSparqlString {
         map.add("s", r);
         Literal l = ResourceFactory.createPlainLiteral("example");
         map.add("o", l);
-        ParameterizedSparqlString query = new ParameterizedSparqlString(map);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(map,(Context) null);
 
         Assert.assertEquals(r.asNode(), query.getParam("s"));
         Assert.assertEquals(l.asNode(), query.getParam("o"));
@@ -146,7 +147,7 @@ public class TestParameterizedSparqlString {
         // Test constructors with predefined prefixes
         PrefixMappingImpl prefixes = new PrefixMappingImpl();
         prefixes.setNsPrefix("ex", "http://example.org");
-        ParameterizedSparqlString query = new ParameterizedSparqlString("", prefixes);
+        ParameterizedSparqlString query = new ParameterizedSparqlString("", prefixes,(Context) null);
 
         Assert.assertEquals(prefixes.getNsPrefixURI("ex"), query.getNsPrefixURI("ex"));
     }
@@ -157,7 +158,7 @@ public class TestParameterizedSparqlString {
         // that does not require command text
         PrefixMappingImpl prefixes = new PrefixMappingImpl();
         prefixes.setNsPrefix("ex", "http://example.org");
-        ParameterizedSparqlString query = new ParameterizedSparqlString(prefixes);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(prefixes,(Context) null);
 
         Assert.assertEquals(prefixes.getNsPrefixURI("ex"), query.getNsPrefixURI("ex"));
     }
@@ -166,7 +167,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_iri_1() {
         // Test simple injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
 
         test(query, new String[] { "<http://example.org>" }, new String[] { "?s" });
@@ -176,7 +177,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_iri_2() {
         // Test simple injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("p", "http://example.org");
 
         test(query, new String[] { "<http://example.org>" }, new String[] { "?p" });
@@ -186,7 +187,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_iri_3() {
         // Test simple injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("o", "http://example.org");
 
         test(query, new String[] { "<http://example.org>" }, new String[] { "?o" });
@@ -196,7 +197,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_iri_4() {
         // Test simple injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o . ?s a ?type }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
 
         test(query, new String[] { "<http://example.org>" }, new String[] { "?s" });
@@ -206,7 +207,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_iri_5() {
         // Test simple injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o . }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
         query.setIri("p", "http://predicate");
 
@@ -217,7 +218,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_bnode_1() {
         // Test Blank Node injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o . }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "_:blankNodeID");
 
         test(query, new String[] { "<_:blankNodeID>" }, new String[] { "?s" });
@@ -227,7 +228,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_bnode_2() {
         // Test Blank Node injenction
         String cmdText = "INSERT { GRAPH <target> { ?node a:p ?o . } } WHERE { ?node a:p ?o . }";
-        ParameterizedSparqlString update = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString update = new ParameterizedSparqlString(cmdText,(Context) null);
         update.setIri("node", "_:blankNodeID");
 
         test(update, new String[] { "<_:blankNodeID>" }, new String[] { "?node" });
@@ -276,7 +277,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_mixed_1() {
         // Test simple injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o . }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
         query.setIri("p", "http://predicate");
         query.setLiteral("o", true);
@@ -288,7 +289,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_string_1() {
         // Test regular string injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o . }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
         query.setIri("p", "http://predicate");
         query.setLiteral("o", "test");
@@ -300,7 +301,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_string_2() {
         // Test a string with quotes
         String cmdText = "SELECT * WHERE { ?s ?p ?o . }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
         query.setIri("p", "http://predicate");
         query.setLiteral("o", "A \"test\" string");
@@ -313,7 +314,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_string_3() {
         // Test a string with a $
         String cmdText = "SELECT * WHERE { ?s ?p ?o . }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
         query.setIri("p", "http://predicate");
         query.setLiteral("o", "Show me the $!");
@@ -325,7 +326,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_string_4() {
         // Test a string with a newline
         String cmdText = "SELECT * WHERE { ?s ?p ?o . }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
         query.setIri("p", "http://predicate");
         query.setLiteral("o", "A multi\nline string");
@@ -338,7 +339,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_string_5() {
         // Test a string with a tab
         String cmdText = "SELECT * WHERE { ?s ?p ?o . }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
         query.setIri("p", "http://predicate");
         query.setLiteral("o", "A tabby\tstring");
@@ -362,7 +363,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_string_7() {
         // Test a string with a backslash
         String cmdText = "SELECT * WHERE { ?s ?p ?o . }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setIri("s", "http://example.org");
         query.setIri("p", "http://predicate");
         query.setLiteral("o", "test a\\b");
@@ -374,7 +375,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_boolean_1() {
         // Test boolean injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setLiteral("o", true);
 
         // We don't expect #boolean as booleans should be formatted as plain
@@ -386,7 +387,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_boolean_2() {
         // Test boolean injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setLiteral("o", false);
 
         // We don't expect #boolean as booleans should be formatted as plain
@@ -398,7 +399,7 @@ public class TestParameterizedSparqlString {
     public void test_param_string_boolean_3() {
         // Test invalid boolean injection
         String cmdText = "SELECT * WHERE { ?s ?p ?o }";
-        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText);
+        ParameterizedSparqlString query = new ParameterizedSparqlString(cmdText,(Context) null);
         query.setLiteral("o", "xyz", TypeMapper.getInstance().getSafeTypeByName(XSD.xboolean.toString()));
 
         // We expect #boolean as booleans with invalid lexical values should not

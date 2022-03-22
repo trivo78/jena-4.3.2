@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.apache.jena.graph.Node ;
 import org.apache.jena.graph.NodeFactory ;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.Iso ;
 import org.apache.jena.sparql.util.NodeIsomorphismMap ;
 import org.apache.jena.update.Update ;
@@ -34,6 +35,30 @@ public class UpdateLoad extends Update
     private boolean silent ;
     
 
+    public UpdateLoad(String source, String dest,Context connCtx)
+    {
+        this(source, NodeFactory.createURI(dest), false,connCtx) ;
+    }
+    
+    public UpdateLoad(String source, String dest, boolean silent,Context connCtx)
+    {
+        this(source, NodeFactory.createURI(dest), silent,connCtx) ;
+    }
+
+    public UpdateLoad(String source, Node dest,Context connCtx)
+    {
+        this(source, dest, false,connCtx) ;
+    }
+
+    public UpdateLoad(String source, Node dest, boolean silent,Context connCtx)
+    {
+        super(connCtx);
+        this.source = source ;
+        this.dest = dest ;
+        this.silent = silent ;
+    }
+
+    
     public UpdateLoad(String source, String dest)
     {
         this(source, NodeFactory.createURI(dest), false) ;
@@ -51,11 +76,12 @@ public class UpdateLoad extends Update
 
     public UpdateLoad(String source, Node dest, boolean silent)
     {
+        super(null);
         this.source = source ;
         this.dest = dest ;
         this.silent = silent ;
     }
-
+    
     public String  getSource()      { return source ; }
     public Node    getDest()        { return dest ; }
     public boolean getSilent()      { return silent ; }

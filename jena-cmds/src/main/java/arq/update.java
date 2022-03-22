@@ -98,13 +98,13 @@ public class update extends CmdUpdate {
     }
 
     protected void execOneFile(String filename, DatasetGraph store) {
-        UpdateRequest req = UpdateFactory.read(filename, updateSyntax);
-        UpdateExec.newBuilder().update(req).dataset(store).execute();;
+        UpdateRequest req = UpdateFactory.read(filename, updateSyntax,null);
+        UpdateExec.newBuilder(null).update(req).dataset(store).execute();;
     }
 
     protected void execOne(String requestString, DatasetGraph store) {
-        UpdateRequest req = UpdateFactory.create(requestString, updateSyntax);
-        UpdateExec.newBuilder().update(req).dataset(store).execute();
+        UpdateRequest req = UpdateFactory.create(requestString, updateSyntax,null);
+        UpdateExec.newBuilder(null).update(req).dataset(store).execute();
     }
 
     @Override

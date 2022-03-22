@@ -87,7 +87,7 @@ public class TestRemoteEndpointResultsWithAuth extends AbstractRemoteEndpointRes
     @After
     public void cleanupTest() {
         Update clearRequest = new UpdateDrop(Target.ALL) ;
-        UpdateProcessor proc = new UpdateProcessRemote(new UpdateRequest(clearRequest), FusekiTestAuth.serviceUpdate(), null, client, null) ;
+        UpdateProcessor proc = new UpdateProcessRemote(new UpdateRequest(clearRequest,null), FusekiTestAuth.serviceUpdate(), null, client, null) ;
         proc.execute() ;
     }
 

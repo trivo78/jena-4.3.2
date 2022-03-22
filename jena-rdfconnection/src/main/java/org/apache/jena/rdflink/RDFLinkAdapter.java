@@ -19,7 +19,6 @@
 package org.apache.jena.rdflink;
 
 import java.util.List;
-import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.atlas.lib.NotImplemented;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
@@ -35,6 +34,7 @@ import org.apache.jena.sparql.core.DatasetGraphZero;
 import org.apache.jena.sparql.exec.QueryExec;
 import org.apache.jena.sparql.exec.QueryExecBuilder;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.update.UpdateRequest;
 
 public class RDFLinkAdapter implements RDFLink {
@@ -181,4 +181,9 @@ public class RDFLinkAdapter implements RDFLink {
 
     @Override
     public void close() { conn.close(); }
+
+    @Override
+    public Context getContext() {
+       return conn.getContext();
+    }
 }

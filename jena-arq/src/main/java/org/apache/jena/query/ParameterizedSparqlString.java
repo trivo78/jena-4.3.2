@@ -39,6 +39,7 @@ import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.shared.impl.PrefixMappingImpl;
 import org.apache.jena.sparql.ARQException;
 import org.apache.jena.sparql.serializer.SerializationContext;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.FmtUtils;
 import org.apache.jena.sparql.util.NodeFactoryExtra;
 import org.apache.jena.update.UpdateFactory;
@@ -143,6 +144,7 @@ public class ParameterizedSparqlString implements PrefixMapping {
     private PrefixMapping prefixes;
     private Map<String, ValueReplacement> valuesReplacements = new HashMap<>();
     private Syntax syntax = Syntax.defaultQuerySyntax;
+    private final Context     connCtx;
 
     /**
      * Creates a new parameterized string
@@ -156,7 +158,7 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param prefixes
      *            Prefix Mapping
      */
-    public ParameterizedSparqlString(String command, QuerySolutionMap map, String base, PrefixMapping prefixes) {
+    public ParameterizedSparqlString(String command, QuerySolutionMap map, String base, PrefixMapping prefixes,Context ctx) {
         if (command != null)
             this.cmd.append(command);
         this.setParams(map);
@@ -164,6 +166,8 @@ public class ParameterizedSparqlString implements PrefixMapping {
         this.prefixes = new PrefixMappingImpl();
         if (prefixes != null)
             this.prefixes.setNsPrefixes(prefixes);
+        
+        this.connCtx = ctx;
     }
 
     /**
@@ -176,8 +180,8 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param base
      *            Base URI
      */
-    public ParameterizedSparqlString(String command, QuerySolutionMap map, String base) {
-        this(command, map, base, null);
+    public ParameterizedSparqlString(String command, QuerySolutionMap map, String base,Context ctx) {
+        this(command, map, base, null,ctx);
     }
 
     /**
@@ -190,8 +194,8 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param prefixes
      *            Prefix Mapping
      */
-    public ParameterizedSparqlString(String command, QuerySolutionMap map, PrefixMapping prefixes) {
-        this(command, map, null, prefixes);
+    public ParameterizedSparqlString(String command, QuerySolutionMap map, PrefixMapping prefixes,Context ctx) {
+        this(command, map, null, prefixes,ctx);
     }
 
     /**
@@ -202,8 +206,8 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param map
      *            Initial Parameters to inject
      */
-    public ParameterizedSparqlString(String command, QuerySolutionMap map) {
-        this(command, map, null, null);
+    public ParameterizedSparqlString(String command, QuerySolutionMap map,Context ctx) {
+        this(command, map, null, null,ctx);
     }
 
     /**
@@ -216,8 +220,8 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param prefixes
      *            Prefix Mapping
      */
-    public ParameterizedSparqlString(String command, String base, PrefixMapping prefixes) {
-        this(command, null, base, prefixes);
+    public ParameterizedSparqlString(String command, String base, PrefixMapping prefixes,Context ctx) {
+        this(command, null, base, prefixes,ctx);
     }
 
     /**
@@ -228,8 +232,8 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param prefixes
      *            Prefix Mapping
      */
-    public ParameterizedSparqlString(String command, PrefixMapping prefixes) {
-        this(command, null, null, prefixes);
+    public ParameterizedSparqlString(String command, PrefixMapping prefixes,Context ctx) {
+        this(command, null, null, prefixes,ctx);
     }
 
     /**
@@ -250,10 +254,14 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param command
      *            Raw Command Text
      */
+    public ParameterizedSparqlString(String command,Context ctx) {
+        this(command, null, null, null,ctx);
+    }
+
     public ParameterizedSparqlString(String command) {
-        this(command, null, null, null);
+        this(command, null, null, null,null);
     }
-
+    
     /**
      * Creates a new parameterized string
      *
@@ -262,8 +270,8 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param prefixes
      *            Prefix Mapping
      */
-    public ParameterizedSparqlString(QuerySolutionMap map, PrefixMapping prefixes) {
-        this(null, map, null, prefixes);
+    public ParameterizedSparqlString(QuerySolutionMap map, PrefixMapping prefixes,Context ctx) {
+        this(null, map, null, prefixes,ctx);
     }
 
     /**
@@ -272,8 +280,8 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param map
      *            Initial Parameters to inject
      */
-    public ParameterizedSparqlString(QuerySolutionMap map) {
-        this(null, map, null, null);
+    public ParameterizedSparqlString(QuerySolutionMap map,Context ctx) {
+        this(null, map, null, null,ctx);
     }
 
     /**
@@ -282,15 +290,19 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @param prefixes
      *            Prefix Mapping
      */
-    public ParameterizedSparqlString(PrefixMapping prefixes) {
-        this(null, null, null, prefixes);
+    public ParameterizedSparqlString(PrefixMapping prefixes,Context ctx) {
+        this(null, null, null, prefixes,ctx);
     }
 
     /**
      * Creates a new parameterized string with an empty command text
      */
+    public ParameterizedSparqlString(Context ctx) {
+        this("", null, null, null,ctx);
+    }
+
     public ParameterizedSparqlString() {
-        this("", null, null, null);
+        this("", null, null, null,null);
     }
 
     /**
@@ -1484,7 +1496,7 @@ public class ParameterizedSparqlString implements PrefixMapping {
      *         (one/more update commands)
      */
     public UpdateRequest asUpdate() {
-        return asUpdate(this.syntax);
+        return asUpdate(this.syntax,this.connCtx);
     }
 
     /**
@@ -1495,8 +1507,8 @@ public class ParameterizedSparqlString implements PrefixMapping {
      * @return Update if the command text is a valid SPARQL Update request
      *         (one/more update commands)
      */
-    public UpdateRequest asUpdate(Syntax syntax) {
-        return UpdateFactory.create(this.toString(), syntax);
+    public UpdateRequest asUpdate(Syntax syntax,Context ctx) {
+        return UpdateFactory.create(this.toString(), syntax,ctx);
     }
 
     /**
@@ -1533,7 +1545,7 @@ public class ParameterizedSparqlString implements PrefixMapping {
      */
     public ParameterizedSparqlString copy(boolean copyParams, boolean copyBase, boolean copyPrefixes) {
         ParameterizedSparqlString copy = new ParameterizedSparqlString(this.cmd.toString(), null,
-                (copyBase ? this.baseUri : null), (copyPrefixes ? this.prefixes : null));
+                (copyBase ? this.baseUri : null), (copyPrefixes ? this.prefixes : null), this.connCtx);
         if (copyParams) {
             Iterator<String> vars = this.getVars();
             while (vars.hasNext()) {

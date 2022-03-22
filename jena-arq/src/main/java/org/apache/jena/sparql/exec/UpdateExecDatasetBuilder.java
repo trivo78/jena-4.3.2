@@ -42,7 +42,7 @@ import org.apache.jena.update.UpdateRequest;
 
 public class UpdateExecDatasetBuilder implements UpdateExecBuilder {
 
-    public static UpdateExecDatasetBuilder create() { return new UpdateExecDatasetBuilder(); }
+    public static UpdateExecDatasetBuilder create(Context ctx) { return new UpdateExecDatasetBuilder(ctx); }
 
     private DatasetGraph dataset            = null;
     private Query        query              = null;
@@ -52,9 +52,12 @@ public class UpdateExecDatasetBuilder implements UpdateExecBuilder {
 
     private Binding      initialBinding     = null;
     private UpdateRequest update            = null;
-    private UpdateRequest updateRequest     = new UpdateRequest();
+    private UpdateRequest updateRequest;
 
-    private UpdateExecDatasetBuilder() {}
+    private UpdateExecDatasetBuilder(Context ctx) {
+        context = ctx;
+        updateRequest     = new UpdateRequest(ctx);
+    }
 
     /** Append the updates in an {@link UpdateRequest} to the {@link UpdateRequest} being built. */
     @Override
@@ -75,7 +78,7 @@ public class UpdateExecDatasetBuilder implements UpdateExecBuilder {
     /** Parse and update operations to the {@link UpdateRequest} being built. */
     @Override
     public UpdateExecDatasetBuilder update(String updateRequestString) {
-        UpdateRequest more = UpdateFactory.create(updateRequestString);
+        UpdateRequest more = UpdateFactory.create(updateRequestString,context);
         add(more);
         return this;
     }

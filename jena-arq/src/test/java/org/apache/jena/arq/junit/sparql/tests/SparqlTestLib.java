@@ -133,7 +133,7 @@ class SparqlTestLib {
         String fn = queryFile(entry);
         Syntax syn = (syntax!=null) ? syntax : guessFileSyntax(fn);
 
-        UpdateRequest request = UpdateFactory.read(fn, syn);
+        UpdateRequest request = UpdateFactory.read(fn, syn,null);
         return request;
     }
 }

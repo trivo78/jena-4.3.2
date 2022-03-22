@@ -50,7 +50,7 @@ public abstract class AbstractTestUpdateBase
     protected static final String FileBase = ARQTestSuite.testDirUpdate;
 
     protected static void script(DatasetGraph gStore, String filename) {
-        UpdateAction.readExecute(FileBase + "/" + filename, gStore);
+        UpdateAction.readExecute(FileBase + "/" + filename, gStore,null);
     }
 
     protected static boolean graphEmpty(Graph graph) {

@@ -148,7 +148,7 @@ public class uparse extends CmdARQ
     {
         UpdateRequest req ; 
         try {
-            req = UpdateFactory.create(updateString, syntax) ;
+            req = UpdateFactory.create(updateString, syntax,null) ;
         } catch (QueryParseException ex)
         {
             System.err.print("Parse error: ") ;
@@ -196,7 +196,7 @@ public class uparse extends CmdARQ
             String baseURI = null ;
             if ( ! req.explicitlySetBaseURI() )
                 baseURI = req.getBaseURI() ;
-            req2 = UpdateFactory.create(updateString2, syntax) ;
+            req2 = UpdateFactory.create(updateString2, syntax,null) ;
         } catch (UnsupportedOperationException ex)
         {
             // No parser after all.

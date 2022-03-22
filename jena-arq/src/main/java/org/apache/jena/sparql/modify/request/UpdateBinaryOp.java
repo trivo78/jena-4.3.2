@@ -19,6 +19,7 @@
 package org.apache.jena.sparql.modify.request;
 
 import org.apache.jena.sparql.ARQException ;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.NodeIsomorphismMap ;
 import org.apache.jena.update.Update ;
 
@@ -28,8 +29,9 @@ public abstract class UpdateBinaryOp extends Update
     private Target dest ;
     private boolean silent ;
 
-    protected UpdateBinaryOp(Target src, Target dest, boolean silent)
+    protected UpdateBinaryOp(Target src, Target dest, boolean silent,Context connCtx)
     {
+        super(connCtx);
         checkTarget(src) ;
         checkTarget(dest) ;
         this.src = src ; 

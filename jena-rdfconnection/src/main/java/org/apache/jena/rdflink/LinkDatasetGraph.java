@@ -23,6 +23,7 @@ import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.core.Transactional;
+import org.apache.jena.sparql.util.Context;
 
 /**
  * SPARQL Graph Store Protocol and whole dataset access.
@@ -145,5 +146,7 @@ public interface LinkDatasetGraph extends LinkDatasetGraphAccess, Transactional,
     /** Close this connection.  Use with try-resource. */
     @Override
     public void close();
+    
+    public Context getContext();
 }
 

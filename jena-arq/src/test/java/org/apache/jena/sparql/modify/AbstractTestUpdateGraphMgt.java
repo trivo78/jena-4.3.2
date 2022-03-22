@@ -42,7 +42,7 @@ public abstract class AbstractTestUpdateGraphMgt extends AbstractTestUpdateBase
         DatasetGraph gStore = getEmptyDatasetGraph();
         Update u = new UpdateCreate(graphIRI);
 
-        UpdateAction.execute(u, gStore);
+        UpdateAction.execute(u, gStore,null);
         // Only true if a graph caching layer exists.
         // JENA-1068 removed that layer
         // (which wasn't safe anyway - it only "existed" in the memory cache)
@@ -55,20 +55,20 @@ public abstract class AbstractTestUpdateGraphMgt extends AbstractTestUpdateBase
         if ( !silentMode ) {
             // try again - should fail (already exists)
             try {
-                UpdateAction.execute(u, gStore);
+                UpdateAction.execute(u, gStore,null);
                 fail();
             } catch (UpdateException ex) {}
         }
 
         // Drop it.
         u = new UpdateDrop(graphIRI);
-        UpdateAction.execute(u, gStore);
+        UpdateAction.execute(u, gStore,null);
         assertFalse(gStore.containsGraph(graphIRI));
 
         if ( !silentMode ) {
             // Drop it again. - should fail
             try {
-                UpdateAction.execute(u, gStore);
+                UpdateAction.execute(u, gStore,null);
                 fail();
             } catch (UpdateException ex) {}
         }
@@ -79,19 +79,19 @@ public abstract class AbstractTestUpdateGraphMgt extends AbstractTestUpdateBase
     public void testCreateDrop2() {
         DatasetGraph gStore = getEmptyDatasetGraph();
         Update u = new UpdateCreate(graphIRI);
-        UpdateAction.execute(u, gStore);
+        UpdateAction.execute(u, gStore,null);
 
         u = new UpdateCreate(graphIRI, true);
-        UpdateAction.execute(u, gStore);
+        UpdateAction.execute(u, gStore,null);
         // JENA-1068
 // assertTrue(gStore.containsGraph(graphIRI)) ;
         assertTrue(graphEmpty(gStore.getGraph(graphIRI)));
 
         u = new UpdateDrop(graphIRI);
-        UpdateAction.execute(u, gStore);
+        UpdateAction.execute(u, gStore,null);
         assertFalse(gStore.containsGraph(graphIRI));
         u = new UpdateDrop(graphIRI, true);
-        UpdateAction.execute(u, gStore);
+        UpdateAction.execute(u, gStore,null);
 
     }
 

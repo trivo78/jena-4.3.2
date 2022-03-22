@@ -65,7 +65,7 @@ public class TestDatasets {
 	@Before
 	public void setup() {
 		UpdateRequest up = UpdateFactory.create(TestDatasets.data);
-		UpdateExec.newBuilder().update(up).dataset(dsg).execute();
+		UpdateExec.newBuilder(null).update(up).dataset(dsg).execute();
 	}
 
 	private void test(String query, String[] expected, int expectedCount) {

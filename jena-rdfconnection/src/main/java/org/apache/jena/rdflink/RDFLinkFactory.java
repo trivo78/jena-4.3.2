@@ -57,7 +57,7 @@ public class RDFLinkFactory {
             .gspEndpoint(graphStoreProtocolEndpoint)
             .build();
     }
-
+ 
     /** Create a builder for a connection to a remote location by URL.
      * This is the URL for the dataset.
      *

@@ -147,7 +147,7 @@ public class UpdateBuilder {
      * @return a new UpdateRequest
      */
     public UpdateRequest buildRequest() {
-        UpdateRequest req = new UpdateRequest(build());
+        UpdateRequest req = new UpdateRequest(build(),null);
         req.setPrefixMapping(prefixHandler.getPrefixes());
         return req;
     }

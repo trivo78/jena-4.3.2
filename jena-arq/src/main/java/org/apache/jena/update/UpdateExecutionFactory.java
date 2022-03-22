@@ -60,8 +60,8 @@ public class UpdateExecutionFactory
      * @param dataset
      * @return UpdateExecution
      */
-    public static UpdateExecution create(Update update, Dataset dataset) {
-        return create(new UpdateRequest(update), dataset);
+    public static UpdateExecution create(Update update, Dataset dataset,Context ctx) {
+        return create(new UpdateRequest(update,ctx), dataset);
     }
 
     /**
@@ -74,8 +74,8 @@ public class UpdateExecutionFactory
      * @deprecated Use {@code UpdateExec.dataset(datasetGraph)... build();}
      */
     @Deprecated
-    public static UpdateExec create(Update update, DatasetGraph datasetGraph) {
-        return create(new UpdateRequest(update), datasetGraph);
+    public static UpdateExec create(Update update, DatasetGraph datasetGraph,Context ctx) {
+        return create(new UpdateRequest(update,ctx), datasetGraph);
     }
 
     /**
@@ -91,8 +91,8 @@ public class UpdateExecutionFactory
      */
     @Deprecated
 
-    public static UpdateExec create(Update update, Dataset dataset, QuerySolution inputBinding) {
-        return create(update, dataset.asDatasetGraph(), BindingLib.asBinding(inputBinding));
+    public static UpdateExec create(Update update, Dataset dataset, QuerySolution inputBinding,Context ctx) {
+        return create(update, dataset.asDatasetGraph(), BindingLib.asBinding(inputBinding),ctx);
     }
 
     /**
@@ -107,8 +107,8 @@ public class UpdateExecutionFactory
      * @deprecated Use {@code UpdateExec.dataset(datasetGraph)... build()}
      */
     @Deprecated
-    public static UpdateExec create(Update update, DatasetGraph datasetGraph, Binding inputBinding) {
-        return create(new UpdateRequest(update), datasetGraph, inputBinding);
+    public static UpdateExec create(Update update, DatasetGraph datasetGraph, Binding inputBinding,Context ctx) {
+        return create(new UpdateRequest(update,ctx), datasetGraph, inputBinding);
     }
 
     /**
@@ -233,13 +233,13 @@ public class UpdateExecutionFactory
 
     // Everything for local updates comes through one of these two make methods
     private static UpdateExecution make(UpdateRequest updateRequest, Dataset dataset, QuerySolution inputBinding, Context context) {
-        return UpdateExecution.dataset(dataset).update(updateRequest).initialBinding(inputBinding).build();
+        return UpdateExecution.dataset(dataset,updateRequest.getConnectionContext()).update(updateRequest).initialBinding(inputBinding).build();
     }
 
     // Everything for local updates comes through one of these two make methods
     private static UpdateExec make(UpdateRequest updateRequest, DatasetGraph datasetGraph, Binding inputBinding, Context context) {
         Context cxt = Context.setupContextForDataset(context, datasetGraph);
-        return UpdateExec.newBuilder().update(updateRequest).dataset(datasetGraph).initialBinding(inputBinding).context(cxt).build();
+        return UpdateExec.newBuilder(updateRequest.getConnectionContext()).update(updateRequest).dataset(datasetGraph).initialBinding(inputBinding).context(cxt).build();
     }
 
     /**
@@ -371,7 +371,7 @@ public class UpdateExecutionFactory
      * @return Remote Update processor
      */
     public static UpdateExecution createRemote(Update update, String remoteEndpoint) {
-        return makeRemote(new UpdateRequest(update), remoteEndpoint, null);
+        return makeRemote(new UpdateRequest(update,null), remoteEndpoint, null);
     }
 
     /**
@@ -386,7 +386,7 @@ public class UpdateExecutionFactory
      */
     @Deprecated
     public static UpdateExecution createRemote(Update update, String remoteEndpoint, Context context) {
-        return makeRemote(new UpdateRequest(update), remoteEndpoint, context);
+        return makeRemote(new UpdateRequest(update,null), remoteEndpoint, context);
     }
 
     /**
@@ -445,7 +445,7 @@ public class UpdateExecutionFactory
      */
     @Deprecated
     public static UpdateExecution createRemoteForm(Update update, String remoteEndpoint) {
-        return makeRemoteForm(new UpdateRequest(update), remoteEndpoint, null);
+        return makeRemoteForm(new UpdateRequest(update,null), remoteEndpoint, null);
     }
 
     /**
@@ -461,7 +461,7 @@ public class UpdateExecutionFactory
      */
     @Deprecated
     public static UpdateExecution createRemoteForm(Update update, String remoteEndpoint, Context context) {
-        return makeRemoteForm(new UpdateRequest(update), remoteEndpoint, context);
+        return makeRemoteForm(new UpdateRequest(update,null), remoteEndpoint, context);
     }
 
     /**

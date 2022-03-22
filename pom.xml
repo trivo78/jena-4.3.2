@@ -1058,8 +1058,8 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <reporting>
+    <modules></modules>
+    <reporting>
     <!-- <outputDirectory>${project.build.directory}/site</outputDirectory> -->
 
     <plugins>

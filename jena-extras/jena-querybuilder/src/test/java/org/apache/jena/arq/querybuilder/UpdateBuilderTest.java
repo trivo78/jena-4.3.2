@@ -529,7 +529,7 @@ public class UpdateBuilderTest {
         m.setNsPrefix("dc", DC_11.NS);
         m.setNsPrefix("ns", "http://example.org/ns#");
 
-        UpdateAction.execute(builder.build(), m);
+        UpdateAction.execute(builder.build(), m,null);
 
         Resource r = ResourceFactory.createResource(n.getURI());
         Property rPriceP = ResourceFactory.createProperty(priceN.getURI());

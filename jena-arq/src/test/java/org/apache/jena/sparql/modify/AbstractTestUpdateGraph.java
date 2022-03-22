@@ -66,7 +66,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         QuadDataAcc acc = new QuadDataAcc();
         acc.addTriple(triple2);
         UpdateDataInsert insert = new UpdateDataInsert(acc);
-        UpdateExec uProc = UpdateExec.dataset(gStore).update(insert).build();
+        UpdateExec uProc = UpdateExec.dataset(gStore,null).update(insert).build();
         uProc.execute();
 
         assertFalse(graphEmpty(gStore.getDefaultGraph()));
@@ -81,7 +81,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         QuadDataAcc acc = new QuadDataAcc();
         acc.addTriple(triple2);
         UpdateDataDelete delete = new UpdateDataDelete(acc);
-        UpdateExec uProc = UpdateExec.dataset(gStore).update(delete).build();
+        UpdateExec uProc = UpdateExec.dataset(gStore,null).update(delete).build();
         uProc.execute();
 
         assertFalse(graphEmpty(gStore.getDefaultGraph()));
@@ -96,7 +96,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         QuadDataAcc acc = new QuadDataAcc();
         acc.addTriple(triple1);
         UpdateDataDelete delete = new UpdateDataDelete(acc);
-        UpdateExec uProc = UpdateExec.dataset(gStore).update(delete).build();
+        UpdateExec uProc = UpdateExec.dataset(gStore,null).update(delete).build();
         uProc.execute();
 
         assertTrue(graphEmpty(gStore.getDefaultGraph()));
@@ -107,7 +107,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
     public void testInsert1() {
         DatasetGraph gStore = getEmptyDatasetGraph();
         UpdateModify insert = new UpdateModify();
-        UpdateAction.execute(insert, gStore);
+        UpdateAction.execute(insert, gStore,null);
         assertTrue(graphEmpty(gStore.getDefaultGraph()));
     }
 
@@ -116,7 +116,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         DatasetGraph gStore = getEmptyDatasetGraph();
         UpdateModify insert = new UpdateModify();
         insert.getInsertAcc().addTriple(triple1);
-        UpdateAction.execute(insert, gStore);
+        UpdateAction.execute(insert, gStore,null);
         assertTrue(graphContains(gStore.getDefaultGraph(), triple1));
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         gStore.addGraph(graphIRI, Factory.createDefaultGraph());
         UpdateModify insert = new UpdateModify();
         insert.getInsertAcc().addQuad(new Quad(graphIRI, triple1));
-        UpdateAction.execute(insert, gStore);
+        UpdateAction.execute(insert, gStore,null);
         assertTrue(graphContains(gStore.getGraph(graphIRI), triple1));
     }
 
@@ -138,7 +138,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         insert.getInsertAcc().addTriple(SSE.parseTriple("(?s <http://example/p> 1066)"));
         Element element = QueryFactory.createElement("{ ?s <http://example/p> 2007 }");
         insert.setElement(element);
-        UpdateAction.execute(insert, gStore);
+        UpdateAction.execute(insert, gStore,null);
         assertTrue(graphContains(gStore.getDefaultGraph(), triple2));
     }
 
@@ -147,7 +147,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         DatasetGraph gStore = getEmptyDatasetGraph();
         QuadAcc acc = new QuadAcc();
         UpdateDeleteWhere delete = new UpdateDeleteWhere(acc);
-        UpdateAction.execute(delete, gStore);
+        UpdateAction.execute(delete, gStore,null);
         assertTrue(graphEmpty(gStore.getDefaultGraph()));
     }
 
@@ -158,7 +158,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         QuadAcc acc = new QuadAcc();
         UpdateDeleteWhere delete = new UpdateDeleteWhere(acc);
         acc.addTriple(SSE.parseTriple("(?s ?p ?o)"));
-        UpdateAction.execute(delete, gStore);
+        UpdateAction.execute(delete, gStore,null);
         assertTrue("Not empty", graphEmpty(gStore.getDefaultGraph()));
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         QuadDataAcc acc = new QuadDataAcc();
         UpdateDataDelete delete = new UpdateDataDelete(acc);
         acc.addTriple(triple1);
-        UpdateAction.execute(delete, gStore);
+        UpdateAction.execute(delete, gStore,null);
         assertTrue(graphEmpty(gStore.getDefaultGraph()));
     }
 
@@ -182,7 +182,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         UpdateDataDelete delete = new UpdateDataDelete(acc);
         acc.setGraph(graphIRI);
         acc.addTriple(triple1);
-        UpdateAction.execute(delete, gStore);
+        UpdateAction.execute(delete, gStore,null);
         assertTrue(graphEmpty(gStore.getGraph(graphIRI)));
         assertTrue(graphEmpty(gStore.getDefaultGraph()));
     }
@@ -197,7 +197,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         Element element = QueryFactory.createElement("{ ?s <http://example/p> ?o }");
         modify.setElement(element);
         modify.getDeleteAcc().addQuad(SSE.parseQuad("(<http://example/graph> ?s <http://example/p> 2007 )"));
-        UpdateAction.execute(modify, gStore);
+        UpdateAction.execute(modify, gStore,null);
 
         assertTrue("Not empty", graphEmpty(gStore.getGraph(graphIRI)));
         assertFalse(graphEmpty(gStore.getDefaultGraph()));
@@ -215,7 +215,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         modify.getInsertAcc().addQuad(new Quad(graphIRI, triple1));
         modify.getDeleteAcc().addTriple(SSE.parseTriple("(?s <http://example/p> ?o)"));
         modify.getDeleteAcc().addQuad(SSE.parseQuad("(<http://example/graph> ?s <http://example/p> ?o)"));
-        UpdateAction.execute(modify, gStore);
+        UpdateAction.execute(modify, gStore,null);
 
         assertFalse(graphEmpty(gStore.getGraph(graphIRI)));
         assertTrue(graphEmpty(gStore.getDefaultGraph()));
@@ -241,7 +241,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         modify.getInsertAcc().addQuad(new Quad(graphIRI, triple1));
         modify.getDeleteAcc().addTriple(SSE.parseTriple("(?s <http://example/p> ?o)"));
         modify.getDeleteAcc().addQuad(SSE.parseQuad("(<http://example/graph> ?s <http://example/p> ?o)"));
-        UpdateAction.execute(modify, gStore);
+        UpdateAction.execute(modify, gStore,null);
 
         assertFalse(graphEmpty(gStore.getGraph(graphIRI)));
         assertTrue(graphEmpty(gStore.getDefaultGraph()));
@@ -263,7 +263,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         modify.getInsertAcc().addQuad(new Quad(graphIRI, triple1));
         modify.getDeleteAcc().addTriple(SSE.parseTriple("(?s <http://example/p> ?o)"));
         modify.getDeleteAcc().addQuad(SSE.parseQuad("(<http://example/graph> ?s <http://example/p> ?o)"));
-        UpdateAction.execute(modify, gStore, initialBinding);
+        UpdateAction.execute(modify, gStore, initialBinding,null);
 
         assertFalse(graphEmpty(gStore.getGraph(graphIRI)));
         assertFalse(graphEmpty(gStore.getDefaultGraph()));
@@ -287,7 +287,7 @@ public abstract class AbstractTestUpdateGraph extends AbstractTestUpdateBase
         namedGraphData(gStore, graphIRI, data(t2));
 
         UpdateCopy copy = new UpdateCopy(Target.DEFAULT, Target.create(graphIRI));
-        UpdateAction.execute(copy, gStore);
+        UpdateAction.execute(copy, gStore,null);
 
         assertFalse(graphEmpty(gStore.getDefaultGraph()));
         assertFalse(graphEmpty(gStore.getGraph(graphIRI)));

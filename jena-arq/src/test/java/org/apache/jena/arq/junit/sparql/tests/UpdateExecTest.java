@@ -62,7 +62,7 @@ public class UpdateExecTest implements Runnable
                 .getResource()
                 .getURI() ;
 
-        UpdateRequest request = UpdateFactory.read(updateFile, Syntax.syntaxARQ) ;
+        UpdateRequest request = UpdateFactory.read(updateFile, Syntax.syntaxARQ,null) ;
         UpdateAction.execute(request, input) ;
         boolean b = datasetSame(input, output, false) ;
         if ( ! b )

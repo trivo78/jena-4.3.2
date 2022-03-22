@@ -36,13 +36,13 @@ public class UpdateReadFromFile
         Dataset dataset = DatasetFactory.createTxnMem() ;
         
         // ---- Read and update script in one step.
-        UpdateAction.readExecute("update.ru", dataset) ;
+        UpdateAction.readExecute("update.ru", dataset,null) ;
         
         // ---- Reset.
-        UpdateAction.parseExecute("DROP ALL", dataset) ;
+        UpdateAction.parseExecute("DROP ALL", dataset,null) ;
         
         // ---- Read the update script, then execute, in separate two steps
-        UpdateRequest request = UpdateFactory.read("update.ru") ;
+        UpdateRequest request = UpdateFactory.read("update.ru",null) ;
         UpdateAction.execute(request, dataset) ;
 
         // Write in debug format.

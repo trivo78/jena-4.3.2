@@ -239,7 +239,7 @@ public class SPARQL_Update extends ActionService
         UpdateRequest req = null;
         if (!action.isTransactional()) {
             try {
-                req = UpdateFactory.read(usingList, input, UpdateParseBase, Syntax.syntaxARQ);
+                req = UpdateFactory.read(usingList, input, UpdateParseBase, Syntax.syntaxARQ,null);
             }
             catch (UpdateException ex) { 
                 ServletOps.errorBadRequest(ex.getMessage()); 

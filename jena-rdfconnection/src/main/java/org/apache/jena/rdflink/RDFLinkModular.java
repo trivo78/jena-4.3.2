@@ -29,6 +29,7 @@ import org.apache.jena.sparql.core.Transactional;
 import org.apache.jena.sparql.exec.QueryExec;
 import org.apache.jena.sparql.exec.QueryExecBuilder;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.update.UpdateRequest;
 
 /**
@@ -41,6 +42,7 @@ public class RDFLinkModular implements RDFLink {
     private final LinkSparqlUpdate updateConnection;
     private final LinkDatasetGraph datasetConnection;
     private final Transactional transactional;
+    private final Context       ctx = new Context();
 
     @Override public void begin()                       { transactional.begin(); }
     @Override public void begin(TxnType txnType)        { transactional.begin(txnType); }
@@ -200,6 +202,11 @@ public class RDFLinkModular implements RDFLink {
             updateConnection.close();
         if ( datasetConnection != null )
             datasetConnection.close();
+    }
+
+    @Override
+    public Context getContext() {
+        return ctx;
     }
 }
 

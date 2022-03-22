@@ -45,6 +45,7 @@ import org.apache.jena.sparql.exec.UpdateExecDatasetBuilder;
 import org.apache.jena.sparql.graph.GraphFactory;
 import org.apache.jena.sparql.graph.GraphReadOnly;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.system.Txn;
 import org.apache.jena.update.UpdateRequest;
 
@@ -66,9 +67,10 @@ import org.apache.jena.update.UpdateRequest;
 public class RDFLinkDataset implements RDFLink {
     private ThreadLocal<Boolean> transactionActive = ThreadLocal.withInitial(()->false);
 
-    private DatasetGraph dataset;
+    private DatasetGraph    dataset;
     private final Isolation isolation;
-
+    private final Context         ctx = new Context();
+    
     private RDFLinkDataset(DatasetGraph dataset) {
         this(dataset, Isolation.NONE);
     }
@@ -94,6 +96,11 @@ public class RDFLinkDataset implements RDFLink {
         return QueryExec.dataset(dataset);
     }
 
+    @Override
+    public Context getContext() {
+        return ctx;
+    }
+
     private class RunnableUpdater implements Runnable{
         private final UpdateRequest         update;
         private final DatasetGraph          dataset;
@@ -108,7 +115,7 @@ public class RDFLinkDataset implements RDFLink {
 
         @Override
         public void run() {
-            final  UpdateExecDatasetBuilder  uedsb =  UpdateExecDatasetBuilder.create().update(update);
+            final  UpdateExecDatasetBuilder  uedsb =  UpdateExecDatasetBuilder.create(getContext()).update(update);
             final List<UpdateResult> r = uedsb.execute(dataset);
             result = r;
         }

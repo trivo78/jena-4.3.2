@@ -23,6 +23,7 @@ import java.util.Collections ;
 import java.util.List ;
 
 import org.apache.jena.graph.Node ;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.Iso ;
 import org.apache.jena.sparql.util.NodeIsomorphismMap ;
 import org.apache.jena.update.Update ;
@@ -36,7 +37,7 @@ public abstract class UpdateWithUsing extends Update
     private List<Node> usingView = Collections.unmodifiableList(using) ;
     private List<Node> usingNamedView = Collections.unmodifiableList(usingNamed) ;
     
-    public UpdateWithUsing() {}
+    public UpdateWithUsing(Context connCtx) { super(connCtx);}
 
     public void addUsing(Node node)         { using.add(node) ; }
     public void addUsingNamed(Node node)    { usingNamed.add(node) ; }

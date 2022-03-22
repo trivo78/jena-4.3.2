@@ -20,10 +20,18 @@ package org.apache.jena.update;
 
 import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.modify.request.UpdateVisitor ;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.NodeIsomorphismMap ;
 
 public abstract class Update
 {
+    private  final Context connCtx;
+    public Context getConnectionContext() {
+        return connCtx;
+    }
+    protected Update(Context connCtx) {
+        this.connCtx = connCtx;
+    }
     public abstract UpdateResult visit(UpdateVisitor visitor) ;
 
     /** Compare by isomorphism - if the isomorphism map is null, compare nodes by .equals */

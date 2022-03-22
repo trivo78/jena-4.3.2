@@ -80,6 +80,10 @@ public class SPARQLParserBase extends QueryParserBase {
         this.query = new Query();
         setPrologue(prologue);
     }
+    
+    public UpdateSink getUpdateSink() {
+        return sink;
+    }
 
     // Signal start/finish of units
 

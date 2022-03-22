@@ -20,17 +20,26 @@ package org.apache.jena.sparql.modify.request;
 
 import org.apache.jena.graph.Node ;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 
 public class UpdateDrop extends UpdateDropClear 
 {
-    public UpdateDrop(String iri, boolean silent)       { super(iri, silent) ; }
-    public UpdateDrop(Target target, boolean silent)    { super(target, silent) ; }
-    public UpdateDrop(Node target, boolean silent)      { super(target, silent) ; }
+    public UpdateDrop(String iri, boolean silent,Context connCtx)       { super(iri, silent,connCtx) ; }
+    public UpdateDrop(Target target, boolean silent,Context connCtx)    { super(target, silent,connCtx) ; }
+    public UpdateDrop(Node target, boolean silent,Context connCtx)      { super(target, silent,connCtx) ; }
     
-    public UpdateDrop(String iri)                       { super(iri, false) ; }
-    public UpdateDrop(Target target)                    { super(target, false) ; }
-    public UpdateDrop(Node target)                      { super(target, false) ; }
+    public UpdateDrop(String iri,Context connCtx)                       { super(iri, false,connCtx) ; }
+    public UpdateDrop(Target target,Context connCtx)                    { super(target, false,connCtx) ; }
+    public UpdateDrop(Node target,Context connCtx)                      { super(target, false,connCtx) ; }
 
+    public UpdateDrop(String iri, boolean silent)                       { super(iri, silent,null) ; }
+    public UpdateDrop(Target target, boolean silent)                    { super(target, silent,null) ; }
+    public UpdateDrop(Node target, boolean silent)                      { super(target, silent,null) ; }
+    
+    public UpdateDrop(String iri)                                       { super(iri, false,null) ; }
+    public UpdateDrop(Target target)                                    { super(target, false,null) ; }
+    public UpdateDrop(Node target)                                      { super(target, false,null) ; }
+    
     @Override
     public UpdateResult visit(UpdateVisitor visitor){ 
         visitor.visit(this) ; 

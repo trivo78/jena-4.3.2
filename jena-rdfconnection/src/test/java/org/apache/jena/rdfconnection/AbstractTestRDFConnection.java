@@ -388,7 +388,7 @@ public abstract class AbstractTestRDFConnection {
     }
 
     @Test public void update_03() {
-    	UpdateRequest update = new UpdateRequest();
+    	UpdateRequest update = new UpdateRequest(null);
     	update.add("INSERT DATA { <urn:ex:s> <urn:ex:p> <urn:ex:o>}");
         try ( RDFConnection conn = connection() ) {
             conn.update(update);
@@ -396,7 +396,7 @@ public abstract class AbstractTestRDFConnection {
     }
 
     @Test public void update_04() {
-    	UpdateRequest update = new UpdateRequest();
+    	UpdateRequest update = new UpdateRequest(null);
     	update.add("INSERT DATA { <urn:ex:s> <urn:ex:p> <urn:ex:o>}");
         try ( RDFConnection conn = connection() ) {
             Txn.executeWrite(conn, ()->conn.update(update));

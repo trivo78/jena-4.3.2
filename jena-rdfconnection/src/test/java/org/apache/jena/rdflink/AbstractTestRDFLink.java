@@ -446,7 +446,7 @@ public abstract class AbstractTestRDFLink {
     }
 
     @Test public void update_03() {
-    	UpdateRequest update = new UpdateRequest();
+    	UpdateRequest update = new UpdateRequest(null);
     	update.add("INSERT DATA { <urn:x:s> <urn:x:p> <urn:x:o>}");
         try ( RDFLink link = link() ) {
             link.update(update);
@@ -454,7 +454,7 @@ public abstract class AbstractTestRDFLink {
     }
 
     @Test public void update_04() {
-    	UpdateRequest update = new UpdateRequest();
+    	UpdateRequest update = new UpdateRequest(null);
     	update.add("INSERT DATA { <urn:x:s> <urn:x:p> <urn:x:o>}");
         try ( RDFLink link = link() ) {
             Txn.executeWrite(link, ()->link.update(update));

@@ -73,7 +73,7 @@ public class ExQuerySubstitute_01 {
         Resource person = ResourceFactory.createResource(uri);
         Literal literal = ResourceFactory.createPlainLiteral(name);
 
-        UpdateExecution.dataset(dataset)
+        UpdateExecution.dataset(dataset,null)
             .update(update)
             .substitution("person", person)
             .substitution("name", literal)

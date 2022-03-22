@@ -71,14 +71,14 @@ public class rupdate extends CmdARQ
 
         for ( String filename : requestFiles )
         {
-            UpdateRequest req = UpdateFactory.read( filename );
+            UpdateRequest req = UpdateFactory.read( filename ,null);
             exec( endpoint, req );
         }
 
         for ( String requestString : super.getPositional() )
         {
             requestString = indirect( requestString );
-            UpdateRequest req = UpdateFactory.create( requestString );
+            UpdateRequest req = UpdateFactory.create( requestString);
             exec( endpoint, req );
         }
     }

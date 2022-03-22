@@ -19,12 +19,17 @@
 package org.apache.jena.sparql.modify.request;
 
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 
 
 public class UpdateAdd extends UpdateBinaryOp
 {
-    public UpdateAdd(Target src, Target dest)                  { super(src, dest, true) ; }
-    public UpdateAdd(Target src, Target dest, boolean silent)  { super(src, dest, silent) ; }
+    public UpdateAdd(Target src, Target dest,Context connCtx) {
+        super(src, dest, true,connCtx) ; 
+    }
+    public UpdateAdd(Target src, Target dest, boolean silent,Context connCtx)  { 
+        super(src, dest, silent,connCtx) ; 
+    }
 
     @Override
     public UpdateResult visit(UpdateVisitor visitor){ 

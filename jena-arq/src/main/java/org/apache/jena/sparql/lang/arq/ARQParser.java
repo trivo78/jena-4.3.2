@@ -1771,7 +1771,7 @@ silent = true ;
       jj_la1[45] = jj_gen;
       ;
     }
-{if ("" != null) return new UpdateLoad(url, dest, silent) ;}
+{if ("" != null) return new UpdateLoad(url, dest, silent,null) ;}
     throw new Error("Missing return statement in function");
   }
 
@@ -1788,7 +1788,7 @@ silent = true ;
       ;
     }
     target = GraphRefAll();
-{if ("" != null) return new UpdateClear(target, silent) ;}
+{if ("" != null) return new UpdateClear(target, silent,null) ;}
     throw new Error("Missing return statement in function");
   }
 
@@ -1805,7 +1805,9 @@ silent = true ;
       ;
     }
     target = GraphRefAll();
-{if ("" != null) return new UpdateDrop(target, silent) ;}
+    
+    
+{if ("" != null) return new UpdateDrop(target, silent,null) ;}
     throw new Error("Missing return statement in function");
   }
 
@@ -1822,7 +1824,7 @@ silent=true ;
       ;
     }
     iri = GraphRef();
-{if ("" != null) return new UpdateCreate(iri, silent) ;}
+{if ("" != null) return new UpdateCreate(iri, silent,null) ;}
     throw new Error("Missing return statement in function");
   }
 
@@ -1841,7 +1843,7 @@ silent=true ;
     src = GraphOrDefault();
     jj_consume_token(TO);
     dest = GraphOrDefault();
-{if ("" != null) return new UpdateAdd(src, dest, silent) ;}
+{if ("" != null) return new UpdateAdd(src, dest, silent,null) ;}
     throw new Error("Missing return statement in function");
   }
 
@@ -1860,7 +1862,7 @@ silent=true ;
     src = GraphOrDefault();
     jj_consume_token(TO);
     dest = GraphOrDefault();
-{if ("" != null) return new UpdateMove(src, dest, silent) ;}
+{if ("" != null) return new UpdateMove(src, dest, silent,null) ;}
     throw new Error("Missing return statement in function");
   }
 
@@ -1879,7 +1881,7 @@ silent=true ;
     src = GraphOrDefault();
     jj_consume_token(TO);
     dest = GraphOrDefault();
-{if ("" != null) return new UpdateCopy(src, dest, silent) ;}
+{if ("" != null) return new UpdateCopy(src, dest, silent,null) ;}
     throw new Error("Missing return statement in function");
   }
 
@@ -1910,12 +1912,12 @@ int beginLine = t.beginLine; int beginColumn = t.beginColumn; t = null;
 startDeleteTemplate(qp, beginLine, beginColumn) ;
     QuadPattern(qp);
 finishDeleteTemplate(qp, beginLine, beginColumn) ;
-{if ("" != null) return new UpdateDeleteWhere(qp) ;}
+{if ("" != null) return new UpdateDeleteWhere(qp,null) ;}
     throw new Error("Missing return statement in function");
   }
 
   final public Update Modify() throws ParseException {Element el ; String iri = null ;
-                    UpdateModify up = new UpdateModify() ;
+                    UpdateModify up = new UpdateModify(null) ;
 startModifyUpdate() ;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case WITH:{

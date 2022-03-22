@@ -331,7 +331,7 @@ public class UpdateBuilderExampleTests {
                 .addDelete("?person", "?property", "?value").addWhere("?person", "?property", "?value")
                 .addWhere("?person", FOAF.givenName, "'Fred'");
 
-        UpdateAction.execute(builder.build(), ds);
+        UpdateAction.execute(builder.build(), ds,null);
 
         Model m2 = ds.getNamedModel(graphName.getURI());
 
@@ -394,7 +394,7 @@ public class UpdateBuilderExampleTests {
         UpdateBuilder builder = new UpdateBuilder().addPrefix("dc", DC_11.NS).addPrefix("xsd", XSD.NS).addInsert(ins)
                 .addWhere(whr);
 
-        UpdateAction.execute(builder.build(), ds);
+        UpdateAction.execute(builder.build(), ds,null);
 
         m1 = ds.getNamedModel(graphName1.getURI());
         assertEquals(7, m1.listStatements().toList().size());
@@ -462,7 +462,7 @@ public class UpdateBuilderExampleTests {
                 .addWhere("?person", FOAF.name, "?name").addOptional("?person", FOAF.mbox, "?email"));
         UpdateBuilder builder = new UpdateBuilder().addInsert(ins).addWhere(whr);
 
-        UpdateAction.execute(builder.build(), ds);
+        UpdateAction.execute(builder.build(), ds,null);
 
         m1 = ds.getNamedModel(graphName1.getURI());
         assertEquals(5, m1.listStatements().toList().size());
@@ -587,7 +587,7 @@ public class UpdateBuilderExampleTests {
         UpdateBuilder builder = new UpdateBuilder().addWhere("?person", FOAF.givenName, "Fred").addWhere("?person",
                 "?property", "?value");
 
-        UpdateAction.execute(builder.buildDeleteWhere(), m);
+        UpdateAction.execute(builder.buildDeleteWhere(), m,null);
 
         assertEquals(3, m.listStatements().toList().size());
         assertTrue(m.contains(will, RDF.type, FOAF.Person));
@@ -633,7 +633,7 @@ public class UpdateBuilderExampleTests {
                                 "?value1"))
                 .addGraph(graphName2, new SelectBuilder().addWhere("?person", "?property2", "?value2"));
 
-        UpdateAction.execute(builder.buildDeleteWhere(), ds);
+        UpdateAction.execute(builder.buildDeleteWhere(), ds,null);
 
         m1 = ds.getNamedModel(graphName1.getURI());
         assertEquals(2, m1.listStatements().toList().size());

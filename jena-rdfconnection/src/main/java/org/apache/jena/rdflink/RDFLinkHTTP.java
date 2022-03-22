@@ -18,7 +18,6 @@
 
 package org.apache.jena.rdflink;
 
-import org.apache.jena.sparql.modify.UpdateResult;
 import java.net.http.HttpClient;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +43,7 @@ import org.apache.jena.sparql.exec.http.GSP;
 import org.apache.jena.sparql.exec.http.QueryExecHTTPBuilder;
 import org.apache.jena.sparql.exec.http.UpdateExecHTTP;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.system.Txn;
 import org.apache.jena.update.UpdateFactory;
 import org.apache.jena.update.UpdateRequest;
@@ -82,6 +82,7 @@ public class RDFLinkHTTP implements RDFLink {
     // Whether to check SPARQL updates given as strings by parsing them.
     protected final boolean parseCheckUpdates;
 
+    private final Context       ctx = new Context();
     /** Create a {@link RDFLinkHTTPBuilder}. */
     public static RDFLinkHTTPBuilder newBuilder() {
         return new RDFLinkHTTPBuilder();
@@ -349,7 +350,7 @@ public class RDFLinkHTTP implements RDFLink {
         UpdateRequest actual = null;
         if ( update == null ) {
             if ( parseCheckUpdates )
-                actual = UpdateFactory.create(updateString);
+                actual = UpdateFactory.create(updateString,this.getContext());
         }
         // Use the update string as provided if possible, otherwise serialize the update.
         String updateStringToSend = ( updateString != null ) ? updateString  : update.toString();
@@ -565,4 +566,9 @@ public class RDFLinkHTTP implements RDFLink {
     @Override public void end()                         { txnLifecycle.end(); }
     @Override public ReadWrite transactionMode()        { return txnLifecycle.transactionMode(); }
     @Override public TxnType transactionType()          { return txnLifecycle.transactionType(); }
+
+    @Override
+    public Context getContext() {
+        return ctx;
+    }
 }

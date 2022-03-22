@@ -202,7 +202,7 @@ public abstract class ExecUpdateHTTPBuilder<X, Y> {
 
     private void ensureUpdateRequest() {
         if ( updateOperations == null )
-            updateOperations = new UpdateRequest();
+            updateOperations = new UpdateRequest(null);
     }
 
     public X build() {

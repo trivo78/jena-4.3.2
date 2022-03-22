@@ -82,7 +82,7 @@ public class UpdateTransformOps {
     }
 
     public static UpdateRequest transform(UpdateRequest update, ElementTransform transform, ExprTransform exprTransform) {
-        UpdateRequest req = new UpdateRequest() ;
+        UpdateRequest req = new UpdateRequest(update.getConnectionContext()) ;
         req.getPrefixMapping().setNsPrefixes(update.getPrefixMapping()) ;
         
         for (Update up : update.getOperations()) {
@@ -159,7 +159,7 @@ public class UpdateTransformOps {
             else {
                 QuadAcc acc = new QuadAcc() ;
                 addAll(acc, quads2) ;
-                result = new UpdateDeleteWhere(acc) ;
+                result = new UpdateDeleteWhere(acc,update.getConnectionContext()) ;
             }
             
             return null;
@@ -175,7 +175,7 @@ public class UpdateTransformOps {
             List<Quad> ins = update.getInsertQuads() ;
             List<Quad> ins1 = transform(ins) ;
 
-            UpdateModify mod = new UpdateModify() ;
+            UpdateModify mod = new UpdateModify(update.getConnectionContext()) ;
 
             addAll(mod.getDeleteAcc(), del1) ;
             addAll(mod.getInsertAcc(), ins1) ;

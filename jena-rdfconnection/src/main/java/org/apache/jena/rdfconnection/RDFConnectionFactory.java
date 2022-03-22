@@ -18,10 +18,12 @@
 
 package org.apache.jena.rdfconnection;
 
+import org.apache.jena.acl.DatasetACL;
 import static org.apache.jena.rdfconnection.LibRDFConn.adapt;
 
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdflink.RDFLinkDatasetBuilder;
+import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.sys.JenaSystem;
 
 /**
@@ -158,6 +160,12 @@ public class RDFConnectionFactory {
     public static RDFConnection connect(Dataset dataset) {
         return RDFConnection.connect(dataset);
     }
+    @Deprecated
+    public static RDFConnection connect(Dataset dataset,String userName) {
+        final RDFConnection ret = RDFConnection.connect(dataset);
+        ret.getContext().put(Symbol.create(DatasetACL.ACL_USER_NAME), userName);
+        return ret;
+    }
 
     /**
      * Connect to a local (same JVM) dataset.
@@ -182,6 +190,12 @@ public class RDFConnectionFactory {
     @Deprecated
     public static RDFConnection connect(Dataset dataset, Isolation isolation) {
         return adapt(RDFLinkDatasetBuilder.newBuilder().dataset(dataset.asDatasetGraph()).isolation(isolation).build());
+    }
+    @Deprecated
+    public static RDFConnection connect(Dataset dataset, Isolation isolation,String userName) {
+        final RDFConnection ret =  adapt(RDFLinkDatasetBuilder.newBuilder().dataset(dataset.asDatasetGraph()).isolation(isolation).build());
+        ret.getContext().put(Symbol.create(DatasetACL.ACL_USER_NAME), userName);
+        return ret;
     }
 
     /** Create a connection to a remote Fuseki server by URL.

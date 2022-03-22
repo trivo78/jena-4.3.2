@@ -21,6 +21,7 @@ package org.apache.jena.sparql.modify.request;
 import java.util.List ;
 
 import org.apache.jena.sparql.core.Quad ;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.Iso ;
 import org.apache.jena.sparql.util.NodeIsomorphismMap ;
 import org.apache.jena.update.Update ;
@@ -29,7 +30,10 @@ public abstract class UpdateData extends Update
 {
     protected QuadDataAcc quadData ;
     
-    public UpdateData(QuadDataAcc quadData) { this.quadData = quadData ; } 
+    public UpdateData(QuadDataAcc quadData,Context connCtx) { 
+        super(connCtx);
+        this.quadData = quadData ; 
+    } 
     
     public List<Quad> getQuads() { return quadData.getQuads() ; }
     

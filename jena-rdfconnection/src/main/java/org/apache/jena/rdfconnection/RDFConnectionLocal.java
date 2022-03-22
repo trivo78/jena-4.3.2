@@ -35,6 +35,7 @@ import org.apache.jena.sparql.core.DatasetGraphFactory;
 import org.apache.jena.sparql.core.DatasetGraphReadOnly;
 import org.apache.jena.sparql.graph.GraphReadOnly;
 import org.apache.jena.sparql.modify.UpdateResult;
+import org.apache.jena.sparql.util.Context;
 import org.apache.jena.system.Txn;
 import org.apache.jena.update.UpdateExecutionFactory;
 import org.apache.jena.update.UpdateRequest;
@@ -60,14 +61,26 @@ public class RDFConnectionLocal implements RDFConnection {
 
     private Dataset dataset;
     private final Isolation isolation;
+    private final Context   ctx;
+    
+    public RDFConnectionLocal(Dataset dataset,Context ctx) {
+        this(dataset, Isolation.NONE,ctx);
+    }
 
+    public RDFConnectionLocal(Dataset dataset, Isolation isolation,Context ctx) {
+        this.dataset = dataset;
+        this.isolation = isolation;
+        this.ctx = ctx;
+    }
     public RDFConnectionLocal(Dataset dataset) {
         this(dataset, Isolation.NONE);
+        
     }
 
     public RDFConnectionLocal(Dataset dataset, Isolation isolation) {
         this.dataset = dataset;
         this.isolation = isolation;
+        this.ctx = new Context();
     }
 
     @Override
@@ -80,6 +93,11 @@ public class RDFConnectionLocal implements RDFConnection {
     @Override
     public QueryExecutionBuilder newQuery() {
         return QueryExecution.create().dataset(dataset);
+    }
+
+    @Override
+    public Context getContext() {
+        return ctx;
     }
     private class RunnableUpdate implements Runnable {
         private final UpdateRequest update;
