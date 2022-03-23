@@ -24,8 +24,41 @@ import org.apache.jena.shared.JenaException ;
 
 public class ACLException extends JenaException
 {
-    public ACLException(String msg, Throwable cause)    { super(msg, cause) ; }
-    public ACLException(String msg)                     { super(msg) ; }
-    public ACLException(Throwable cause)                { super(cause) ; }
-    public ACLException()                               { super() ; }
+    private final String    graphName;
+    private final String    userName;
+    public ACLException(String msg, Throwable cause)    { 
+        super(msg, cause) ; 
+        graphName = null;
+        userName = null;
+    }
+    public ACLException(String msg)                     { 
+        super(msg) ; 
+        graphName = null;
+        userName = null;
+        
+    }
+    public ACLException(Throwable cause)                { 
+        super(cause) ; 
+        graphName = null;
+        userName = null;
+        
+    }
+    public ACLException()                               { 
+        super() ; 
+        graphName = null;
+        userName = null;
+        
+    }
+    public ACLException(String graph,String user) {
+       super("User " + user + " cannot access " + graph);
+       graphName = graph;
+       userName = user;
+    }
+    
+    public String getGraphName() {
+        return graphName;
+    }
+    public String getUserName() {
+        return userName;
+    }
 }
