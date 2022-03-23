@@ -84,7 +84,9 @@ public class UpdateEngineWorker implements UpdateVisitor
 
     @Override
     public void visit(UpdateDrop update)
-    { execDropClear(update, false) ; }
+    { 
+        execDropClear(update, false) ; 
+    }
 
     @Override
     public void visit(UpdateClear update)
@@ -116,11 +118,11 @@ public class UpdateEngineWorker implements UpdateVisitor
         
         if ( isClear ) {
             if ( g == null || datasetGraph.containsGraph(g) ) {
-                checkACL(update, graphName, DatasetACL.aclId.aiClear);
+                checkACL(graphName, DatasetACL.aclId.aiClear);
                 graph(datasetGraph, g).clear();
             }
         } else {
-            checkACL(update, graphName, DatasetACL.aclId.aiDrop);
+            checkACL(graphName, DatasetACL.aclId.aiDrop);
             datasetGraph.removeGraph(g);
         }
     }
@@ -132,8 +134,8 @@ public class UpdateEngineWorker implements UpdateVisitor
         
         for ( Node gn : list )  {
             final String graphName = gn.getURI();
-            checkACL(update, graphName, DatasetACL.aclId.aiDrop);
-            checkACL(update, graphName, DatasetACL.aclId.aiClear);
+            checkACL(graphName, DatasetACL.aclId.aiDrop);
+            checkACL(graphName, DatasetACL.aclId.aiClear);
         }
         
         for ( Node gn : list ) 
@@ -151,7 +153,7 @@ public class UpdateEngineWorker implements UpdateVisitor
             return;
         }
         
-        checkACL(update, g.getURI(), DatasetACL.aclId.aiCreate);
+        checkACL(g.getURI(), DatasetACL.aclId.aiCreate);
         // In-memory specific
         datasetGraph.addGraph(g, GraphFactory.createDefaultGraph());
     }
@@ -244,7 +246,11 @@ public class UpdateEngineWorker implements UpdateVisitor
         // MOVE (DEFAULT or GRAPH) TO (DEFAULT or GRAPH)
         // Difefrent source and destination.
         
-        checkACL(update, update.getSrc().getGraph().getName() , DatasetACL.aclId.aiDrop);
+        checkACL(update.getSrc().getGraph().getURI() , DatasetACL.aclId.aiDrop);
+        checkACL(update.getDest().getGraph().getURI() , DatasetACL.aclId.aiInsertData);
+        
+        if (datasetGraph.containsGraph(update.getDest().getGraph()) == false)
+            checkACL(update.getDest().getGraph().getURI() , DatasetACL.aclId.aiCreate);
         
         gsCopy(datasetGraph, update.getSrc(), update.getDest(), update.getSilent());
         gsDrop(datasetGraph, update.getSrc(), true);
@@ -306,7 +312,7 @@ public class UpdateEngineWorker implements UpdateVisitor
     public UpdateResult visit(UpdateDataInsert update) {
         List<Quad> ret = new ArrayList<>();
         for ( Quad quad : update.getQuads() )
-            addToDatasetGraph(datasetGraph, quad,ret);
+            addToDatasetGraph(datasetGraph, quad,ret,this.context,DatasetACL.aclId.aiInsertData);
         
         return new UpdateResult(null,ret);
     }
@@ -315,7 +321,7 @@ public class UpdateEngineWorker implements UpdateVisitor
     public UpdateResult visit(UpdateDataDelete update) {
         List<Quad> ret = new ArrayList<>();
         for ( Quad quad : update.getQuads() )
-            deleteFromDatasetGraph(datasetGraph, quad,ret);
+            deleteFromDatasetGraph(datasetGraph, quad,ret,this.context,DatasetACL.aclId.aiDeleteData);
         
         return new UpdateResult(ret,null);
     }
@@ -340,7 +346,7 @@ public class UpdateEngineWorker implements UpdateVisitor
             Iter.close(bindings);
 
             Iterator<Binding> it = db.iterator();
-            deleted = execDelete(datasetGraph, quads, null, it);
+            deleted = execDelete(datasetGraph, quads, null, it,this.context,DatasetACL.aclId.aiUpdate);
             Iter.close(it);
         }
         finally {
@@ -407,11 +413,11 @@ public class UpdateEngineWorker implements UpdateVisitor
             Iter.close(bindings);
 
             Iterator<Binding> it = db.iterator();
-            List<Quad> deleted = execDelete(datasetGraph, update.getDeleteQuads(), withGraph, it);
+            List<Quad> deleted = execDelete(datasetGraph, update.getDeleteQuads(), withGraph, it,this.context,DatasetACL.aclId.aiUpdate);
             Iter.close(it);
 
             Iterator<Binding> it2 = db.iterator();
-            List<Quad> updated =  execInsert(datasetGraph, update.getInsertQuads(), withGraph, it2);
+            List<Quad> updated =  execInsert(datasetGraph, update.getInsertQuads(), withGraph, it2,this.context,DatasetACL.aclId.aiUpdate);
             Iter.close(it2);
             
             ret = new UpdateResult(deleted,updated);
@@ -500,50 +506,81 @@ public class UpdateEngineWorker implements UpdateVisitor
         return n.isURI() || n.isLiteral() ;
     }
 
-    protected static List<Quad> execDelete(DatasetGraph dsg, List<Quad> quads, Node dftGraph, Iterator<Binding> bindings) {
+    protected static List<Quad> execDelete(
+        DatasetGraph        dsg, 
+        List<Quad>          quads, 
+        Node                dftGraph, 
+        Iterator<Binding>   bindings,
+        Context             ctx,
+        DatasetACL.aclId    aclId
+    ) {
         Pair<List<Quad>, List<Quad>> p = split(quads) ;
-        return execDelete(dsg, p.getLeft(), p.getRight(), dftGraph, bindings) ;
+        return execDelete(dsg, p.getLeft(), p.getRight(), dftGraph, bindings,ctx,aclId) ;
     }
     
-    protected static List<Quad> execDelete(DatasetGraph dsg, List<Quad> onceQuads, List<Quad> templateQuads, Node dftGraph, Iterator<Binding> bindings) {
+    protected static List<Quad> execDelete(
+            DatasetGraph        dsg, 
+            List<Quad>          onceQuads, 
+            List<Quad>          templateQuads, 
+            Node                dftGraph, 
+            Iterator<Binding>   bindings,
+            Context             ctx,
+            DatasetACL.aclId    aclId
+    ) {
         List<Quad> ret = new ArrayList<>();
         
         if ( onceQuads != null && bindings.hasNext() ) {
             onceQuads = remapDefaultGraph(onceQuads, dftGraph) ;
-            onceQuads.forEach(q->deleteFromDatasetGraph(dsg, q,ret)) ;
+            onceQuads.forEach(q->deleteFromDatasetGraph(dsg, q,ret,ctx,aclId)) ;
         }
         Iterator<Quad> it = template(templateQuads, dftGraph, bindings) ;
         if ( it == null )
             return ret;
         
         
-        it.forEachRemaining(q->deleteFromDatasetGraph(dsg, q,ret)) ;
+        it.forEachRemaining(q->deleteFromDatasetGraph(dsg, q,ret,ctx,aclId)) ;
         return ret;
     }
 
-    protected static List<Quad> execInsert(DatasetGraph dsg, List<Quad> quads, Node dftGraph, Iterator<Binding> bindings) {
+    protected static List<Quad> execInsert(
+        DatasetGraph        dsg, 
+        List<Quad>          quads, 
+        Node                dftGraph, 
+        Iterator<Binding>   bindings,
+        Context             ctx,
+        DatasetACL.aclId    aclId
+    ) {
         Pair<List<Quad>, List<Quad>> p = split(quads) ;
-        return execInsert(dsg, p.getLeft(), p.getRight(), dftGraph, bindings) ;
+        return execInsert(dsg, p.getLeft(), p.getRight(), dftGraph, bindings,ctx,aclId) ;
     }
     
-    protected static List<Quad>  execInsert(DatasetGraph dsg, List<Quad> onceQuads, List<Quad> templateQuads, Node dftGraph, Iterator<Binding> bindings) {
+    protected static List<Quad>  execInsert(
+        DatasetGraph        dsg, 
+        List<Quad>          onceQuads, 
+        List<Quad>          templateQuads, 
+        Node                dftGraph, 
+        Iterator<Binding>   bindings,
+        Context             ctx,
+        DatasetACL.aclId    aclId
+    ) {
         List<Quad> ret = new ArrayList<>();
         if ( onceQuads != null && bindings.hasNext() ) {
             onceQuads = remapDefaultGraph(onceQuads, dftGraph) ;
-            onceQuads.forEach((q)->addToDatasetGraph(dsg, q,ret)) ;
+            onceQuads.forEach((q)->addToDatasetGraph(dsg, q,ret,ctx,aclId)) ;
         }
         Iterator<Quad> it = template(templateQuads, dftGraph, bindings) ;
         if ( it == null )
             return ret ;
-        it.forEachRemaining((q)->addToDatasetGraph(dsg, q,ret)) ;
+        it.forEachRemaining((q)->addToDatasetGraph(dsg, q,ret,ctx,aclId)) ;
         
         return ret;
     }
 
     // Catch all individual adds of quads
-    private static void addToDatasetGraph(DatasetGraph datasetGraph, Quad quad,List<Quad> result) {
+    private static void addToDatasetGraph(DatasetGraph datasetGraph, Quad quad,List<Quad> result,Context ctx,DatasetACL.aclId aclId) {
         // Check legal triple.
-        if ( quad.isLegalAsData() ) {
+        if ( quad.isLegalAsData() ) { 
+            checkACL(quad.getGraph().getURI(), aclId, ctx);
             if(datasetGraph.add(quad))
                 result.add(quad);
         }
@@ -552,9 +589,11 @@ public class UpdateEngineWorker implements UpdateVisitor
     }
 
     // Catch all individual deletes of quads
-    private static void deleteFromDatasetGraph(DatasetGraph datasetGraph, Quad quad,List<Quad> result) {
+    private static void deleteFromDatasetGraph(DatasetGraph datasetGraph, Quad quad,List<Quad> result,Context ctx,DatasetACL.aclId aclId) {
         if ( datasetGraph instanceof DatasetGraphReadOnly )
             Log.warn(UpdateEngineWorker.class, "Read only dataset");
+        
+        checkACL(quad.getGraph().getURI().toString(), aclId, ctx);
         
         if(datasetGraph.delete(quad))
             result.add(quad);
@@ -611,15 +650,19 @@ public class UpdateEngineWorker implements UpdateVisitor
         throw new UpdateException(msg);
     }
     
-    private void checkACL(Update upd,String graphName, DatasetACL.aclId id) throws ACLException {
-        final Context connCtx = upd.getConnectionContext();
-        final String usrName = (this.context != null ? this.context.get(USER_NAME_SYMBOL) : null);
-        final DatasetACL acl = (this.context != null ? (DatasetACL) this.context.get(ACL_NAME_SYMBOL) : null);
+    private static void checkACL(String graphName, DatasetACL.aclId id,Context ctx) throws ACLException {
+        final String usrName = (ctx != null ? ctx.get(USER_NAME_SYMBOL) : null);
+        final DatasetACL acl = (ctx != null ? (DatasetACL) ctx.get(ACL_NAME_SYMBOL) : null);
         
         if (acl == null || usrName == null)
             return ;    //NO ACL CHECK PERFORMED
         
         acl.checkGrap(id,graphName , usrName);
+        
+    }
+    
+    private void checkACL(String graphName, DatasetACL.aclId id) throws ACLException {
+        checkACL(graphName, id, this.context);
         
     }
 }
