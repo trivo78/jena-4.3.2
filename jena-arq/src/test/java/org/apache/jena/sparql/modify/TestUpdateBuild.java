@@ -39,7 +39,7 @@ public class TestUpdateBuild {
 
     @Test public void update_build_01() {
         DatasetGraph dsg = DatasetGraphFactory.createTxnMem();
-        UpdateExec.newBuilder(null)
+        UpdateExec.newBuilder()
             .dataset(dsg)
             .update(update)
             .build()
@@ -53,7 +53,7 @@ public class TestUpdateBuild {
         UpdateRequest update = UpdateFactory.create(insertStr);
 
         Binding binding = SSE.parseBinding("(binding (?x 123))");
-        UpdateExec.newBuilder(null)
+        UpdateExec.newBuilder()
             .dataset(dsg)
             .update(update)
             .substitution(binding)
@@ -68,7 +68,7 @@ public class TestUpdateBuild {
         UpdateRequest update = UpdateFactory.create(insertStr);
 
         Binding binding = SSE.parseBinding("(binding (?x 456))");
-        UpdateExec.newBuilder(null)
+        UpdateExec.newBuilder()
             .dataset(dsg)
             .update(update)
             .substitution(binding)
@@ -81,9 +81,9 @@ public class TestUpdateBuild {
         DatasetGraph dsg = DatasetGraphFactory.createTxnMem();
         assertTrue(dsg.isEmpty());
         dsg.execute(()->{
-            UpdateExec.newBuilder(null)
+            UpdateExec.newBuilder()
                 .dataset(dsg)
-                .update("INSERT DATA { <x:s> <x:p> <x:o> }")
+                .update("INSERT DATA { <x:s> <x:p> <x:o> }",null)
                 .execute();
         });
         assertFalse(dsg.isEmpty());
@@ -93,10 +93,10 @@ public class TestUpdateBuild {
         DatasetGraph dsg = DatasetGraphFactory.createTxnMem();
         assertTrue(dsg.isEmpty());
         dsg.execute(()->{
-            UpdateExec.newBuilder(null)
+            UpdateExec.newBuilder()
                 .dataset(dsg)
-                .update("INSERT DATA { <x:s> <x:p> <x:o1> }")
-                .update("INSERT DATA { <x:s> <x:p> <x:o2> }")
+                .update("INSERT DATA { <x:s> <x:p> <x:o1> }",null)
+                .update("INSERT DATA { <x:s> <x:p> <x:o2> }",null)
                 .execute();
         });
         assertEquals(2, Iter.count(dsg.find()));

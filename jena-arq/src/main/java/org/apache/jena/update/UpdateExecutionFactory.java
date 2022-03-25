@@ -239,7 +239,7 @@ public class UpdateExecutionFactory
     // Everything for local updates comes through one of these two make methods
     private static UpdateExec make(UpdateRequest updateRequest, DatasetGraph datasetGraph, Binding inputBinding, Context context) {
         Context cxt = Context.setupContextForDataset(context, datasetGraph);
-        return UpdateExec.newBuilder(updateRequest.getConnectionContext()).update(updateRequest).dataset(datasetGraph).initialBinding(inputBinding).context(cxt).build();
+        return UpdateExec.newBuilder().update(updateRequest).dataset(datasetGraph).initialBinding(inputBinding).context(cxt).build();
     }
 
     /**

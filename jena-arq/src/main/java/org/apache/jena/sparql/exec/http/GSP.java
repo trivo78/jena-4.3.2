@@ -530,7 +530,7 @@ public class GSP {
         // HTTP DELETE means "remove resource", not "clear resource".
 //        String url = serviceEndpoint;
 //        HttpOp.httpDelete(url);
-        UpdateExecHTTP.service(serviceEndpoint).update("CLEAR ALL").execute();
+        UpdateExecHTTP.service(serviceEndpoint).update("CLEAR ALL",null).execute();
     }
 
     /** Send a file of triples to a URL. */

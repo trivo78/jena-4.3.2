@@ -39,7 +39,7 @@ public interface UpdateExecBuilder {
     public UpdateExecBuilder update(Update update);
 
     /** Set the update. */
-    public UpdateExecBuilder update(String updateString);
+    public UpdateExecBuilder update(String updateString,Context ctx);
 
     /** Set a context entry. */
     public UpdateExecBuilder set(Symbol symbol, Object value);

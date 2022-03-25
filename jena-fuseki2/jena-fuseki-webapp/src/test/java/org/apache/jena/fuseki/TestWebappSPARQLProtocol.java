@@ -30,6 +30,7 @@ import org.apache.jena.query.*;
 import org.apache.jena.riot.WebContent;
 import org.apache.jena.sparql.exec.http.GSP;
 import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
+import org.apache.jena.sparql.exec.http.UpdateExecutionHTTPBuilder;
 import org.apache.jena.sparql.exec.http.UpdateSendMode;
 import org.apache.jena.sparql.util.Convert;
 import org.apache.jena.update.*;
@@ -78,6 +79,7 @@ public class TestWebappSPARQLProtocol extends AbstractFusekiWebappTest
 
     @Test
     public void update_02() {
-        UpdateExecution.service(serviceUpdate()).update("INSERT DATA {}").sendMode(UpdateSendMode.asPostForm).execute();
+        final UpdateExecutionHTTPBuilder httpBuilder = UpdateExecution.service(serviceUpdate());
+        httpBuilder.update("INSERT DATA {}").sendMode(UpdateSendMode.asPostForm).execute();
     }
 }

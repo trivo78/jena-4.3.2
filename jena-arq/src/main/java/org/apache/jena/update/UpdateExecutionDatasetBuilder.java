@@ -35,14 +35,14 @@ import org.apache.jena.sparql.util.Symbol;
 public class UpdateExecutionDatasetBuilder implements UpdateExecutionBuilder {
 
     /** Create a new builder of {@link QueryExecution} for a local dataset. */
-    public static UpdateExecutionDatasetBuilder newBuilder(Context ctx) { return new UpdateExecutionDatasetBuilder(ctx); }
+    public static UpdateExecutionDatasetBuilder newBuilder() { return new UpdateExecutionDatasetBuilder(); }
 
-    public static UpdateExecutionDatasetBuilder create(Context ctx) { return newBuilder(ctx); }
+    public static UpdateExecutionDatasetBuilder create(Context ctx) { return newBuilder(); }
 
     private final UpdateExecDatasetBuilder builder;
 
-    public UpdateExecutionDatasetBuilder(Context ctx) {
-        builder = UpdateExec.newBuilder(ctx);
+    public UpdateExecutionDatasetBuilder() {
+        builder = UpdateExec.newBuilder();
     }
 
     /** Append the updates in an {@link UpdateRequest} to the {@link UpdateRequest} being built. */
@@ -61,8 +61,8 @@ public class UpdateExecutionDatasetBuilder implements UpdateExecutionBuilder {
 
     /** Parse and update operations to the {@link UpdateRequest} being built. */
     @Override
-    public UpdateExecutionDatasetBuilder update(String updateRequestString) {
-        builder.update(updateRequestString);
+    public UpdateExecutionDatasetBuilder update(String updateRequestString,Context ctx) {
+        builder.update(updateRequestString,ctx);
         return this;
     }
 
@@ -139,5 +139,10 @@ public class UpdateExecutionDatasetBuilder implements UpdateExecutionBuilder {
     public void execute(Dataset dataset) {
         dataset(dataset);
         execute();
+    }
+
+    @Override
+    public UpdateExecutionBuilder update(String updateRequestString) {
+        return update(updateRequestString, null);
     }
 }

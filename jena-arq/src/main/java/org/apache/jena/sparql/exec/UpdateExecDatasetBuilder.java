@@ -42,7 +42,7 @@ import org.apache.jena.update.UpdateRequest;
 
 public class UpdateExecDatasetBuilder implements UpdateExecBuilder {
 
-    public static UpdateExecDatasetBuilder create(Context ctx) { return new UpdateExecDatasetBuilder(ctx); }
+    public static UpdateExecDatasetBuilder create() { return new UpdateExecDatasetBuilder(); }
 
     private DatasetGraph dataset            = null;
     private Query        query              = null;
@@ -54,9 +54,8 @@ public class UpdateExecDatasetBuilder implements UpdateExecBuilder {
     private UpdateRequest update            = null;
     private UpdateRequest updateRequest;
 
-    private UpdateExecDatasetBuilder(Context ctx) {
-        context = ctx;
-        updateRequest     = new UpdateRequest(ctx);
+    private UpdateExecDatasetBuilder() {
+        updateRequest     = new UpdateRequest(context);
     }
 
     /** Append the updates in an {@link UpdateRequest} to the {@link UpdateRequest} being built. */
@@ -64,6 +63,7 @@ public class UpdateExecDatasetBuilder implements UpdateExecBuilder {
     public UpdateExecDatasetBuilder update(UpdateRequest updateRequest) {
         Objects.requireNonNull(updateRequest);
         add(updateRequest);
+        this.context(updateRequest.getConnectionContext());
         return this;
     }
 
@@ -72,14 +72,16 @@ public class UpdateExecDatasetBuilder implements UpdateExecBuilder {
     public UpdateExecDatasetBuilder update(Update update) {
         Objects.requireNonNull(update);
         add(update);
+        this.context(update.getConnectionContext());
         return this;
     }
 
     /** Parse and update operations to the {@link UpdateRequest} being built. */
     @Override
-    public UpdateExecDatasetBuilder update(String updateRequestString) {
-        UpdateRequest more = UpdateFactory.create(updateRequestString,context);
+    public UpdateExecDatasetBuilder update(String updateRequestString,Context ctx) {
+        UpdateRequest more = UpdateFactory.create(updateRequestString);
         add(more);
+        this.context(ctx);
         return this;
     }
 

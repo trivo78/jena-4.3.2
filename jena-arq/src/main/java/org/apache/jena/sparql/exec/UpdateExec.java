@@ -30,7 +30,7 @@ public interface UpdateExec extends UpdateProcessor
     
     /** Create a {@link UpdateExecBuilder} for a dataset. */
     public static UpdateExecBuilder dataset(DatasetGraph dataset,Context ctx) {
-        return UpdateExecDatasetBuilder.create(ctx).dataset(dataset);
+        return UpdateExecDatasetBuilder.create().context(ctx).dataset(dataset);
     }
 
     /** Create a {@link UpdateExecBuilder} for a remote endpoint. */
@@ -38,8 +38,8 @@ public interface UpdateExec extends UpdateProcessor
         return UpdateExecHTTP.newBuilder().endpoint(serviceURL);
     }
 
-    public static UpdateExecDatasetBuilder newBuilder(Context ctx) {
-        return UpdateExecDatasetBuilder.create(ctx);
+    public static UpdateExecDatasetBuilder newBuilder() {
+        return UpdateExecDatasetBuilder.create();
     }
 
     /** Execute */

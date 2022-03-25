@@ -226,7 +226,7 @@ public class UpdateAction
     // All non-streaming updates come through here.
     private static List<UpdateResult> execute$(UpdateRequest request, DatasetGraph datasetGraph, Binding inputBinding)
     {
-        UpdateProcessor uProc = UpdateExec.newBuilder(null).update(request).dataset(datasetGraph).initialBinding(inputBinding).build();
+        UpdateProcessor uProc = UpdateExec.newBuilder().update(request).dataset(datasetGraph).initialBinding(inputBinding).build();
         if (uProc == null)
             throw new ARQException("No suitable update procesors are registered/able to execute your updates");
         return uProc.execute();

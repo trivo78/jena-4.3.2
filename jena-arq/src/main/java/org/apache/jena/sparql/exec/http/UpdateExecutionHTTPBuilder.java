@@ -68,4 +68,9 @@ public class UpdateExecutionHTTPBuilder
         super.substitution(Var.alloc(varName), value.asNode());
         return thisBuilder();
     }
+
+    @Override
+    public UpdateExecutionHTTPBuilder  update(String updateRequestString) {
+        return update(updateRequestString,null);
+    }
 }

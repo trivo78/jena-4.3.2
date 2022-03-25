@@ -32,7 +32,9 @@ public interface UpdateExecutionBuilder {
     public UpdateExecutionBuilder update(Update update);
 
     /** Parse and update operations to the {@link UpdateRequest} being built. */
+    public UpdateExecutionBuilder update(String updateRequestString,Context ctx);
     public UpdateExecutionBuilder update(String updateRequestString);
+    
 
     public UpdateExecutionBuilder set(Symbol symbol, Object value);
 

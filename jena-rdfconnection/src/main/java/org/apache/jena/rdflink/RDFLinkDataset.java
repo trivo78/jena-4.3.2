@@ -115,7 +115,7 @@ public class RDFLinkDataset implements RDFLink {
 
         @Override
         public void run() {
-            final  UpdateExecDatasetBuilder  uedsb =  UpdateExecDatasetBuilder.create(getContext()).update(update);
+            final  UpdateExecDatasetBuilder  uedsb =  UpdateExecDatasetBuilder.create().update(update);
             final List<UpdateResult> r = uedsb.execute(dataset);
             result = r;
         }

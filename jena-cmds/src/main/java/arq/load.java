@@ -94,7 +94,7 @@ public class load extends CmdUpdate {
             }
         }
 
-        UpdateExec.newBuilder(null).update(req).dataset(dataset).execute();
+        UpdateExec.newBuilder().update(req).dataset(dataset).execute();
 
         if ( dump ) {
             IndentedWriter out = IndentedWriter.stdout;
