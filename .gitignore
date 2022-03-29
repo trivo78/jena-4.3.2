@@ -13,3 +13,12 @@ jena-shacl/.pom.xml.un~
 jena-geosparql/derby.log
 jena-geosparql/derby.log
 jena-geosparql/derby.log
+/jena-arq/nbproject/
+*.lock
+*.idn
+*.dat
+*.bpt
+*.obj
+*.bdf
+*.jrnl
+*.log
