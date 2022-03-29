@@ -19,7 +19,6 @@
 package org.apache.jena.rdflink;
 
 import java.util.List;
-import org.apache.jena.sparql.modify.UpdateResult;
 import static org.apache.jena.rdflink.LibRDFLink.asDatasetGraph;
 import static org.apache.jena.rdflink.LibRDFLink.graph2model;
 import static org.apache.jena.rdflink.LibRDFLink.model2graph;
@@ -33,6 +32,7 @@ import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.sparql.exec.*;
 import org.apache.jena.sparql.modify.UpdateResult;
 import org.apache.jena.sparql.util.Context;
+import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.update.UpdateRequest;
 
 /** Provide {@link RDFConnection} using a {@link RDFLink} */
@@ -101,12 +101,12 @@ public class RDFConnectionAdapter implements RDFConnection {
     @Override
     public QueryExecution query(Query query) {
         QueryExec queryExec = get().query(query);
-        return adapt(get().query(query));
+        return adapt(this.other, get().query(query));
     }
 
     @Override
     public QueryExecution query(String queryString) {
-        return adapt(get().query(queryString));
+        return adapt(this.other,get().query(queryString));
     }
 
     @Override
@@ -114,7 +114,18 @@ public class RDFConnectionAdapter implements RDFConnection {
         return new QueryExecutionBuilderAdapter(get().newQuery());
     }
 
-    private static QueryExecution adapt(QueryExec queryExec) {
+    private static QueryExecution adapt(RDFLink link, QueryExec queryExec) {
+        final Context ctx = queryExec.getContext();
+        final Context connCtx = link.getContext();
+        
+        if (ctx != null) {
+            for(final Symbol s : connCtx.keys()) {
+                final Object o  = connCtx.get(s);
+                ctx.set(s, o);
+                
+            }
+        }
+        
         if ( queryExec instanceof QueryExecApp ) {
             QueryExecMod builder = ((QueryExecApp)queryExec).getBuilder();
             Dataset ds = null;

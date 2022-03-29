@@ -38,6 +38,7 @@ public abstract class  DatasetACL {
         aiDelete,
         aiQuery
     };
+    //throwing accessors
     public void checkCreate(String graphName, String user) throws ACLException{
         checkGrap(aclId.aiCreate, graphName, user);
     }
@@ -65,6 +66,14 @@ public abstract class  DatasetACL {
     public void checkQuery(String graphName, String user) throws ACLException{
         checkGrap(aclId.aiQuery, graphName, user);
     }
+    
+    //not throwing accessors
     //real work is done here
-    public abstract void checkGrap(aclId id, String graphName, String user) throws ACLException;
+    public void checkGrap(aclId id, String graphName, String user) throws ACLException {
+        final boolean f = checkGrapBase(id, graphName, user);
+        if (f == false) 
+            throw new ACLException(graphName, user);
+    }
+    
+    public abstract boolean checkGrapBase(aclId id, String graphName, String user);
 }
