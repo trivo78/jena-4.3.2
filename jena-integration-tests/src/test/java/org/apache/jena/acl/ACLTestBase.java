@@ -45,6 +45,7 @@ public class ACLTestBase {
     private static final String q02_clear_graph  = "CLEAR GRAPH <http://ggg1>";
     private static final String q03_drop_graph  = "DROP GRAPH <http://ggg1>";
     private static final String q04_select_all = "SELECT * WHERE { GRAPH ?g {?s ?p ?o}}";
+    private static final String q05_select_all = "SELECT * WHERE { GRAPH <http://graph_1> {?s ?p ?o}}";
     
     private final TS_DatasetFactory.DatasetFactoryId    dfiId;
     private final String                                datasetName;
@@ -171,4 +172,43 @@ public class ACLTestBase {
         Assert.assertEquals(1,qr3.size());
         
     }
+    
+    @Test
+    public void testQuery_02() {
+        System.out.println("Executing " + this.getClass().getName() + ".testQuery_02()");
+        final DatasetACL acl = new DatasetACL() {
+            @Override
+            public boolean checkGrapBase(DatasetACL.aclId id, String graphName, String user) {
+                if (user.equals(ADMIN_USER))
+                    return true;
+
+                if (user.equals(USER_1) && graphName.equals("http://graph_1"))
+                    return true;
+                if (user.equals(USER_2) && graphName.equals("http://graph_2"))
+                    return true;
+                
+                return false;
+            }
+        };
+            
+        final Dataset ds = TS_DatasetFactory.newInstance(dfiId, datasetName, acl);
+        final RDFConnection conn1 = RDFConnection.connect(ds, DatasetACL.ADMIN_USER);
+        final List<UpdateResult>   ur = DatasetActions.update(ds, q01_insert_where_bind,conn1);
+        Assert.assertEquals(ur.size(),1);
+        Assert.assertEquals(0,ur.get(0).deletedTuples.size());
+        Assert.assertEquals(3,ur.get(0).updatedTuples.size());
+
+        final List <Map<String,String>> qr = DatasetActions.query(ds, q05_select_all, conn1);
+        Assert.assertEquals(2,qr.size());
+
+        final RDFConnection conn2 = RDFConnection.connect(ds, USER_1);
+        final List <Map<String,String>> qr2 = DatasetActions.query(ds, q05_select_all, conn2);
+        Assert.assertEquals(2,qr2.size());
+
+        final RDFConnection conn3 = RDFConnection.connect(ds, USER_2);
+        final List <Map<String,String>> qr3 = DatasetActions.query(ds, q05_select_all, conn3);
+        Assert.assertEquals(0,qr3.size());
+        
+    }
+    
 }
