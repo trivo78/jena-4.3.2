@@ -18,11 +18,13 @@
 
 package org.apache.jena.tdb2;
 
+import org.apache.jena.acl.DatasetACL;
 import org.apache.jena.dboe.base.file.Location;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.jena.sparql.core.assembler.AssemblerUtils;
+import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.sys.JenaSystem;
 import org.apache.jena.tdb2.assembler.VocabTDB2;
 
@@ -44,6 +46,18 @@ public class TDB2Factory
     /** Create or connect to a TDB2-backed dataset */
     public static Dataset connectDataset(String location) {
         return connectDataset(Location.create(location));    }
+
+    /** Create or connect to a TDB2-backed dataset */
+    public static Dataset connectDataset(Location location,DatasetACL acl) {
+        DatasetGraph dsg = DatabaseMgr.connectDatasetGraph(location);
+        dsg.getContext().set(Symbol.create(DatasetACL.ACL_HANDLER_NAME) , acl);
+        return DatasetFactory.wrap(dsg);
+    }
+
+    /** Create or connect to a TDB2-backed dataset */
+    public static Dataset connectDataset(String location,DatasetACL acl) {
+        return connectDataset(Location.create(location),acl);    }
+
 
     /**
      * Create an in-memory TDB2-backed dataset (for testing). In-memory TDB2 datasets are use
