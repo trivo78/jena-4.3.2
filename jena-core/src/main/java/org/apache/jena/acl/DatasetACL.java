@@ -23,7 +23,7 @@ package org.apache.jena.acl;
  */
 public abstract class  DatasetACL {
     public static final String ADMIN_USER = "admin";
-    public static final String ACL_CONTEXT_NAME = "ACL";
+    public static final String ACL_HANDLER_NAME = "ACL";
     public static final String ACL_USER_NAME = "USER";
     
     public static final String ACL_ALL_GRAPHS = "ALL";

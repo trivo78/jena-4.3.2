@@ -68,7 +68,7 @@ import org.apache.jena.update.UpdateException ;
 public class UpdateEngineWorker implements UpdateVisitor
 {
     private final static Symbol     USER_NAME_SYMBOL = Symbol.create(DatasetACL.ACL_USER_NAME);
-    private final static Symbol     ACL_NAME_SYMBOL = Symbol.create(DatasetACL.ACL_CONTEXT_NAME);
+    private final static Symbol     ACL_NAME_SYMBOL = Symbol.create(DatasetACL.ACL_HANDLER_NAME);
     
     final boolean enableDebugPrint = true;
     protected final DatasetGraph datasetGraph ;

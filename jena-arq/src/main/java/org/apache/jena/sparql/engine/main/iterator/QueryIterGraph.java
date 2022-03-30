@@ -100,7 +100,7 @@ public class QueryIterGraph extends QueryIterRepeatApply
 
     protected static class QueryIterGraphInner extends QueryIterSub
     {
-        private static final Symbol SYM_ACL = Symbol.create(DatasetACL.ACL_CONTEXT_NAME);
+        private static final Symbol SYM_ACL = Symbol.create(DatasetACL.ACL_HANDLER_NAME);
         private static final Symbol SYM_USR = Symbol.create(DatasetACL.ACL_USER_NAME);
         
         protected final Binding parentBinding ;

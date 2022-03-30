@@ -21,7 +21,6 @@ package org.apache.jena.query;
 import java.util.List;
 import java.util.Objects ;
 import org.apache.jena.acl.DatasetACL;
-import static org.apache.jena.acl.DatasetACL.ACL_CONTEXT_NAME;
 
 import org.apache.jena.assembler.Assembler;
 import org.apache.jena.rdf.model.Model;
@@ -36,6 +35,7 @@ import org.apache.jena.sparql.core.assembler.DatasetAssembler;
 import org.apache.jena.sparql.util.DatasetUtils;
 import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.sparql.util.graph.GraphUtils;
+import static org.apache.jena.acl.DatasetACL.ACL_HANDLER_NAME;
 
 /**
  * Makes {@link Dataset}s in various ways.
@@ -74,7 +74,7 @@ public class DatasetFactory {
         
         public static Dataset createTxnMem(DatasetACL acl) {
             final Dataset ret = wrap(DatasetGraphFactory.createTxnMem());
-            ret.getContext().put(Symbol.create(ACL_CONTEXT_NAME), acl);
+            ret.getContext().put(Symbol.create(ACL_HANDLER_NAME), acl);
             return ret;
         }
  
