@@ -19,12 +19,14 @@
 package org.apache.jena.tdb;
 
 import java.io.File ;
+import org.apache.jena.acl.DatasetACL;
 
 import org.apache.jena.atlas.lib.FileOps ;
 import org.apache.jena.query.Dataset ;
 import org.apache.jena.query.DatasetFactory ;
 import org.apache.jena.sparql.core.DatasetGraph ;
 import org.apache.jena.sparql.core.assembler.AssemblerUtils ;
+import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.sys.JenaSystem ;
 import org.apache.jena.tdb.assembler.VocabTDB ;
 import org.apache.jena.tdb.base.file.Location ;
@@ -62,6 +64,22 @@ public class TDBFactory
     private static Dataset createDataset(DatasetGraph datasetGraph)
     { return DatasetFactory.wrap(datasetGraph) ; }
     
+    /** Create or connect to a TDB-backed dataset */ 
+    public static Dataset createDataset(String dir,DatasetACL acl)
+    { return createDataset(Location.create(dir),acl) ; }
+
+    /** Create or connect to a TDB-backed dataset */ 
+    public static Dataset createDataset(Location location,DatasetACL acl)
+    { return createDataset(createDatasetGraph(location),acl) ; }
+
+    /** Create or connect to a TDB dataset backed by an in-memory block manager. For testing.*/ 
+    public static Dataset createDataset(DatasetACL acl)
+    { return createDataset(createDatasetGraph(acl)) ; }
+
+    /** Create a dataset around a DatasetGraphTDB */ 
+    private static Dataset createDataset(DatasetGraph datasetGraph,DatasetACL acl)
+    { return DatasetFactory.wrap(datasetGraph) ; }
+    
     /** Create or connect to a TDB-backed dataset (graph-level) */
     public static DatasetGraph createDatasetGraph(String directory)
     { return createDatasetGraph(Location.create(directory)) ; }
@@ -73,6 +91,23 @@ public class TDBFactory
     /** Create a TDB-backed dataset (graph-level) in memory (for testing) */
     public static DatasetGraph createDatasetGraph() {
         return _createDatasetGraph() ;
+    }
+    public static DatasetGraph createDatasetGraph(String directory,DatasetACL acl)
+    { return createDatasetGraph(Location.create(directory),acl) ; }
+
+    /** Create or connect to a TDB-backed dataset (graph-level) */
+    public static DatasetGraph createDatasetGraph(Location location,DatasetACL acl)
+    { 
+        final DatasetGraph ret = _createDatasetGraph(location) ; 
+        ret.getContext().put(Symbol.create(DatasetACL.ACL_HANDLER_NAME), acl);
+        return ret;
+    }
+
+    /** Create a TDB-backed dataset (graph-level) in memory (for testing) */
+    public static DatasetGraph createDatasetGraph(DatasetACL acl) {
+        final DatasetGraph ret = _createDatasetGraph() ;
+        ret.getContext().put(Symbol.create(DatasetACL.ACL_HANDLER_NAME), acl);
+        return ret;        
     }
     
     /** Release from the JVM. All caching is lost. */
