@@ -70,7 +70,7 @@ public class TDBFactory
 
     /** Create or connect to a TDB-backed dataset */ 
     public static Dataset createDataset(Location location,DatasetACL acl)
-    { return createDataset(createDatasetGraph(location),acl) ; }
+    { return createDataset(createDatasetGraph(location,acl)) ; }
 
     /** Create or connect to a TDB dataset backed by an in-memory block manager. For testing.*/ 
     public static Dataset createDataset(DatasetACL acl)
@@ -78,7 +78,10 @@ public class TDBFactory
 
     /** Create a dataset around a DatasetGraphTDB */ 
     private static Dataset createDataset(DatasetGraph datasetGraph,DatasetACL acl)
-    { return DatasetFactory.wrap(datasetGraph) ; }
+    { 
+        datasetGraph.getContext().put(Symbol.create(DatasetACL.ACL_HANDLER_NAME), acl);
+        return DatasetFactory.wrap(datasetGraph) ; 
+    }
     
     /** Create or connect to a TDB-backed dataset (graph-level) */
     public static DatasetGraph createDatasetGraph(String directory)

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import org.apache.jena.acl.DatasetACL;
 
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.atlas.lib.StrUtils;
@@ -30,11 +31,40 @@ import org.apache.jena.atlas.lib.tuple.TupleFactory;
 import org.apache.jena.graph.Node;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.ExecutionContext;
+import org.apache.jena.sparql.util.Context;
+import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.tdb.store.NodeId;
 import org.apache.jena.tdb.store.nodetable.NodeTable;
 import org.apache.jena.tdb.store.nodetupletable.NodeTupleTable;
 
 class StageMatchTuple {
+    private static class ACLFilter implements Predicate<Tuple<NodeId>> {
+        private final static Symbol SYM_USR = Symbol.create(DatasetACL.ACL_USER_NAME);
+        private final static Symbol SYM_ACL = Symbol.create(DatasetACL.ACL_HANDLER_NAME);
+        
+        private final Context           ctx;
+        private final NodeTupleTable    nodeTupleTable;
+        
+        
+        public ACLFilter(Context c,NodeTupleTable ntt) {
+            ctx = c;
+            nodeTupleTable = ntt;
+        }
+        @Override
+        public boolean test(Tuple<NodeId> t) {
+            final DatasetACL acl = (DatasetACL) ctx.get(SYM_ACL);
+            final String     usrName = (String) ctx.get(SYM_USR);
+            
+            if (acl == null || usrName == null)
+                return true;
+            
+            
+            final Node nGraph = nodeTupleTable.getNodeTable().getNodeForNodeId(t.get(0));
+            
+            return acl.checkGrapBase(DatasetACL.aclId.aiQuery, nGraph.toString(), usrName);
+        }
+        
+    }
 
     /* Entry point */
     static Iterator<BindingNodeId> access(NodeTupleTable nodeTupleTable, Iterator<BindingNodeId> input, Tuple<Node> patternTuple,
@@ -67,6 +97,11 @@ class StageMatchTuple {
         if ( filter != null )
             iterMatches = Iter.filter(iterMatches, filter);
 
+        final Context ctx = execCxt.getContext();
+        
+        
+        iterMatches = Iter.filter(iterMatches, new ACLFilter(ctx, nodeTupleTable));
+        
         // If we want to reduce to RDF semantics over quads,
         // we need to reduce the quads to unique triples.
         // We do that by having the graph slot as "any", then running
