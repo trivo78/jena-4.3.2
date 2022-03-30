@@ -39,7 +39,7 @@ public class TS_DatasetFactory {
                 break;
             case dfiTDB1: {
                 final org.apache.jena.tdb.base.file.Location loc = org.apache.jena.tdb.base.file.Location.create("./run/" + name);
-                ret = org.apache.jena.tdb.TDBFactory.createDataset(loc);
+                ret = org.apache.jena.tdb.TDBFactory.createDataset(loc,acl);
                 if (ret.asDatasetGraph() != null) {
                     ret.begin(ReadWrite.WRITE);
                     ret.asDatasetGraph().clear();
@@ -49,7 +49,7 @@ public class TS_DatasetFactory {
             }
             case dfiTDB2: {
                 final org.apache.jena.dboe.base.file.Location loc = org.apache.jena.dboe.base.file.Location.create("./run/" + name );
-                ret = org.apache.jena.tdb2.TDB2Factory.connectDataset(loc);  
+                ret = org.apache.jena.tdb2.TDB2Factory.connectDataset(loc,acl);  
                 if (ret.asDatasetGraph() != null) {
                     ret.begin(ReadWrite.WRITE);
                     ret.asDatasetGraph().clear();
