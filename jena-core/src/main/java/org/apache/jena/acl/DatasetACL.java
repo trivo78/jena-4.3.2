@@ -26,7 +26,10 @@ public abstract class  DatasetACL {
     public static final String ACL_HANDLER_NAME = "ACL";
     public static final String ACL_USER_NAME = "USER";
     
-    public static final String ACL_ALL_GRAPHS = "ALL";
+    public static final String ACL_GRAPH_NAME_ALL = "$$ALL$$";
+    public static final String ACL_GRAPH_NAME_DEFAULT = "$$DEFAULT$$";
+    
+    public static final String DEF_GRAPH_NAME = "urn:x-arq:DefaultGraphNode";
     
     public enum aclId {
         aiDrop, 

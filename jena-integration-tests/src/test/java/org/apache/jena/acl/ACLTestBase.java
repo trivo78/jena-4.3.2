@@ -46,9 +46,11 @@ public class ACLTestBase {
     private static final String q03_drop_graph  = "DROP GRAPH <http://ggg1>";
     private static final String q04_select_all = "SELECT * WHERE { GRAPH ?g {?s ?p ?o}}";
     private static final String q05_select_all = "SELECT * WHERE { GRAPH <http://graph_1> {?s ?p ?o}}";
+    private static final String q06_select_all = "SELECT * WHERE { ?s ?p ?o}";
     
     private final TS_DatasetFactory.DatasetFactoryId    dfiId;
     private final String                                datasetName;
+    
     
     private static final String q01_insert_where_bind = 
         "INSERT {   " + 
@@ -65,6 +67,35 @@ public class ACLTestBase {
         "}";
     
     
+    private final static String q02_insert_data_dg = 
+        "PREFIX mp: <http://mysparql.com/>" + System.lineSeparator() + 
+        "INSERT DATA {" + System.lineSeparator() + 
+        "mp:person0 mp:firstname \"Jay\" ." + System.lineSeparator() + 
+        "mp:person0 mp:lastname \"Stevens\" ." + System.lineSeparator() + 
+        "mp:person0 mp:state \"CA\" ." + System.lineSeparator() + 
+        "mp:person1 mp:firstname \"John\" ." + System.lineSeparator() + 
+        "mp:person1 mp:lastname \"Homlmes\" ." + System.lineSeparator() + 
+        "mp:person1 mp:state \"CZ\" ." + System.lineSeparator() + 
+        "mp:person2 mp:firstname \"Erwin\" ." + System.lineSeparator() + 
+        "mp:person2 mp:lastname \"Rommel\" ." + System.lineSeparator() + 
+        "mp:person2 mp:state \"PZ\" ." + System.lineSeparator() +
+        "}"
+    ;    
+
+    private final static String q03_insert_data_dg = 
+        "PREFIX mp: <http://mysparql.com/>" + System.lineSeparator() + 
+        "INSERT DATA {" + System.lineSeparator() + 
+        "mp:person10 mp:firstname \"Jay\" ." + System.lineSeparator() + 
+        "mp:person10 mp:lastname \"Stevens\" ." + System.lineSeparator() + 
+        "mp:person10 mp:state \"CA\" ." + System.lineSeparator() + 
+        "mp:person11 mp:firstname \"John\" ." + System.lineSeparator() + 
+        "mp:person11 mp:lastname \"Homlmes\" ." + System.lineSeparator() + 
+        "mp:person11 mp:state \"CZ\" ." + System.lineSeparator() + 
+        "mp:person12 mp:firstname \"Erwin\" ." + System.lineSeparator() + 
+        "mp:person12 mp:lastname \"Rommel\" ." + System.lineSeparator() + 
+        "mp:person12 mp:state \"PZ\" ." + System.lineSeparator() +
+        "}"
+    ;    
     
     public ACLTestBase(TS_DatasetFactory.DatasetFactoryId id,String dsName) {
         dfiId = id;
@@ -100,6 +131,65 @@ public class ACLTestBase {
     }
     
     @Test
+    public void testInsert_03() {
+        System.out.println("Executing " + this.getClass().getName() + ".testInsert_03()");
+        //with admin user
+        final String S_DEF_GRAPH_NAME = "urn:x-arq:DefaultGraphNode";
+        final DatasetACL acl = new DatasetACL() {
+            final String DEF_GRAPH_NAME = S_DEF_GRAPH_NAME;
+            @Override
+            public boolean checkGrapBase(DatasetACL.aclId id, String graphName, String user)  {
+                if (user.equals(ADMIN_USER))
+                    return true;
+                
+                
+                if (user.equals(USER_1) && graphName.equals(DEF_GRAPH_NAME))
+                    return true;
+                
+                
+                if (user.equals(USER_2) && graphName.equals(DEF_GRAPH_NAME) && id == aclId.aiQuery)
+                    return true;
+                
+                    
+                return false;
+            }
+        };
+            
+        final Dataset ds = TS_DatasetFactory.newInstance(dfiId, datasetName, acl);
+        final RDFConnection conn = RDFConnection.connect(ds, USER_1);
+        //USER1 can insert
+        List<UpdateResult>   ur  = DatasetActions.update(ds, q02_insert_data_dg ,conn);
+        
+        Assert.assertEquals(1,ur.size());
+        Assert.assertTrue(ur.get(0).deletedTuples == null || ur.get(0).deletedTuples.size() == 0);
+        Assert.assertEquals(9,ur.get(0).updatedTuples.size());
+        
+        final List <Map<String,String>> qr = DatasetActions.query(ds, q06_select_all, conn);
+        
+        Assert.assertEquals(9,qr.size());
+        
+        //USER2 can only query
+        
+        final RDFConnection conn2 = RDFConnection.connect(ds, USER_2);
+        
+        ur = null;  //reset
+        try { 
+            ur = DatasetActions.update(ds, q03_insert_data_dg ,conn2);
+        } catch(ACLException e) {
+            Assert.assertEquals(USER_2,e.getUserName());
+            Assert.assertEquals(S_DEF_GRAPH_NAME,e.getGraphName());
+        }
+        Assert.assertTrue(ur == null || ur.size() == 0 );
+        
+        //now try to query
+        final RDFConnection conn3 = RDFConnection.connect(ds, USER_2);
+        final List<Map<String,String>> qr2 = DatasetActions.query(ds, q06_select_all, conn3);
+        Assert.assertNotEquals(null, qr2);
+        Assert.assertEquals(9, qr2.size());
+        
+                
+    }
+    @Test
     public void testInsert_02() {
         System.out.println("Executing " + this.getClass().getName() + ".testInsert_02()");
         //with admin user
@@ -122,7 +212,7 @@ public class ACLTestBase {
         
         List<UpdateResult>   ur  = null;
         try { 
-            ur = DatasetActions.update(ds, q01_insert_where_bind,conn);
+            ur = DatasetActions.update(ds, q01_insert_where_bind ,conn);
         } catch(ACLException e) {
             Assert.assertEquals(USER_1,e.getUserName());
             Assert.assertEquals("http://graph_2",e.getGraphName());
@@ -135,6 +225,7 @@ public class ACLTestBase {
         
                 
     }
+    
     @Test
     public void testQuery_01() {
         System.out.println("Executing " + this.getClass().getName() + ".testQuery_01()");

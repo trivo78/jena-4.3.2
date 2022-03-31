@@ -27,7 +27,6 @@ import java.util.Iterator ;
 import java.util.List ;
 import org.apache.jena.acl.ACLException;
 import org.apache.jena.acl.DatasetACL;
-import static org.apache.jena.acl.DatasetACL.ACL_ALL_GRAPHS;
 
 import org.apache.jena.atlas.data.BagFactory ;
 import org.apache.jena.atlas.data.DataBag ;
@@ -63,6 +62,7 @@ import org.apache.jena.sparql.util.Context ;
 import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.update.Update;
 import org.apache.jena.update.UpdateException ;
+import static org.apache.jena.acl.DatasetACL.ACL_GRAPH_NAME_ALL;
 
 /** Implementation of general purpose update request execution */ 
 public class UpdateEngineWorker implements UpdateVisitor
@@ -112,7 +112,7 @@ public class UpdateEngineWorker implements UpdateVisitor
                 error("No such graph: " + g);
         }
 
-        final String graphName = g != null ? g.getURI() : ACL_ALL_GRAPHS;
+        final String graphName = g != null ? g.getURI() : ACL_GRAPH_NAME_ALL;
         
         
         

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.apache.jena.acl.DatasetACL;
+import static org.apache.jena.acl.DatasetACL.DEF_GRAPH_NAME;
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.atlas.lib.StrUtils;
 
@@ -59,9 +60,16 @@ class StageMatchTuple {
                 return true;
             
             
-            final Node nGraph = nodeTupleTable.getNodeTable().getNodeForNodeId(t.get(0));
+            String graphName = "";
             
-            return acl.checkGrapBase(DatasetACL.aclId.aiQuery, nGraph.toString(), usrName);
+            if (t.len() == 3)
+                graphName = DEF_GRAPH_NAME;
+            else { 
+                final Node nGraph = nodeTupleTable.getNodeTable().getNodeForNodeId(t.get(0));
+                graphName = nGraph.toString();
+            }
+            
+            return acl.checkGrapBase(DatasetACL.aclId.aiQuery, graphName, usrName);
         }
         
     }
