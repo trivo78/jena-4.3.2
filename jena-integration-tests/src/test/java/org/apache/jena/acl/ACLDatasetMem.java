@@ -18,6 +18,8 @@
 
 package org.apache.jena.acl;
 
+import org.apache.jena.sparql.engine.iterator.QueryIteratorCloseable;
+
 /**
  *
  * @author Lorenzo

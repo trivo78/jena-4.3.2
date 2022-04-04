@@ -20,15 +20,13 @@ package org.apache.jena.acl;
 import java.util.List;
 import java.util.Map;
 import static org.apache.jena.acl.DatasetACL.ADMIN_USER;
-import org.apache.jena.http.TestBlankNodeBinary;
+import static org.apache.jena.acl.DatasetACL.DEF_GRAPH_NAME;
 import org.apache.jena.query.Dataset;
 
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.sparql.modify.UpdateResult;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 
 /**
  *
@@ -93,9 +91,38 @@ public class ACLTestBase {
         "mp:person11 mp:state \"CZ\" ." + System.lineSeparator() + 
         "mp:person12 mp:firstname \"Erwin\" ." + System.lineSeparator() + 
         "mp:person12 mp:lastname \"Rommel\" ." + System.lineSeparator() + 
-        "mp:person12 mp:state \"PZ\" ." + System.lineSeparator() +
+        "mp:person12 mp:state \"CZ\" ." + System.lineSeparator() +
         "}"
     ;    
+    
+    private final static String q06_select_some_dg = 
+            "PREFIX mp: <http://mysparql.com/>" + System.lineSeparator() + 
+            "SELECT ?person WHERE {" + System.lineSeparator() + 
+            "?person mp:state \"CZ\" ." + System.lineSeparator() + 
+            "}"
+    ;
+    
+    private final static String q07_insert_data_ng = 
+        "PREFIX mp: <http://mysparql.com/>" + System.lineSeparator() + 
+        "INSERT DATA { GRAPH mp:graph1 {" + System.lineSeparator() + 
+        "mp:person10 mp:firstname \"Jay\" ." + System.lineSeparator() + 
+        "mp:person10 mp:lastname \"Stevens\" ." + System.lineSeparator() + 
+        "mp:person10 mp:state \"CA\" ." + System.lineSeparator() + 
+        "mp:person11 mp:firstname \"John\" ." + System.lineSeparator() + 
+        "mp:person11 mp:lastname \"Homlmes\" ." + System.lineSeparator() + 
+        "mp:person11 mp:state \"CZ\" ." + System.lineSeparator() + 
+        "mp:person12 mp:firstname \"Erwin\" ." + System.lineSeparator() + 
+        "mp:person12 mp:lastname \"Rommel\" ." + System.lineSeparator() + 
+        "mp:person12 mp:state \"CZ\" ." + System.lineSeparator() +
+        "}}"
+    ;    
+    
+    private final static String q08_select_some_ng = 
+            "PREFIX mp: <http://mysparql.com/>" + System.lineSeparator() + 
+            "SELECT ?person WHERE { GRAPH mp:graph1 {" + System.lineSeparator() + 
+            "?person mp:state \"CZ\" ." + System.lineSeparator() + 
+            "}}"
+    ;
     
     public ACLTestBase(TS_DatasetFactory.DatasetFactoryId id,String dsName) {
         dfiId = id;
@@ -134,9 +161,9 @@ public class ACLTestBase {
     public void testInsert_03() {
         System.out.println("Executing " + this.getClass().getName() + ".testInsert_03()");
         //with admin user
-        final String S_DEF_GRAPH_NAME = "urn:x-arq:DefaultGraphNode";
+        
+        
         final DatasetACL acl = new DatasetACL() {
-            final String DEF_GRAPH_NAME = S_DEF_GRAPH_NAME;
             @Override
             public boolean checkGrapBase(DatasetACL.aclId id, String graphName, String user)  {
                 if (user.equals(ADMIN_USER))
@@ -177,7 +204,7 @@ public class ACLTestBase {
             ur = DatasetActions.update(ds, q03_insert_data_dg ,conn2);
         } catch(ACLException e) {
             Assert.assertEquals(USER_2,e.getUserName());
-            Assert.assertEquals(S_DEF_GRAPH_NAME,e.getGraphName());
+            Assert.assertEquals(DEF_GRAPH_NAME,e.getGraphName());
         }
         Assert.assertTrue(ur == null || ur.size() == 0 );
         
@@ -300,6 +327,86 @@ public class ACLTestBase {
         final List <Map<String,String>> qr3 = DatasetActions.query(ds, q05_select_all, conn3);
         Assert.assertEquals(0,qr3.size());
         
+    }
+    
+    @Test
+    public void testQuery_03() {
+        System.out.println("Executing " + this.getClass().getName() + ".testQuery_03()");
+        
+        
+        final DatasetACL acl = new DatasetACL() {
+            @Override
+            public boolean checkGrapBase(DatasetACL.aclId id, String graphName, String user) {
+                if (user.equals(ADMIN_USER))
+                    return true;
+
+                if (user.equals(USER_1) && graphName.equals(DEF_GRAPH_NAME))
+                    return true;
+
+                    
+                return false;
+            }
+        };
+            
+        final Dataset ds = TS_DatasetFactory.newInstance(dfiId, datasetName, acl);
+        final RDFConnection conn1 = RDFConnection.connect(ds, DatasetACL.ADMIN_USER);
+        final List<UpdateResult>   ur = DatasetActions.update(ds, q03_insert_data_dg,conn1);
+        Assert.assertEquals(1,ur.size());
+        Assert.assertTrue(ur.get(0).deletedTuples == null || ur.get(0).deletedTuples.size() == 0);
+        Assert.assertEquals(9,ur.get(0).updatedTuples.size());
+
+        final List <Map<String,String>> qr = DatasetActions.query(ds, q06_select_some_dg, conn1);
+        Assert.assertEquals(2,qr.size());
+        
+
+        final RDFConnection conn2 = RDFConnection.connect(ds, USER_1);
+        final List <Map<String,String>> qr2 = DatasetActions.query(ds, q06_select_some_dg, conn2);
+        Assert.assertEquals(2,qr2.size());
+
+        final RDFConnection conn3 = RDFConnection.connect(ds, USER_2);
+        final List <Map<String,String>> qr3 = DatasetActions.query(ds, q06_select_some_dg, conn3);
+        Assert.assertEquals(0,qr3.size());
+
+    }
+    
+    @Test
+    public void testQuery_04() {
+        System.out.println("Executing " + this.getClass().getName() + ".testQuery_04()");
+        
+        
+        final DatasetACL acl = new DatasetACL() {
+            @Override
+            public boolean checkGrapBase(DatasetACL.aclId id, String graphName, String user) {
+                if (user.equals(ADMIN_USER))
+                    return true;
+
+                if (user.equals(USER_1) && graphName.equals("http://mysparql.com/graph1"))
+                    return true;
+
+                    
+                return false;
+            }
+        };
+            
+        final Dataset ds = TS_DatasetFactory.newInstance(dfiId, datasetName, acl);
+        final RDFConnection conn1 = RDFConnection.connect(ds, DatasetACL.ADMIN_USER);
+        final List<UpdateResult>   ur = DatasetActions.update(ds, q07_insert_data_ng,conn1);
+        Assert.assertEquals(1,ur.size());
+        Assert.assertTrue(ur.get(0).deletedTuples == null || ur.get(0).deletedTuples.size() == 0);
+        Assert.assertEquals(9,ur.get(0).updatedTuples.size());
+
+        final List <Map<String,String>> qr = DatasetActions.query(ds, q08_select_some_ng, conn1);
+        Assert.assertEquals(2,qr.size());
+        
+
+        final RDFConnection conn2 = RDFConnection.connect(ds, USER_1);
+        final List <Map<String,String>> qr2 = DatasetActions.query(ds, q08_select_some_ng, conn2);
+        Assert.assertEquals(2,qr2.size());
+
+        final RDFConnection conn3 = RDFConnection.connect(ds, USER_2);
+        final List <Map<String,String>> qr3 = DatasetActions.query(ds, q08_select_some_ng, conn3);
+        Assert.assertEquals(0,qr3.size());
+
     }
     
 }
