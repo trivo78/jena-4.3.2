@@ -21,15 +21,19 @@ package org.apache.jena.sparql.engine.main.solver;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Predicate;
+import org.apache.jena.acl.DatasetACL;
 
 import org.apache.jena.atlas.iterator.Iter;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.sparql.core.GraphView;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.engine.ExecutionContext;
 import org.apache.jena.sparql.engine.binding.Binding;
 import org.apache.jena.sparql.engine.binding.BindingBuilder;
+import org.apache.jena.sparql.util.Context;
+import org.apache.jena.sparql.util.Symbol;
 import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
@@ -50,6 +54,21 @@ public class StageMatchTriple {
     }
 
     private static Iterator<Binding> accessTriple(Binding binding, Graph graph, Triple pattern, Predicate<Triple> filter, ExecutionContext execCxt) {
+        if (graph instanceof GraphView) {
+            final GraphView gv = (GraphView) graph;
+            final Node n = gv.getGraphName();
+            final String graphName = (n != null ? n.toString() : DatasetACL.DEF_GRAPH_NAME);
+            
+            final Context ctx = execCxt.getContext();
+            
+            final DatasetACL dacl = (DatasetACL) ctx.get(Symbol.create(DatasetACL.ACL_HANDLER_NAME));
+            final String userName  = (String) ctx.get(Symbol.create(DatasetACL.ACL_USER_NAME));
+            if (dacl != null && userName != null) {
+                if (dacl.checkGrapBase(DatasetACL.aclId.aiQuery, graphName, userName) == false)
+                    return Iter.nullIterator();
+            }
+            
+        }
         Node s = substituteFlat(pattern.getSubject(), binding) ;
         Node p = substituteFlat(pattern.getPredicate(), binding) ;
         Node o = substituteFlat(pattern.getObject(), binding) ;

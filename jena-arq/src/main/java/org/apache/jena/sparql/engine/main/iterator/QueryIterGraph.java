@@ -171,34 +171,8 @@ public class QueryIterGraph extends QueryIterRepeatApply
             }
             return qIter ;
         }
-        //check ACL if possible
-        protected static boolean checkACL(Node node, Context ctx) {
-            boolean ret = true;
-
-            try {
-                final String graphName = node.toString();
-                String userName = (String) ctx.get(SYM_USR);
-                final DatasetACL dacl = (DatasetACL) ctx.get(SYM_ACL);
-
-                if (userName == null)
-                    userName = "ginger";
-
-                if (dacl == null || userName == null)
-                    return true;    //no acl, behave as usual
-
-
-                ret = dacl.checkGrapBase(DatasetACL.aclId.aiQuery, graphName, userName);
-                
-            } catch(Exception e ) {
-                
-            }
-
-            return ret;
-        }
         // Create the iterator for a cycle of one node - or return null if there can't be any results.
         protected static QueryIterator buildIterator(Binding binding, Node graphNode, Op opExec, ExecutionContext outerCxt) {
-            if (checkACL(graphNode, outerCxt.getContext()) == false)
-                    return null;
             
             if ( !graphNode.isURI() && !graphNode.isBlank() )
                 // e.g. variable bound to a literal or blank node.
