@@ -38,7 +38,6 @@ public abstract class  DatasetACL {
         aiInsertData,
         aiDeleteData,
         aiUpdate,
-        aiDelete,
         aiQuery
     };
     //throwing accessors
@@ -63,9 +62,7 @@ public abstract class  DatasetACL {
     public void checkUpdate(String graphName, String user) throws ACLException{
         checkGrap(aclId.aiUpdate, graphName, user);
     }
-    public void checkDelete(String graphName, String user) throws ACLException{
-        checkGrap(aclId.aiDelete, graphName, user);
-    }
+ 
     public void checkQuery(String graphName, String user) throws ACLException{
         checkGrap(aclId.aiQuery, graphName, user);
     }
