@@ -31,7 +31,7 @@ public abstract class  DatasetACL {
     
     public static final String DEF_GRAPH_NAME = "urn:x-arq:DefaultGraphNode";
     
-    public enum aclId {
+    public static  enum aclId {
         aiDrop, 
         aiClear,
         aiCreate,
